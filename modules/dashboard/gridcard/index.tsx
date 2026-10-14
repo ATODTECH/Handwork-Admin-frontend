@@ -5,7 +5,7 @@ import { LucideIcon } from "lucide-react";
 import { useState } from "react"
 
 // Dummy Data [current, previous]
-const API_DATA: gridCardProps = {
+const API_DATA: GridCardProps = {
   revenue: [84784, 84781],
   users: [21864, 11864],
   artisans: [13854, 13864],

@@ -16,7 +16,7 @@ export default function RootLayout({ children }:
       className={`${poppins.variable} h-full antialiased`}
     >
       <body className="flex flex-col h-screen overflow-hidden">
-        <div className="scrollbar-thin scrollbar-thumb-gray-200 h-screen overflow-auto bg-[#FFFFFF]">
+        <div className="scrollbar-thin scrollbar-thumb-gray-200 h-screen bg-[#FFFFFF]">
           {children}
         </div>
         <Toaster position="top-right" richColors />

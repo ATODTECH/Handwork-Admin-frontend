@@ -10,10 +10,10 @@ const DashboardTemplate = ({ children }: { children: React.ReactNode }) => {
         <LogoIndex />
       </div>
       <div className="flex flow-row h-[calc(100vh-80.17px)]">
-        <header className="flex flex-col py-7.5 pl-2 h-full w-60.25 border-r border-r-hw-grey-200">
+        <header className="flex flex-col pb-7.5 pl-2 h-full w-60.25 border-r border-r-hw-grey-200">
           <SideBarHeader />
         </header>
-        <div className="flex-1 w-[calc(100vw-15.0625rem)] relative flex flex-col justify-between gap-6 pl-8 pt-7.5">
+        <div className="flex-1 w-[calc(100vw-15.0625rem)] relative flex flex-col justify-between gap-6 pl-8">
           {children}
         </div>
       </div>

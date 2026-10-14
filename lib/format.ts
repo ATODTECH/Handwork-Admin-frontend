@@ -14,15 +14,21 @@ export const formatNaira = (amountMinor: number) => {
   return `₦ ${COUNT.format(naira)}`
 }
 
-/** "2026-09" to "Sep". Mid-month, so no time zone can shift it into a neighbour. */
-export const formatMonth = (month: string) => MONTH.format(new Date(`${month}-15T12:00:00Z`))
-
 export const formatActivityDate = (iso: string, now = new Date()) => {
   const date = new Date(iso)
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
   if (DAY_KEY.format(date) === DAY_KEY.format(now)) return `Today, ${TIME.format(date)}`
   if (DAY_KEY.format(date) === DAY_KEY.format(yesterday)) return `Yesterday, ${TIME.format(date)}`
+  return DAY.format(date)
+}
+
+export const formatActivityDay = (iso: string, now = new Date()) => {
+  const date = new Date(iso)
+  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+
+  if (DAY_KEY.format(date) === DAY_KEY.format(now)) return "Today"
+  if (DAY_KEY.format(date) === DAY_KEY.format(yesterday)) return "Yesterday"
   return DAY.format(date)
 }
 

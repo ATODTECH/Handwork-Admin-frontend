@@ -21,7 +21,7 @@ const SideBarHeader = () => {
   const pathname = usePathname()
 
   return (
-    <aside className="flex flex-col gap-y-4 2xl:gap-y-5 h-fit w-full overflow-y-auto scrollbar-thin pr-2">
+    <aside className="flex flex-col gap-y-4 2xl:gap-y-5 h-fit w-full overflow-y-auto scrollbar-thin pt-7.5 pr-2">
       {routes.map((route, index)=> 
         <Link
           key={index}
