@@ -1,3 +1,4 @@
+import DashboardOverview from '@/modules/dashboard';
 import { Metadata, NextPage } from 'next'
 
 export const metadata: Metadata = {
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
 
 const Overview: NextPage = () => {
   return (
-    <div>page</div>
+    <>
+      <DashboardOverview />
+    </>
   )
 }
 

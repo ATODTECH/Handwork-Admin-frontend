@@ -52,9 +52,31 @@
   --color-hw-text-yellow: #FFCC00;
   --color-hw-text-red: #FF3B30;
   --color-hw-base-white: #FFFFFF;
-  --color-hw-base-400: #F56630;
+  --color-hw-grey-200: #E4E7EC;
+  --color-hw-grey-300: #D0D5DD;
+  --color-hw-grey-400: #F56630;
   --color-hw-grey-500: #667185;
+  --color-hw-grey-700: #344054;
   --color-hw-grey-900: #101928;
+  --color-hw-grey-text-900: #212121;
+  --color-hw-border: #EAECF0;
+  --color-hw-grid-border: #D2D3D8;
+
+  /* brand, from the mobile app's constants/theme.ts */
+  --color-brand: #9333EA;
+  --color-brand-deep: #7E22CE;
+  --color-brand-tint: #E9D5FF;
+  --color-ink-title: #141417;
+  --color-ink-muted: #4F4E59;
+  --color-ink-meta: #83818E;
+  --color-ink-border: #E6E5EA;
+  --color-ink-placeholder: #C7C5CD;
+  --color-danger: #D94949;
+  --color-brand-surface: #F3E8FF;
+  --color-brand-surface-subtle: #FAF5FF;
+
+  /* screens */
+  --breakpoint-2xl: 1440px;
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -72,18 +94,18 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --primary: #F56F46;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EFF5FF;
+  --secondary-foreground: #1E338A;
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --accent: #FFFFFF;
+  --accent-foreground: #1E338A;
+  --destructive: #FF3B30;
+  --border: #E4E7EC;
+  --input: #D0D5DD;
+  --ring: #F56F46;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
