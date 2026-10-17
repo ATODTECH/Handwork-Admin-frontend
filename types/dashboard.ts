@@ -34,3 +34,5 @@ interface DISPUTESProps {
   solution: badges;
   timeStamp: string;
 }
+
+

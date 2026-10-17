@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { LucideIcon } from "lucide-react";
 import { formatActivityDate, formatActivityDay } from "@/lib/format";
+import { UseAvatar } from "@/components/shared/use-avatar";
 
 const CLASSNAME="rounded-[10px] border border-hw-grey-200 pt-3.5 divide-y divide-hw-grey-200"
 
@@ -116,7 +117,7 @@ const ArtisanDisputes = () => {
           data.slice(0, 4).map((value, index) => (
             <GridRowCard
               key={index}
-              initials={<InitialsTemp name={value.name} className=" text-hw-secondary bg-[#EFF5FF]" />}
+              initials={<UseAvatar src="" name={value.name} aspectRatio="w-10 h-10" className="bg-[#EFF5FF] text-sm" />}
               details={[value.name, `${value.role +' · '+ value.location}`]}
               tone="Pending"
               action="Approve"
@@ -132,7 +133,7 @@ const ArtisanDisputes = () => {
           titles={["Open Disputes & Support","open cases — payment and misconduct — sample data"]}
           icon={{icon:Headphones}}
           dataLength={dataDispute.length}
-          route={ROUTES.artisans}
+          route={ROUTES.support}
           className="text-hw-primary bg-[#FEF1ED]"
         />
         {

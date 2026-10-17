@@ -3,7 +3,7 @@ import Image from "next/image"
 
 const LogoIndex = () => {
   return (
-    <div className="flex h-fit items-center">
+    <div className="flex h-fit items-center select-none">
       <Image
         src={logo}
         alt="Logo HandworkExpert"
@@ -13,7 +13,7 @@ const LogoIndex = () => {
         draggable={false}
         className="w-auto text-xs "
       />
-      {/* <span className=" text-lg leading-[100%] tracking-wide text-black">HandworkExpert</span> */}
+      <span className=" text-lg leading-[100%] tracking-tight text-black">HandworkExpert</span>
     </div>
   )
 }
