@@ -1,5 +1,7 @@
-import { Poppins } from "next/font/google";
+import { Metadata } from "next";
+import { Inter, Poppins } from "next/font/google";
 import { Toaster } from "sonner";
+import { QueryProvider } from "@/providers/query-provider";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -8,17 +10,30 @@ const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700'],
 });
 
-export default function RootLayout({ children }: 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://www.handworkexpert.com"),
+  title: {
+    default: "Handwork Expert",
+    template: "%s | Handwork Expert",
+  },
+};
+
+export default function RootLayout({ children }:
 { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${poppins.variable} h-full antialiased`}
+      className={`${poppins.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="flex flex-col h-screen overflow-hidden">
-        <div className="scrollbar-thin scrollbar-thumb-gray-200 h-screen bg-[#FFFFFF]">
+      <body>
+        <QueryProvider>
           {children}
-        </div>
+        </QueryProvider>
         <Toaster position="top-right" richColors />
       </body>
     </html>

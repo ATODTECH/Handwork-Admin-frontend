@@ -1,16 +1,16 @@
 import { usePathname } from "next/navigation"
 
 export const ROUTES = {
-  login: "/login",
-  dashboard: "/dashboard/overview",
-  users: "/dashboard/users",
-  artisans: "/dashboard/artisans",
-  services: "/dashboard/services",
-  bookings: "/dashboard/bookings",
-  reports: "/dashboard/reports",
-  support: "/dashboard/support",
-  notifications: "/dashboard/notifications",
-  settings: "/dashboard/settings",
+  login: "/admin/login",
+  dashboard: "/admin/dashboard/overview",
+  users: "/admin/dashboard/users",
+  artisans: "/admin/dashboard/artisans",
+  services: "/admin/dashboard/services",
+  bookings: "/admin/dashboard/bookings",
+  reports: "/admin/dashboard/reports",
+  support: "/admin/dashboard/support",
+  notifications: "/admin/dashboard/notifications",
+  settings: "/admin/dashboard/settings",
 } as const
 
 /**

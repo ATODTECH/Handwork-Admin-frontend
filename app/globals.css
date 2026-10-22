@@ -75,7 +75,16 @@
   --color-brand-surface: #F3E8FF;
   --color-brand-surface-subtle: #FAF5FF;
 
+  /* public site */
+  --font-site: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-primary-text: #292626;
+  --color-primary-white: #FFFFFF;
+  --color-secondary-blue: #172153;
+  --color-secondary-orange: #F56F46;
+
   /* screens */
+  --breakpoint-425xl: 425px;
+  --breakpoint-1280xl: 1280px;
   --breakpoint-2xl: 1440px;
 
   --radius-sm: calc(var(--radius) * 0.6);
@@ -154,6 +163,20 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* public site: category brand ticker */
+.marquee-content {
+  animation: marquee calc(var(--char-count) * 4s) linear infinite;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
 @layer base {
