@@ -1,4 +1,4 @@
-import { ContactPost, SubscribePost } from "@/api/contact"
+import { ContactPost, SubscribePost } from "@/api/site/contact"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 

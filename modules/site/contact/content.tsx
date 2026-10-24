@@ -7,9 +7,9 @@ import { FormikHelpers, useFormik } from "formik";
 import { newsletter, callerIcon, emailIcon, locationIcon } from "@/assets/site";
 import { JoinNetwork } from "@/components/site/join-network";
 
-import { ContactUsType, FieldConfig, FieldName, SubscribeType } from "@/types/contact-us";
-import { validationSchema, validationSubSchema } from "@/schema/validation";
-import { useContact, useSubscribe } from "@/hooks/use-contact";
+import { ContactUsType, FieldConfig, FieldName, SubscribeType } from "@/types/site/contact-us";
+import { validationSchema, validationSubSchema } from "@/schema/validation-site";
+import { useContact, useSubscribe } from "@/hooks/site/use-contact";
 
 const FIELDS: FieldConfig[] = [
   { name: "name", label: "Name" },

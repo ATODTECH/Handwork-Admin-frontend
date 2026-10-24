@@ -1,7 +1,7 @@
-import { ApiDataRes } from '@/types/contact-us';
+import { ApiDataRes } from '@/types/site/contact-us';
 import { api } from '../lib/axios-config';
 
-type res = {
+export type res = {
   data: ApiDataRes
   status: string
 }

@@ -1,4 +1,4 @@
-import { SvgProps } from "@/types/svg"
+import { SvgProps } from "@/types/admin/svg"
 
 export const ReportsIcon = (props: SvgProps) => {
   return (

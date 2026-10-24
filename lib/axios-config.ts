@@ -2,7 +2,7 @@ import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const DEFAULT_TIMEOUT_MS = 90_000;
+const DEFAULT_TIMEOUT_MS = 30_000;
 
 export class ApiError extends Error {
   status: number;
