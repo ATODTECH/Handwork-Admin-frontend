@@ -7,6 +7,9 @@ import { usePathname } from "next/navigation"
 import { ChevronDown, ChevronUp, Menu, X } from "lucide-react"
 import { siteLogo } from "@/assets/site"
 import { CATEGORY_LINKS } from "@/modules/site/categories-details/data"
+import { DropdownButton, DropdownRegister } from "./dropdown"
+import { DialogRegister } from "./dialog-register"
+import { LoginFormField, RegisterFormField } from "./form/field-form"
 
 const links = [
   { title: "About Us", route: "/about-us" },
@@ -19,7 +22,14 @@ export const TopBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeDialog, setActiveDialog] = useState<string|null>(null)
+  const [current, setCurrent] = useState<string>("")
+  
 
+  const handleDialog = (val:string, mode:string) => {
+    setActiveDialog(val)
+    setCurrent(mode)
+  }
   // category detail pages have no dark hero behind the bar, so it starts solid
   const isSolid = pathname.startsWith("/categories/")
   const isCategories = pathname.startsWith("/categories")
@@ -43,7 +53,7 @@ export const TopBar = () => {
     <>
       <header id="topbar" className={`fixed top-0 backdrop-blur-[6px] w-screen max-w-[1920px] py-3 px-4 sm:px-16 xl:px-28 z-20 shadow-md ${isScrolled ? "bg-secondary-blue" : isSolid ? "bg-primary-white" : ""}`}>
         <nav className="flex flex-row w-full items-center justify-between">
-          <Link href="/" className="outline-0 w-[21%]">
+          <Link href="/" className="outline-0">
             <Image src={siteLogo} draggable={false} priority className="h-10 w-auto" alt="Logo" />
           </Link>
           {/* Desktop nav */}
@@ -56,8 +66,22 @@ export const TopBar = () => {
               <Link key={link.route} href={link.route} className={desktopLinkClass(pathname === link.route)}>{link.title}</Link>
             )}
           </div>
-          {/* keeps the nav centred until login / sign up return here */}
-          <div className="w-[21%] py-6"></div>
+          <div className="flex items-center gap-2">
+            <DropdownRegister
+              action="login"
+              content={["As a Professional", "As a User"]}
+              button={<DropdownButton title="Login" className="text-hw-base-white bg-transparent " />}
+              className="min-w-38"
+              onclick={(val, mode)=> handleDialog(val, mode)}
+            />
+            <DropdownRegister
+              action="register"
+              content={["Become a Professional", "Become a User"]}
+              button={<DropdownButton title="Sign up" className="text-hw-grey-text-900" />}
+              onclick={(val, mode)=> handleDialog(val, mode)}
+            />
+          </div>
+
           {/* Mobile hamburger menu */}
           <button
             onClick={() => setDrawerOpen(true)}
@@ -68,6 +92,24 @@ export const TopBar = () => {
           </button>
         </nav>
       </header>
+
+      {/* Dialog Login */}
+      <DialogRegister
+        title={`Login As A ${current==="As a User"? 'User': 'Professional'}`}
+        desc={`Login for ${current==="As a User"? 'Customer': 'Artisan'}`}
+        open={activeDialog === "login"}
+        onOpenChange={(isOpen) => setActiveDialog(isOpen ? "login" : null)}
+        content={<LoginFormField />}
+      />
+
+      {/* Dialog Register */}
+      <DialogRegister
+        title={`Join As A ${current==="Become a User"? 'User': 'Professional'}`}
+        desc={`Registration for ${current==="Become a User"? 'Customer': 'Artisan'}`}
+        open={activeDialog === "register"}
+        onOpenChange={(isOpen) => setActiveDialog(isOpen ? "register" : null)}
+        content={<RegisterFormField />}
+      />
 
       {/* Mobile drawer */}
       {drawerOpen && (
