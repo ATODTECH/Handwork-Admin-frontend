@@ -22,7 +22,7 @@ export const DialogRegister = ({
       <DialogContent className="max-w-[90%] sm:max-w-[70%] lg:max-w-[50%] h-fit max-h-[90vh] overflow-hidden">
         <DialogHeader className="p-5 text-center">
           <DialogTitle className={"text-2xl sm:text-3xl font-bold"}>{title}</DialogTitle>
-          <DialogDescription className={"flex flex-col text-sm sm:text-base font-semibold text-muted-foreground"}>
+          <DialogDescription className={"flex flex-col text-sm sm:text-base font-medium text-muted-foreground"}>
             <span className="">{desc}</span>
           </DialogDescription>
         </DialogHeader>

@@ -66,18 +66,20 @@ export const TopBar = () => {
               <Link key={link.route} href={link.route} className={desktopLinkClass(pathname === link.route)}>{link.title}</Link>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-2">
             <DropdownRegister
               action="login"
               content={["As a Professional", "As a User"]}
               button={<DropdownButton title="Login" className="text-hw-base-white bg-transparent " />}
               className="min-w-38"
+              // format action & content[x]
               onclick={(val, mode)=> handleDialog(val, mode)}
             />
             <DropdownRegister
               action="register"
               content={["Become a Professional", "Become a User"]}
               button={<DropdownButton title="Sign up" className="text-hw-grey-text-900" />}
+              // format action & content[x]
               onclick={(val, mode)=> handleDialog(val, mode)}
             />
           </div>
@@ -95,11 +97,11 @@ export const TopBar = () => {
 
       {/* Dialog Login */}
       <DialogRegister
-        title={`Login As A ${current==="As a User"? 'User': 'Professional'}`}
-        desc={`Login for ${current==="As a User"? 'Customer': 'Artisan'}`}
+        title={"Welcome Back"}
+        desc={"Enter your email and password to access your account"}
         open={activeDialog === "login"}
         onOpenChange={(isOpen) => setActiveDialog(isOpen ? "login" : null)}
-        content={<LoginFormField />}
+        content={<LoginFormField onclick={(val, mode)=> handleDialog(val, mode)} />}
       />
 
       {/* Dialog Register */}

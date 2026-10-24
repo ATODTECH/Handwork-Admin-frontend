@@ -65,9 +65,18 @@ export const registerSchema = Yup.object({
     .oneOf([true], "You must agree to the Privacy Policy and Terms"),
 });
 
+export const loginSchema = Yup.object({
+  email: Yup
+    .string()
+    .trim()
+    .required("Email is required")
+    .email("Enter a valid email address"),
+  password: Yup.string().required("Password is required")
+})
 
 
 
+export type LoginFormValues = Yup.InferType<typeof loginSchema>
 export type RegisterFormValues = Yup.InferType<typeof registerSchema>
 
 

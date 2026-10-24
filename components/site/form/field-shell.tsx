@@ -12,6 +12,7 @@ import { cn } from "cn";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import FieldSelect from "./field-select";
+import { Button } from "@/components/ui/button";
 
 
 const FieldShell = ({
@@ -27,6 +28,7 @@ const FieldShell = ({
   className,
   selectValue,
   selectedCountry,
+  forgotPassword,
   onFocus,
   onBlur,
   onChange,
@@ -45,6 +47,7 @@ const FieldShell = ({
   className?: string
   selectValue?: string
   selectedCountry?: Pick<COUNTRIESType, "dial" | "flag">
+  forgotPassword?: (val: string) => void
   onFocus: () => void
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -99,7 +102,7 @@ const FieldShell = ({
                 autoComplete={autoComplete}
                 disabled={isPending}
                 aria-invalid={showError}
-                className={cn(config.name==="phone"?"pl-24":"pl-2", isIconRight||config.name==="password"? "pr-10": "pr-2", "py-5 text-hw-grey-text-900 text-[13px] xl:text-sm", className)}
+                className={cn(config.name==="phone"? "pl-24": "pl-2", isIconRight||config.name==="password"? "pr-10": "pr-2", "py-5 text-hw-grey-text-900 text-[13px] xl:text-sm", className)}
                 onFocus={onFocus}
                 onBlur={onBlur}
                 onChange={onChange}
@@ -121,6 +124,11 @@ const FieldShell = ({
       </div>
       {showError && (
         <FieldError id={`${config.name}-id`} errors={[{message: error}]} className="text-xs xl:text-[13px]" />
+      )}
+      {(forgotPassword && (config.name==="password")) && (
+        <button onClick={()=> forgotPassword("active")} className="flex text-sm max-w-fit font-medium text-hw-primary">
+          Forgot Password
+        </button>
       )}
     </Field>
   )
