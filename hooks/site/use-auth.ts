@@ -1,18 +1,19 @@
-import { LoginPost } from "@/api/site/auth";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { registerMutation, siteSignInMutation } from "@/services/site/auth"
 
-
-const useSignIn = () =>
+export const useSiteSignIn = () =>
   useMutation({
-    mutationFn: LoginPost,
+    ...siteSignInMutation(),
     onSuccess: () => {
-      toast.success(`Welcome back, ${""}!`)
-    },
-    onError: (error) => {
-      toast.error(error.message)
+      toast.success("Welcome back!")
     },
   })
 
-
-export default useSignIn
+export const useRegister = () =>
+  useMutation({
+    ...registerMutation(),
+    onSuccess: () => {
+      toast.success("You have successfully registered this account")
+    },
+  })
