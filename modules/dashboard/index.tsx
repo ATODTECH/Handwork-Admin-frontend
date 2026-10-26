@@ -1,6 +1,7 @@
 "use client"
 
-import { HeaderPage, ROUTES } from "@/lib/routes"
+import { ROUTES } from "@/lib/routes"
+import { usePageHeading } from "@/hooks/admin/use-page-heading"
 import Link from "next/link"
 import GridCard from "./gridcard"
 import ArtisanDisputes from "./artisan-disputes"
@@ -8,7 +9,7 @@ import RecentUsers from "./recent-users"
 import { PageHeader } from "@/components/shared/page-header"
 
 const DashboardOverview = () => {
-  const headerTitle = HeaderPage()
+  const headerTitle = usePageHeading()
 
   return (
     <section className="flex-1 flex flex-col py-7.5 pr-8 overflow-y-auto scrollbar-thin">
