@@ -75,10 +75,10 @@ export const RegisterFormField = () => {
       isCheckboxCont={(
         <div className="ml-1.5 text-[13px] lg:text-sm font-normal leading-normal">
           I agree to Artisan&apos;s{" "}
-          <Link href="/privacy-policy" className={"text-hw-primary"}>
+          <Link href="/policy" target="_blank" className={"text-hw-primary"}>
             Attic Privacy Policy
           </Link>{" "}&amp;{" "}
-          <Link href="/terms" className={"text-hw-primary"}>
+          <Link href="/terms" target="_blank" className={"text-hw-primary"}>
             Terms and Conditions.
           </Link>
         </div>
@@ -108,9 +108,9 @@ export const RegisterFormField = () => {
             </button>
             <p className="text-center text-[13px] lg:text-sm mb-10">
               Already have an account?{" "}
-              <a href="/login" className={"text-hw-primary"}>
+              <Link href="/login" className={"text-hw-primary"}>
                 Login
-              </a>
+              </Link>
             </p>
           </FieldSet>
         </FieldGroup>
