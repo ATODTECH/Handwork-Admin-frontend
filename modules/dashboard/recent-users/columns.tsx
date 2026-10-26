@@ -11,6 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+
+const noop = () => toast("coming soon!")
 
 const column = createDataTableColumns<Users>()
 
@@ -105,8 +108,8 @@ export const userColumns = (onAction: (event: Users) => void) =>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </DropdownMenuGroup>
-            <DropdownMenuItem className={"py-1 text-hw-secondary focus:text-hw-secondary text-sm"}>Suspend</DropdownMenuItem>
-            <DropdownMenuItem className={"py-1 text-hw-primary focus:text-hw-primary text-sm"}>Disable</DropdownMenuItem>
+            <DropdownMenuItem onClick={noop} className={"py-1 text-hw-secondary focus:text-hw-secondary text-sm"}>Suspend</DropdownMenuItem>
+            <DropdownMenuItem onClick={noop} className={"py-1 text-hw-primary focus:text-hw-primary text-sm"}>Disable</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
