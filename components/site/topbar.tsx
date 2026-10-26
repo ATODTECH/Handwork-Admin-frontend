@@ -26,9 +26,9 @@ export const TopBar = () => {
   const [current, setCurrent] = useState<string>("")
   
 
-  const handleDialog = (val:string, mode:string) => {
+  const handleDialog = (val:string|null, mode?:string) => {
     setActiveDialog(val)
-    setCurrent(mode)
+    setCurrent(mode??"")
   }
   // category detail pages have no dark hero behind the bar, so it starts solid
   const isSolid = pathname.startsWith("/categories/")

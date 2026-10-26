@@ -2,7 +2,7 @@
 const PolicyContent = () => {
   return (
     <div className=" leading-relaxed">
-      <div className="p-5 py-10 pt-20 sm:px-16 xl:px-28 bg-hw-secondary text-primary-white">
+      <div className="p-5 py-10 pt-20 sm:px-16 xl:px-28 bg-secondary-blue text-primary-white">
         <h1 className={"text-xl sm:text-2xl font-bold"}>ACCEPTABLE USE POLICY</h1>
         <div className={"flex flex-col text-base sm:text-lg text-hw-primary font-semibold"}>
           <span className="">Handwork Expert</span>
