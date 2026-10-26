@@ -7,46 +7,83 @@ import FieldShell from "./field-shell";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
+import type { AccountRole } from "@/lib/auth/session";
 
 
-const NAME_FIELD: FieldConfig = { name: "name", label: "Name" }
-/** for both `email` and `password` */
-const FIELDS: FieldConfig[] = [
-  { name: "email", label: "Email", type: "email" },
-  { name: "password", label: "Password", type: "password", autoComplete: "new-password" }
+const NAME_FIELDS: FieldConfig[] = [
+  { name: "firstName", label: "First name", autoComplete: "given-name" },
+  { name: "lastName", label: "Last name", autoComplete: "family-name" },
 ]
+const EMAIL_FIELD: FieldConfig = { name: "email", label: "Email", type: "email", autoComplete: "email" }
+const NEW_PASSWORD_FIELD: FieldConfig = { name: "password", label: "Password", type: "password", autoComplete: "new-password" }
+const PASSWORD_FIELD: FieldConfig = { name: "password", label: "Password", type: "password", autoComplete: "current-password" }
 const PHONE_FIELD: FieldConfig = { name: "phone", label: "Phone", type: "tel", autoComplete: "tel-national" }
 const LEGAL_FIELD: FieldConfig = { name: "agreeToTerms", type: "checkbox" }
 
+/** API stores `contact` in international form, e.g. +2348012345678 */
+const toContact = (dial: string, phone: string) => `${dial}${phone.replace(/^0/, "")}`
+
+const API_FIELD_TO_FORM: Record<string, keyof RegisterFormValues> = {
+  first_name: "firstName",
+  last_name: "lastName",
+  email: "email",
+  password: "password",
+  contact: "phone",
+}
+
 
 /** Register formfield */
-export const RegisterFormField = () => {
+export const RegisterFormField = ({
+  role,
+  onLogin,
+}: {
+  role: AccountRole
+  /** In a dialog: switch to the login dialog instead of navigating to /login */
+  onLogin?: () => void
+}) => {
   const { mutate: RegisterUser, isPending} = useRegister()
   const [focusedField, setFocusedField] = useState<FieldName | null>(null)
 
 
   const formik = useFormik<RegisterFormValues>({
     initialValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       countryCode: "+234",
       phone: "",
-      agreeToTerms: true,
+      agreeToTerms: false,
     },
     validationSchema: registerSchema,
     onSubmit: async (values: RegisterFormValues, { setFieldValue, setFieldTouched, resetForm }: FormikHelpers<RegisterFormValues>) => {
-      RegisterUser(registerSchema.cast(values), {
+      const { firstName, lastName, email, password, countryCode, phone } = registerSchema.cast(values)
+      RegisterUser({
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password,
+        contact: toContact(countryCode, phone),
+        role,
+      }, {
         onSuccess: () => resetForm(),
-				onError: () => {
+				onError: (error) => {
           void setFieldValue("password", "", false);
 					void setFieldTouched("password", false, false);
+          // Show the API's field errors (e.g. email or phone already taken) under the matching inputs
+          const errors: Partial<Record<keyof RegisterFormValues, string>> = {}
+          for (const [apiField, formField] of Object.entries(API_FIELD_TO_FORM)) {
+            const message = error.fieldErrors[apiField]?.[0]
+            if (message) errors[formField] = message
+          }
+          formik.setErrors(errors)
 				},
       })
     },
   })
-    
+
   
   const renderField = (config: FieldConfig) => (
     <FieldShell
@@ -95,22 +132,34 @@ export const RegisterFormField = () => {
       >
         <FieldGroup>
           <FieldSet className="space-y-1">
-            {renderField(NAME_FIELD)}
-            {FIELDS.map(renderField)}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {NAME_FIELDS.map(renderField)}
+            </div>
+            {renderField(EMAIL_FIELD)}
+            {renderField(NEW_PASSWORD_FIELD)}
             {renderField(PHONE_FIELD)}
             {renderField(LEGAL_FIELD)}
             <button
               type="submit"
-              disabled={formik.isSubmitting || isPending}
-              className="w-full rounded-lg tracking-[2%] bg-secondary-blue px-10 py-3 text-sm font-bold text-hw-base-white transition-opacity disabled:cursor-not-allowed hover:bg-secondary-blue/90"
+              // Can't register until the terms are accepted
+              disabled={!formik.values.agreeToTerms || isPending}
+              aria-busy={isPending}
+              className="flex w-full items-center justify-center gap-2 rounded-lg tracking-[2%] bg-secondary-blue px-10 py-3 text-sm font-bold text-hw-base-white transition-opacity disabled:cursor-not-allowed disabled:opacity-60 hover:bg-secondary-blue/90"
             >
-              Register
+              {isPending && <Spinner />}
+              {isPending ? "Creating your account…" : "Register"}
             </button>
             <p className="text-center text-[13px] lg:text-sm mb-10">
               Already have an account?{" "}
-              <a href="/login" className={"text-hw-primary"}>
-                Login
-              </a>
+              {onLogin ? (
+                <button type="button" onClick={onLogin} className={"text-hw-primary"}>
+                  Login
+                </button>
+              ) : (
+                <Link href="/login" className={"text-hw-primary"}>
+                  Login
+                </Link>
+              )}
             </p>
           </FieldSet>
         </FieldGroup>
@@ -124,7 +173,8 @@ export const RegisterFormField = () => {
 export const LoginFormField = ({
   onclick,
 }: {
-  onclick: (val: string, mode: string) => void
+  /** In a dialog: open the register dialog instead of navigating to /register */
+  onclick?: (val: string, mode: string) => void
 }) => {
   const {mutate: LoginUser, isPending} = useSiteSignIn()
   const [focusedField, setFocusedField] = useState<FieldName | null>(null)
@@ -176,23 +226,39 @@ export const LoginFormField = ({
       >
         <FieldGroup>
           <FieldSet className="space-y-2">
-            {FIELDS.map(renderField)}
+            {renderField(EMAIL_FIELD)}
+            {renderField(PASSWORD_FIELD)}
             <button
               type="submit"
-              disabled={formik.isSubmitting || isPending}
-              className="w-full rounded-lg tracking-[2%] bg-secondary-blue px-10 py-3 text-sm font-bold text-hw-base-white transition-opacity disabled:cursor-not-allowed hover:bg-secondary-blue/90"
+              disabled={isPending}
+              aria-busy={isPending}
+              className="flex w-full items-center justify-center gap-2 rounded-lg tracking-[2%] bg-secondary-blue px-10 py-3 text-sm font-bold text-hw-base-white transition-opacity disabled:cursor-not-allowed disabled:opacity-60 hover:bg-secondary-blue/90"
             >
-              Login
+              {isPending && <Spinner />}
+              {isPending ? "Signing in…" : "Login"}
             </button>
             <div className="flex flex-col gap-15 text-center text-[13px] lg:text-sm mb-10">
-              <span>Don't have an account?</span>
+              <span>Don&apos;t have an account?</span>
               <div className="flex flex-col 425xl:flex-row flex-wrap items-center justify-between gap-y-2 gap-x-3 text-base font-semibold">
-                <Button variant={"outline"} onClick={()=> onclick("register", "Become a Professional")} className={"text-hw-primary"}>
-                  Join as a Professional
-                </Button>
-                <Button variant={"outline"} onClick={()=> onclick("register", "Become a User")} className={"text-hw-primary"}>
-                  Join as a User
-                </Button>
+                {onclick ? (
+                  <>
+                    <Button type="button" variant={"outline"} onClick={()=> onclick("register", "Become a Professional")} className={"text-hw-primary"}>
+                      Join as a Professional
+                    </Button>
+                    <Button type="button" variant={"outline"} onClick={()=> onclick("register", "Become a User")} className={"text-hw-primary"}>
+                      Join as a User
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant={"outline"} render={<Link href="/register?role=artisan" />} nativeButton={false} className={"text-hw-primary"}>
+                      Join as a Professional
+                    </Button>
+                    <Button variant={"outline"} render={<Link href="/register" />} nativeButton={false} className={"text-hw-primary"}>
+                      Join as a User
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </FieldSet>

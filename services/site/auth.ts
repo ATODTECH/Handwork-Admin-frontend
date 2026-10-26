@@ -1,24 +1,25 @@
 import { mutationOptions } from "@tanstack/react-query"
-import { siteHttp } from "@/lib/http/client"
+import { accountHttp } from "@/lib/http/client"
 import { mutationKeys } from "@/lib/query/keys"
-import type { SiteApiResponse } from "@/types/api"
-import type { LoginType } from "@/types/site/auth"
+import type { AccountLoginRes, AccountRegisterRes, LoginType } from "@/types/site/auth"
 import type { RegisterType } from "@/types/site/register"
 
-// NOTE: the API has no `/v2/api/auth/login/` or `/v2/api/register/` routes yet — these are placeholders
+// The API's router is built with `trailing_slash=False`: router routes (`/api/user`, `/api/artisan`, ...)
+// 404 with a trailing slash, while hand-written paths like `/api/token/refresh/` keep theirs
 export const siteAuthService = {
-  signIn: (credentials: LoginType) => siteHttp.post<SiteApiResponse>("/api/auth/login/", credentials),
-  register: (payload: RegisterType) => siteHttp.post<SiteApiResponse>("/api/register/", payload),
+  signIn: (credentials: LoginType) =>
+    accountHttp.post<AccountLoginRes>("/signin/client", credentials, { skipAuth: true }),
+  register: ({ role, ...payload }: RegisterType) =>
+    accountHttp.post<AccountRegisterRes>(
+      role === "ARTISAN" ? "/api/artisan" : "/api/user",
+      { ...payload, role },
+      // Creating an account can be slow: the API sends the welcome email before it answers
+      { skipAuth: true, timeout: 90_000 },
+    ),
 }
 
 export const siteSignInMutation = () =>
   mutationOptions({
     mutationKey: mutationKeys.site.signIn,
     mutationFn: siteAuthService.signIn,
-  })
-
-export const registerMutation = () =>
-  mutationOptions({
-    mutationKey: mutationKeys.site.register,
-    mutationFn: siteAuthService.register,
   })

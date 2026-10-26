@@ -4,8 +4,11 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ChevronDown, ChevronUp, Menu, X } from "lucide-react"
+import { ChevronDown, ChevronUp, LogOut, Menu, UserRound, X } from "lucide-react"
 import { siteLogo } from "@/assets/site"
+import { Button } from "@/components/ui/button"
+import { useAccountProfile, useSignOut } from "@/hooks/site/use-auth"
+import { ACCOUNT_ROUTES } from "@/lib/routes"
 import { CATEGORY_LINKS } from "@/modules/site/categories-details/data"
 import { DropdownButton, DropdownRegister } from "./dropdown"
 import { DialogRegister } from "./dialog-register"
@@ -24,6 +27,9 @@ export const TopBar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeDialog, setActiveDialog] = useState<string|null>(null)
   const [current, setCurrent] = useState<string>("")
+  const profile = useAccountProfile()
+  const signOut = useSignOut()
+  const isRegisteringUser = current === "Become a User"
   
 
   const handleDialog = (val:string, mode:string) => {
@@ -66,6 +72,27 @@ export const TopBar = () => {
               <Link key={link.route} href={link.route} className={desktopLinkClass(pathname === link.route)}>{link.title}</Link>
             )}
           </div>
+          {profile ? (
+            <div className="hidden lg:flex items-center gap-2">
+              <Button
+                variant="secondary"
+                render={<Link href={ACCOUNT_ROUTES.dashboard} />}
+                nativeButton={false}
+                className="h-8 py-2 px-2.5 text-hw-grey-text-900"
+              >
+                <UserRound />
+                <span className="max-w-40 truncate">{profile.name || "My account"}</span>
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={signOut}
+                className={`h-8 py-2 px-2.5 ${isSolid && !isScrolled ? "text-gray-900" : "text-primary-white hover:text-hw-grey-text-900"}`}
+              >
+                <LogOut />
+                <span>Sign out</span>
+              </Button>
+            </div>
+          ) : (
           <div className="hidden lg:flex items-center gap-2">
             <DropdownRegister
               action="login"
@@ -83,6 +110,7 @@ export const TopBar = () => {
               onclick={(val, mode)=> handleDialog(val, mode)}
             />
           </div>
+          )}
 
           {/* Mobile hamburger menu */}
           <button
@@ -106,11 +134,11 @@ export const TopBar = () => {
 
       {/* Dialog Register */}
       <DialogRegister
-        title={`Join As A ${current==="Become a User"? 'User': 'Professional'}`}
-        desc={`Registration for ${current==="Become a User"? 'Customer': 'Artisan'}`}
+        title={`Join As A ${isRegisteringUser ? 'User': 'Professional'}`}
+        desc={`Registration for ${isRegisteringUser ? 'Customer': 'Artisan'}`}
         open={activeDialog === "register"}
         onOpenChange={(isOpen) => setActiveDialog(isOpen ? "register" : null)}
-        content={<RegisterFormField />}
+        content={<RegisterFormField role={isRegisteringUser ? "USER" : "ARTISAN"} onLogin={() => handleDialog("login", "")} />}
       />
 
       {/* Mobile drawer */}
@@ -178,6 +206,34 @@ export const TopBar = () => {
                 </li>
               ))}
             </ul>
+            <div className="flex flex-col gap-2 border-t border-hw-grey-200 p-4">
+              {profile ? (
+                <>
+                  <Link
+                    href={ACCOUNT_ROUTES.dashboard}
+                    onClick={closeDrawer}
+                    className="flex items-center gap-2 py-2 text-primary-text"
+                  >
+                    <UserRound className="h-4 w-4" />
+                    {profile.name || "My account"}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => { closeDrawer(); signOut() }}
+                    className="flex items-center gap-2 py-2 text-left text-primary-text cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={closeDrawer} className="py-2 text-primary-text">Login</Link>
+                  <Link href="/register" onClick={closeDrawer} className="py-2 text-primary-text">Sign up as a User</Link>
+                  <Link href="/register?role=artisan" onClick={closeDrawer} className="py-2 text-primary-text">Become a Professional</Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

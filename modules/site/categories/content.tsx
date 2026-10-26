@@ -3,24 +3,14 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  agriculture, automotive, clothingStore, exportServices, homesProperty, logisticsWarehousing, techIT,
-} from "@/assets/site"
+import { CATEGORY_LINKS } from "@/modules/site/categories-details/data"
 import { Pagination } from "@/components/site/pagination"
 
 const caption = "ATOD TECH offers a diverse array of expertly crafted services, seamlessly merging creativity."
 const brands = ["Happiness store", "Grace kampala", "Joyce store", "Anointed store", "G&D gadgets", "Kano price"]
 
 // placeholder data until the categories API is wired up
-const categories = [
-  { name: "fashion", icon: clothingStore, category: "Fashion And Beauty", caption, brands },
-  { name: "export", icon: exportServices, category: "Export Services", caption, brands },
-  { name: "property", icon: homesProperty, category: "Home And Property", caption, brands },
-  { name: "logistics", icon: logisticsWarehousing, category: "Logistics And Warehousing", caption, brands },
-  { name: "tech-IT", icon: techIT, category: "Tech/IT", caption, brands },
-  { name: "automotive", icon: automotive, category: "Automotive", caption, brands },
-  { name: "agriculture", icon: agriculture, category: "Agriculture", caption, brands },
-]
+const categories = CATEGORY_LINKS.map(({ id, name, image }) => ({ name: id, icon: image, category: name, caption, brands }))
 
 const PAGE_SIZE = 5
 

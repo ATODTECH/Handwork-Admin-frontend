@@ -4,6 +4,7 @@ import {
   construction, electrician, packaging, dispatch, transport, loading, lawnmower, container, farmEquipment,
   seedFertilizer, farmManagement, manVegetables, deliveryMarket, carWash, autoElect, airConditioner, shoeMaker,
   generatorService, welder, webDev, softwareDev, digitalMarketer, gameDev, ITconsulting, gadgetRepair,
+  agriculture, automotive, clothingStore, exportServices, homesProperty, logisticsWarehousing, techIT,
 } from "@/assets/site"
 
 export interface CategoryListing {
@@ -22,15 +23,15 @@ export interface CategoryDetails {
   categoryList: CategoryListing[]
 }
 
-/** Category slugs used in /categories/[id], the nav and the footer */
+/** Category slugs used in /categories/[id], the nav, the footer and the dashboards */
 export const CATEGORY_LINKS = [
-  { id: "fashion", name: "Fashion And Beauty" },
-  { id: "export", name: "Export Services" },
-  { id: "property", name: "Home And Property" },
-  { id: "logistics", name: "Logistics And Warehousing" },
-  { id: "agriculture", name: "Agriculture" },
-  { id: "automotive", name: "Automotive" },
-  { id: "tech-IT", name: "Tech/IT" },
+  { id: "fashion", name: "Fashion And Beauty", image: clothingStore },
+  { id: "export", name: "Export Services", image: exportServices },
+  { id: "property", name: "Home And Property", image: homesProperty },
+  { id: "logistics", name: "Logistics And Warehousing", image: logisticsWarehousing },
+  { id: "agriculture", name: "Agriculture", image: agriculture },
+  { id: "automotive", name: "Automotive", image: automotive },
+  { id: "tech-IT", name: "Tech/IT", image: techIT },
 ] as const
 
 const listing = (

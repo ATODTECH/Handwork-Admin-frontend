@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       // Block authenticated/dashboard routes from indexing
-      disallow: ['/user/', '/artisan/', '/admin/'],
+      disallow: ['/dashboard', '/admin/'],
     },
     sitemap: 'https://www.handworkexpert.com/sitemap.xml',
   }

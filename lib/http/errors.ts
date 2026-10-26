@@ -7,17 +7,21 @@ export class ApiError extends Error {
   readonly status: number
   readonly fieldErrors: FieldErrors
   readonly body: unknown
+  /** No answer within the timeout: the server may still have done the work */
+  readonly timedOut: boolean
 
-  constructor(message: string, { status = 0, fieldErrors = {}, body = null }: {
+  constructor(message: string, { status = 0, fieldErrors = {}, body = null, timedOut = false }: {
     status?: number
     fieldErrors?: FieldErrors
     body?: unknown
+    timedOut?: boolean
   } = {}) {
     super(message)
     this.name = "ApiError"
     this.status = status
     this.fieldErrors = fieldErrors
     this.body = body
+    this.timedOut = timedOut
   }
 
   get isUnauthorized() {
@@ -69,7 +73,7 @@ export const toApiError = (error: unknown): ApiError => {
   if (isAxiosError(error)) {
     const axiosError = error as AxiosError
     if (axiosError.code === AxiosError.ECONNABORTED || axiosError.code === AxiosError.ETIMEDOUT) {
-      return new ApiError("The request timed out. Please try again.")
+      return new ApiError("The request timed out. Please try again.", { timedOut: true })
     }
     if (!axiosError.response) {
       // Network failure, DNS error, CORS block, etc.
