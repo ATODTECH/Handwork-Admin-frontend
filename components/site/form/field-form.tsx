@@ -1,4 +1,4 @@
-import { useRegister } from "@/hooks/site/use-register";
+import { useRegister, useSiteSignIn } from "@/hooks/site/use-auth";
 import { COUNTRIES, LoginFormValues, loginSchema, RegisterFormValues, registerSchema } from "@/schema/validation-site";
 import { FieldConfig, FieldName } from "@/types/site/register";
 import { FormikHelpers, useFormik } from "formik";
@@ -6,7 +6,6 @@ import { useState } from "react";
 import FieldShell from "./field-shell";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import Link from "next/link";
-import useSignIn from "@/hooks/site/use-auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -127,7 +126,7 @@ export const LoginFormField = ({
 }: {
   onclick: (val: string, mode: string) => void
 }) => {
-  const {mutate: LoginUser, isPending} = useSignIn()
+  const {mutate: LoginUser, isPending} = useSiteSignIn()
   const [focusedField, setFocusedField] = useState<FieldName | null>(null)
 
   const formik = useFormik<LoginFormValues>({

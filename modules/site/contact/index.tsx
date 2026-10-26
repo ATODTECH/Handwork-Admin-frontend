@@ -1,7 +1,7 @@
 "use client"
 
 import { contactHero } from "@/assets/site"
-import { useOnload } from "@/hooks/use-onload"
+import { useSiteSession } from "@/hooks/site/use-site-session"
 import { DataLoading } from "@/components/site/data-loading"
 import { PageHero } from "@/components/site/page-hero"
 import { WidgetError } from "@/components/site/widget-error"
@@ -9,7 +9,7 @@ import { ContentContactIndex } from "./content"
 
 const ContactIndex = () => {
   // sets the cookie the contact and subscribe endpoints expect
-  const { isPending, isError, refetch, isRefetching } = useOnload()
+  const { isPending, isError, refetch, isRefetching } = useSiteSession()
 
   if (isPending) return <DataLoading className="my-50" />
   if (isError) {
