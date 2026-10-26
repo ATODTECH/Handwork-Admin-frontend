@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: PageProps<'/[path]'>) {
 
   return siteMetadata({
     title: path === "policy"? "privacy policy": "terms and conditions",
-    description: `HandworkExpert legal ${path}`,
+    description: `HandworkExpert legal ${path} document`,
     path: `/${path}`,
   });
 }

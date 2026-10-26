@@ -1,4 +1,12 @@
+import { UserRole } from "@/types/site/my-account";
 import { usePathname } from "next/navigation"
+
+
+export const ROUTESITE = {
+  profile: (role: UserRole) => `/my-account/${role}/profile` as const,
+  address: (role: UserRole) => `/my-account/${role}/address` as const,
+} as const;
+
 
 export const ROUTES = {
   login: "/admin/login",
