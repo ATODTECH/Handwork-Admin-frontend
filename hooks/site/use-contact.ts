@@ -1,26 +1,19 @@
-import { ContactPost, SubscribePost } from "@/api/site/contact"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
+import { contactMutation, subscribeMutation } from "@/services/site/contact"
 
 export const useContact = () =>
   useMutation({
-    mutationFn: ContactPost,
+    ...contactMutation(),
     onSuccess: () => {
       toast.success("You have successfully submitted this form")
-    },
-    onError: (error) => {
-      toast.error(error.message)
     },
   })
 
 export const useSubscribe = () =>
   useMutation({
-    mutationFn: SubscribePost,
+    ...subscribeMutation(),
     onSuccess: () => {
       toast.success("Message successfully sent")
     },
-    onError: (error) => {
-      toast.error(error.message)
-    },
   })
-

@@ -1,6 +1,4 @@
 import { UserRole } from "@/types/site/my-account";
-import { usePathname } from "next/navigation"
-
 
 export const ROUTESITE = {
   profile: (role: UserRole) => `/my-account/${role}/profile` as const,
@@ -34,9 +32,4 @@ export const PAGE_HEADINGS: Record<string, { title: string, description?: string
   [ROUTES.support]: { title: "Support" },
   [ROUTES.notifications]: { title: "Notifications", description: "Stay on top of approvals, bookings, payments and support activity." },
   [ROUTES.settings]: { title: "Settings", description: "Manage platform details, admin access, payments and notification preferences." },
-}
-
-export const HeaderPage = () => {
-  const pathname = usePathname()
-  return (PAGE_HEADINGS[pathname])
 }

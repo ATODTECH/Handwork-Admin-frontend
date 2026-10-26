@@ -1,7 +1,8 @@
 "use client"
 
 import { DataTable } from "@/components/table-data/data-table"
-import { HeaderPage, ROUTES } from "@/lib/routes"
+import { ROUTES } from "@/lib/routes"
+import { usePageHeading } from "@/hooks/admin/use-page-heading"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { userColumns } from "../dashboard/recent-users/columns"
@@ -38,7 +39,7 @@ const noop = () => toast("coming soon!")
 const NO_RECENTUSER: Users[] = []
 
 const UserManagementIndex = () => {
-  const headerTitle = HeaderPage()
+  const headerTitle = usePageHeading()
   const [data, setData] = useState(SAMPLE_USERS)
   const [filter, setFilter] = useState<AllUserColumnFilters["filter"]>()
   const [reviewing, setReviewing] = useState<Users | null>(null)

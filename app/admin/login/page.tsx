@@ -1,4 +1,5 @@
-import { Metadata, NextPage } from 'next'
+import { Metadata } from 'next'
+import AdminLogin from '@/modules/admin-login'
 
 export const metadata: Metadata = {
   title: "Login - HandworkExpert",
@@ -6,9 +7,7 @@ export const metadata: Metadata = {
 };
 
 const Login = () => {
-  return (
-    <div>Login page</div>
-  )
+  return <AdminLogin />
 }
 
 export default Login
