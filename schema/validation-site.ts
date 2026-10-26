@@ -30,19 +30,30 @@ export const validationSchema = Yup.object({
     .required("Message is required"),
 });
 
-export const registerSchema = Yup.object({
-  name: Yup
-    .string()
+const nameField = (label: string) =>
+  Yup.string()
     .trim()
-    .required("Name is required")
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name is too long"),
+    .required(`${label} is required`)
+    .min(2, `${label} must be at least 2 characters`)
+    .max(100, `${label} is too long`)
+
+export const registerSchema = Yup.object({
+  firstName: nameField("First name"),
+  lastName: nameField("Last name"),
   email: Yup
     .string()
     .trim()
     .required("Email is required")
     .email("Enter a valid email address"),
-  password: Yup.string().required("Password is required"),
+  // Mirrors the API's rule, so users aren't bounced after submitting
+  password: Yup
+    .string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).+$/,
+      "Use an uppercase letter, a lowercase letter, a number and a symbol"
+    ),
   countryCode: Yup.string().required(),
   phone: Yup
     .string()

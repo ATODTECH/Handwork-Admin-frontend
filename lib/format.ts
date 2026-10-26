@@ -4,7 +4,27 @@ const TIME = new Intl.DateTimeFormat("en-NG", { hour: "numeric", minute: "2-digi
 const DAY = new Intl.DateTimeFormat("en-NG", { day: "numeric", month: "short", year: "numeric", timeZone: "Africa/Lagos" })
 const DAY_KEY = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Lagos" })
 
+const NAIRA = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 })
+const SCHEDULE_DAY = new Intl.DateTimeFormat("en-NG", { weekday: "short", day: "numeric", month: "short" })
+
 export const formatCount = (value: number) => COUNT.format(value)
+
+/** Naira in (as the API's decimal fields send it), a full figure out: ₦45,000 */
+export const formatNairaAmount = (naira: number | string) => NAIRA.format(Number(naira) || 0)
+
+/**
+ * A booking's local date + "HH:MM:SS" time, as sent by the API: "Tue, 4 Nov · 2:30 pm".
+ * Parsed as local wall-clock time, so no timezone shift.
+ */
+export const formatSchedule = (date: string | null, time?: string | null) => {
+  if (!date) return "Date to be agreed"
+  const [year, month, day] = date.split("-").map(Number)
+  const [hours = 0, minutes = 0] = (time ?? "").split(":").map(Number)
+  const when = new Date(year, month - 1, day, hours, minutes)
+  const dayLabel = SCHEDULE_DAY.format(when)
+  if (!time) return dayLabel
+  return `${dayLabel} · ${when.toLocaleTimeString("en-NG", { hour: "numeric", minute: "2-digit", hour12: true })}`
+}
 
 /** Kobo in, a compact naira figure out: NGN 4.2M, NGN 850K, NGN 0. */
 export const formatNaira = (amountMinor: number) => {

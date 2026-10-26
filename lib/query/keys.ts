@@ -7,11 +7,20 @@ export const queryKeys = {
     all: ["site"] as const,
     session: () => [...queryKeys.site.all, "session"] as const,
   },
+  account: {
+    all: ["account"] as const,
+    bookings: () => [...queryKeys.account.all, "bookings"] as const,
+    notifications: () => [...queryKeys.account.all, "notifications"] as const,
+  },
 } as const
 
 export const mutationKeys = {
   admin: {
     signIn: ["admin", "sign-in"] as const,
+  },
+  account: {
+    markNotificationRead: ["account", "notifications", "mark-read"] as const,
+    startPayment: ["account", "bookings", "start-payment"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,

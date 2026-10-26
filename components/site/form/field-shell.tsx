@@ -98,7 +98,7 @@ const FieldShell = ({
                 name={config.name}
                 type={inputType ?? "text"}
                 value={vetValue}
-                placeholder={config.name}
+                placeholder={config.placeholder ?? config.label ?? config.name}
                 autoComplete={autoComplete}
                 disabled={isPending}
                 aria-invalid={showError}
@@ -126,7 +126,7 @@ const FieldShell = ({
         <FieldError id={`${config.name}-id`} errors={[{message: error}]} className="text-xs xl:text-[13px]" />
       )}
       {(forgotPassword && (config.name==="password")) && (
-        <button onClick={()=> forgotPassword("active")} className="flex text-sm max-w-fit font-medium text-hw-primary">
+        <button type="button" onClick={()=> forgotPassword("active")} className="flex text-sm max-w-fit font-medium text-hw-primary">
           Forgot Password
         </button>
       )}

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryProvider } from "@/providers/query-provider";
 import "./globals.css";
 
@@ -32,7 +33,7 @@ export default function RootLayout({ children }:
     >
       <body>
         <QueryProvider>
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
         </QueryProvider>
         <Toaster position="top-right" richColors />
       </body>
