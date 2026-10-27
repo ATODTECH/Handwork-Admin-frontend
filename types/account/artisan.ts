@@ -1,11 +1,11 @@
+/** Staff review of an artisan (`User.verification_status`) */
+export type VerificationStatus = "PENDING" | "APPROVED" | "REJECTED"
+
 /** ID types the API accepts (`User.DOCUMENT_TYPE`) */
 export type IdDocumentType = "DL" | "PSP" | "NIN"
 
 /** One of these is true on a skill; the form picks exactly one */
 export type WorkAvailability = "weekdays_only" | "weekends_only" | "weekdays_and_weekends"
-
-/** How the artisan wants to be paid (`BankDetails.payment_on_delivery` / `escrow_payment`) */
-export type PayoutMethod = "payment_on_delivery" | "escrow_payment"
 
 /** An artisan's skill, as nested in `GET /api/artisan/{id}` (decimal fields arrive as strings) */
 export interface ArtisanSkill {
@@ -31,6 +31,10 @@ export interface ArtisanProfile {
   document_type: IdDocumentType | null
   /** Set by the API once bank details are saved */
   onboardingComplete: boolean
+  /** Staff review: customers only see APPROVED artisans */
+  verification_status: VerificationStatus
+  /** Why changes were requested (when REJECTED) */
+  verification_note: string
   skill: ArtisanSkill | null
 }
 
@@ -65,5 +69,4 @@ export interface BankDetailsPayload {
   bankName: string
   accountNumber: string
   accountName: string
-  payoutMethod: PayoutMethod
 }

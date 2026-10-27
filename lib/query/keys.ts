@@ -3,6 +3,12 @@
  * can target a whole domain (`queryKeys.site.all`) or one entry.
  */
 export const queryKeys = {
+  admin: {
+    all: ["admin"] as const,
+    artisansRoot: () => [...queryKeys.admin.all, "artisans"] as const,
+    artisans: (status: string) => [...queryKeys.admin.artisansRoot(), status] as const,
+    artisanCounts: () => [...queryKeys.admin.artisansRoot(), "counts"] as const,
+  },
   site: {
     all: ["site"] as const,
     session: () => [...queryKeys.site.all, "session"] as const,
@@ -20,6 +26,8 @@ export const queryKeys = {
 export const mutationKeys = {
   admin: {
     signIn: ["admin", "sign-in"] as const,
+    approveArtisan: ["admin", "artisans", "approve"] as const,
+    rejectArtisan: ["admin", "artisans", "reject"] as const,
   },
   account: {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,

@@ -62,15 +62,13 @@ export const artisanOnboardingService = {
     return accountHttp.post("/api/skill", body, { timeout: UPLOAD_TIMEOUT_MS })
   },
 
-  saveBankDetails: ({ bankName, accountNumber, accountName, payoutMethod }: BankDetailsPayload) =>
+  saveBankDetails: ({ bankName, accountNumber, accountName }: BankDetailsPayload) =>
     accountHttp.post(
       "/api/bank_details",
       toFormData({
         name: bankName,
         account_number: accountNumber,
         account_name: accountName,
-        payment_on_delivery: String(payoutMethod === "payment_on_delivery"),
-        escrow_payment: String(payoutMethod === "escrow_payment"),
       }),
     ),
 }

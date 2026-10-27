@@ -1,8 +1,7 @@
 "use client"
 
 import { useFormik } from "formik"
-import { HandCoins, ShieldCheck } from "lucide-react"
-import ChoiceCardGroup, { type ChoiceOption } from "@/components/form/choice-card-group"
+import { ShieldCheck } from "lucide-react"
 import ComboboxField from "@/components/form/combobox-field"
 import FormField from "@/components/form/form-field"
 import { fieldState, textFieldProps, touch } from "@/components/form/formik-field-props"
@@ -10,24 +9,8 @@ import { useBanks, useSaveBankDetails } from "@/hooks/account/use-artisan-onboar
 import { formLevelError, toFormErrors } from "@/lib/form-errors"
 import { toApiError } from "@/lib/http/errors"
 import { payoutSchema, type PayoutFormValues } from "@/schema/validation-artisan"
-import type { PayoutMethod } from "@/types/account/artisan"
 import RetryHint from "./retry-hint"
 import StepForm from "./step-form"
-
-const PAYOUT_METHODS: ChoiceOption<PayoutMethod>[] = [
-  {
-    value: "escrow_payment",
-    label: "Escrow payment",
-    description: "The customer pays upfront; we hold it safely and transfer it to you once the job is done.",
-    icon: ShieldCheck,
-  },
-  {
-    value: "payment_on_delivery",
-    label: "Payment on delivery",
-    description: "The customer pays you directly when you finish the job.",
-    icon: HandCoins,
-  },
-]
 
 const API_FIELDS: Record<string, keyof PayoutFormValues> = {
   name: "bankName",
@@ -42,7 +25,7 @@ const PayoutStep = () => {
   const bankOptions = (banks.data ?? []).map(({ name }) => ({ value: name, label: name }))
 
   const formik = useFormik<PayoutFormValues>({
-    initialValues: { bankName: "", accountNumber: "", accountName: "", payoutMethod: "escrow_payment" },
+    initialValues: { bankName: "", accountNumber: "", accountName: "" },
     validationSchema: payoutSchema,
     onSubmit: async (values, { setErrors }) => {
       try {
@@ -88,14 +71,13 @@ const PayoutStep = () => {
         />
       </div>
 
-      <ChoiceCardGroup
-        {...fieldState(formik, "payoutMethod")}
-        legend="How do you want to receive payment?"
-        options={PAYOUT_METHODS}
-        value={formik.values.payoutMethod}
-        onValueChange={(value) => formik.setFieldValue("payoutMethod", value)}
-        columns={2}
-      />
+      <p className="flex gap-3 rounded-xl bg-secondary px-4 py-3 text-sm leading-relaxed text-hw-grey-700">
+        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-hw-secondary" />
+        <span>
+          Customers pay Handwork Expert, not you directly. We hold the money safely and add it to your earnings, minus
+          our 10% service fee, once the job is completed and fully paid. Your payouts go to this account.
+        </span>
+      </p>
     </StepForm>
   )
 }

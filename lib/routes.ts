@@ -47,7 +47,7 @@ export const accountArea = (role: "USER" | "ARTISAN") =>
 export const PAGE_HEADINGS: Record<string, { title: string, description?: string }> = {
   [ROUTES.dashboard]: { title: "Dashboard" },
   [ROUTES.users]: { title: "User Management" },
-  [ROUTES.artisans]: { title: "Artisans" },
+  [ROUTES.artisans]: { title: "Artisans", description: "Review new artisans before customers can find and book them." },
   [ROUTES.services]: { title: "Services", description: "Services And Category Management" },
   [ROUTES.bookings]: { title: "Bookings" },
   [ROUTES.reports]: { title: "Reports", description: "Review marketplace performance and download detailed reports." },

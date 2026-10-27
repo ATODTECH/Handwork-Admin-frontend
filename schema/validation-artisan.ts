@@ -1,5 +1,5 @@
 import * as Yup from "yup"
-import type { IdDocumentType, PayoutMethod, WorkAvailability } from "@/types/account/artisan"
+import type { IdDocumentType, WorkAvailability } from "@/types/account/artisan"
 
 /** The API stores uploads as Django ImageFields, so only raster images */
 export const IMAGE_UPLOAD = {
@@ -58,7 +58,6 @@ export const payoutSchema = Yup.object({
     .required("Account name is required")
     .min(3, "Enter the name on the account")
     .max(350, "Account name is too long"),
-  payoutMethod: Yup.mixed<PayoutMethod>().oneOf(["payment_on_delivery", "escrow_payment"]).required(),
 })
 
 export type IdentityFormValues = Omit<Yup.InferType<typeof identitySchema>, "document"> & { document: File | null }
