@@ -36,7 +36,7 @@ export const servicesSchema = Yup.object({
   serviceIds: Yup.array(Yup.number().required()).min(1, "Pick at least one service").required(),
   description: Yup.string()
     .trim()
-    .required("Tell customers about your experience")
+    .required("Describe your experience")
     .min(30, "Write at least 30 characters so customers know what to expect")
     .max(1000, "Keep it under 1,000 characters"),
   baseCharge: nairaAmount("Lowest charge"),
