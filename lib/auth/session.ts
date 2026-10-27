@@ -90,6 +90,22 @@ export const accountSession = {
     }
   },
 
+  /** The signed-in user's id, read from the access token's `user_id` claim (not verified: the API does that) */
+  getUserId: (): string | null => {
+    const payload = accountTokens.getAccessToken()?.split(".")[1]
+    if (!payload) return null
+    try {
+      const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+      const { user_id } = JSON.parse(json) as { user_id?: unknown }
+      return typeof user_id === "string" || typeof user_id === "number" ? String(user_id) : null
+    } catch {
+      return null
+    }
+  },
+
+  /** Lets the route guard into the artisan dashboard once onboarding is done */
+  markOnboarded: () => writeCookie(ACCOUNT_ONBOARDED_COOKIE, "1", MAX_AGE_SECONDS),
+
   clear: () => {
     accountTokens.clear()
     for (const name of [ACCOUNT_ROLE_COOKIE, ACCOUNT_NAME_COOKIE, ACCOUNT_ONBOARDED_COOKIE]) writeCookie(name, "", 0)

@@ -112,6 +112,12 @@ export const useSignOut = () => {
 const listeners = new Set<() => void>()
 const notifyProfileChange = () => listeners.forEach((listener) => listener())
 
+/** Record in the session that this artisan finished onboarding */
+export const markAccountOnboarded = () => {
+  accountSession.markOnboarded()
+  notifyProfileChange()
+}
+
 let cachedKey = ""
 let cachedProfile: AccountProfile | null = null
 

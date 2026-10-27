@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import type { AccountRole } from "@/lib/auth/session";
+import { toFormErrors } from "@/lib/form-errors";
 
 
 const NAME_FIELDS: FieldConfig[] = [
@@ -73,12 +74,7 @@ export const RegisterFormField = ({
           void setFieldValue("password", "", false);
 					void setFieldTouched("password", false, false);
           // Show the API's field errors (e.g. email or phone already taken) under the matching inputs
-          const errors: Partial<Record<keyof RegisterFormValues, string>> = {}
-          for (const [apiField, formField] of Object.entries(API_FIELD_TO_FORM)) {
-            const message = error.fieldErrors[apiField]?.[0]
-            if (message) errors[formField] = message
-          }
-          formik.setErrors(errors)
+          formik.setErrors(toFormErrors(error, API_FIELD_TO_FORM))
 				},
       })
     },

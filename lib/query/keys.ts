@@ -11,6 +11,9 @@ export const queryKeys = {
     all: ["account"] as const,
     bookings: () => [...queryKeys.account.all, "bookings"] as const,
     notifications: () => [...queryKeys.account.all, "notifications"] as const,
+    artisanProfile: (id: string) => [...queryKeys.account.all, "artisan-profile", id] as const,
+    serviceOptions: () => [...queryKeys.account.all, "service-options"] as const,
+    banks: () => [...queryKeys.account.all, "banks"] as const,
   },
 } as const
 
@@ -21,6 +24,9 @@ export const mutationKeys = {
   account: {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,
     startPayment: ["account", "bookings", "start-payment"] as const,
+    saveIdentity: ["account", "onboarding", "identity"] as const,
+    saveSkill: ["account", "onboarding", "skill"] as const,
+    saveBankDetails: ["account", "onboarding", "bank-details"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,
