@@ -6,4 +6,6 @@ export interface AdminLoginRes {
   refresh: string
   name: string
   role: string
+  /** Django staff flag: required for the admin console */
+  is_staff: boolean
 }
