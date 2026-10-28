@@ -29,6 +29,9 @@ export interface ArtisanProfile {
   nin: string | null
   document: string | null
   document_type: IdDocumentType | null
+  address: string | null
+  state: string | null
+  city: string | null
   /** Set by the API once bank details are saved */
   onboardingComplete: boolean
   /** Staff review: customers only see APPROVED artisans */
@@ -54,6 +57,12 @@ export interface IdentityPayload {
   nin: string
   documentType: IdDocumentType
   document: File
+}
+
+export interface LocationPayload {
+  address: string
+  state: string
+  city: string
 }
 
 export interface SkillPayload {

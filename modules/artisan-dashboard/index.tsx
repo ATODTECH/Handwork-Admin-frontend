@@ -13,6 +13,7 @@ import EmptyState from "@/components/account/empty-state"
 import type { DashboardNavGroup } from "@/components/account/nav"
 import PageHeader from "@/components/account/page-header"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
+import LocationPrompt from "./location-prompt"
 import VerificationStatus from "./verification-status"
 
 const ARTISAN_NAV: DashboardNavGroup[] = [
@@ -38,6 +39,7 @@ export const ArtisanShell = ({ children }: { children: React.ReactNode }) => <Da
 export const ArtisanOverview = () => (
   <>
     <PageHeader title="Artisan dashboard" description="Your jobs, schedule and earnings in one place." />
+    <LocationPrompt />
     <VerificationStatus />
     <EmptyState
       icon={BriefcaseBusiness}

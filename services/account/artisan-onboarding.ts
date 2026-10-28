@@ -2,12 +2,14 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import axios from "axios"
 import { accountHttp } from "@/lib/http/client"
 import { isApiError, toApiError } from "@/lib/http/errors"
+import { COUNTRY } from "@/lib/locations"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
 import type {
   ArtisanProfile,
   Bank,
   BankDetailsPayload,
   IdentityPayload,
+  LocationPayload,
   ServiceOption,
   SkillPayload,
   WorkAvailability,
@@ -48,6 +50,9 @@ export const artisanOnboardingService = {
       toFormData({ nin, document_type: documentType, document }),
       { timeout: UPLOAD_TIMEOUT_MS },
     ),
+
+  saveLocation: (userId: string, location: LocationPayload) =>
+    accountHttp.patch<ArtisanProfile>(`/api/artisan/${userId}`, { ...location, country: COUNTRY }),
 
   saveSkill: ({ description, baseCharge, capCharge, serviceIds, availability, photos }: SkillPayload) => {
     const body = toFormData({
@@ -97,6 +102,12 @@ export const saveIdentityMutation = (userId: string) =>
   mutationOptions({
     mutationKey: mutationKeys.account.saveIdentity,
     mutationFn: (payload: IdentityPayload) => artisanOnboardingService.saveIdentity(userId, payload),
+  })
+
+export const saveLocationMutation = (userId: string) =>
+  mutationOptions({
+    mutationKey: mutationKeys.account.saveLocation,
+    mutationFn: (payload: LocationPayload) => artisanOnboardingService.saveLocation(userId, payload),
   })
 
 export const saveSkillMutation = () =>

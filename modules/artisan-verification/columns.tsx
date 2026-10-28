@@ -3,6 +3,7 @@ import { UseAvatar } from "@/components/shared/use-avatar"
 import VerificationBadge from "@/components/shared/verification-badge"
 import { createDataTableColumns } from "@/components/table-data/columns"
 import { formatActivityDate } from "@/lib/format"
+import { formatLocation } from "@/lib/locations"
 import type { ArtisanForReview } from "@/types/admin/artisans"
 
 const column = createDataTableColumns<ArtisanForReview>()
@@ -37,7 +38,7 @@ export const artisanColumns = (onReview: (artisan: ArtisanForReview) => void) =>
       id: "location",
       header: "Location",
       meta: { cellClassName: "text-hw-grey-700" },
-      cell: ({ row: { original } }) => [original.city, original.state].filter(Boolean).join(", ") || "—",
+      cell: ({ row: { original } }) => formatLocation(original) ?? "—",
     }),
     column.accessor("date_joined", {
       header: "Joined",

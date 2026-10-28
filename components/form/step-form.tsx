@@ -14,7 +14,7 @@ interface StepFormProps {
   children: React.ReactNode
 }
 
-/** Shared frame for each onboarding step: the fields, a form-level error and the continue button */
+/** Shared frame for a form: the fields, a form-level error and the submit button (onboarding steps, booking) */
 const StepForm = ({ onSubmit, pending, submitLabel, pendingLabel, formError, children }: StepFormProps) => (
   <form noValidate onSubmit={onSubmit} className="flex flex-col gap-6" aria-busy={pending}>
     <FieldGroup className="gap-6">{children}</FieldGroup>

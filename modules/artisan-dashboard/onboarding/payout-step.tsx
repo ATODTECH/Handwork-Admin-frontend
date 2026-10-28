@@ -10,7 +10,7 @@ import { formLevelError, toFormErrors } from "@/lib/form-errors"
 import { toApiError } from "@/lib/http/errors"
 import { payoutSchema, type PayoutFormValues } from "@/schema/validation-artisan"
 import RetryHint from "./retry-hint"
-import StepForm from "./step-form"
+import StepForm from "@/components/form/step-form"
 
 const API_FIELDS: Record<string, keyof PayoutFormValues> = {
   name: "bankName",
