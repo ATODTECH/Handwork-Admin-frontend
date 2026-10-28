@@ -29,9 +29,13 @@ export const ACCOUNT_ROUTES = {
   dashboard: "/dashboard",
   customerHome: "/dashboard/customer",
   customerBookings: "/dashboard/customer/bookings",
+  customerArtisans: "/dashboard/customer/artisans",
   artisanHome: "/dashboard/artisan",
   artisanOnboarding: "/dashboard/artisan/onboarding",
 } as const
+
+/** An artisan's profile and booking form, for customers */
+export const customerArtisanRoute = (id: string) => `${ACCOUNT_ROUTES.customerArtisans}/${id}` as const
 
 /** Where each role lands after signing in */
 export const accountHome = (role: "USER" | "ARTISAN", onboarded: boolean) =>

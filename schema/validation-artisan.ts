@@ -1,4 +1,5 @@
 import * as Yup from "yup"
+import { NIGERIAN_STATES } from "@/lib/locations"
 import type { IdDocumentType, WorkAvailability } from "@/types/account/artisan"
 
 /** The API stores uploads as Django ImageFields, so only raster images */
@@ -11,7 +12,7 @@ export const IMAGE_UPLOAD = {
 export const MAX_WORK_PHOTOS = 3
 
 /** A naira amount typed as text: digits, optionally with thousands separators */
-const nairaAmount = (label: string) =>
+export const nairaAmount = (label: string) =>
   Yup.number()
     .transform((_, original) => (original === "" ? undefined : Number(String(original).replace(/,/g, ""))))
     .typeError(`${label} must be a number`)
@@ -30,6 +31,21 @@ export const identitySchema = Yup.object({
     .matches(/^\d{11}$/, "NIN must be exactly 11 digits"),
   documentType: Yup.mixed<IdDocumentType>().oneOf(["DL", "PSP", "NIN"]).required("Choose a document type"),
   document: imageFile.required("Upload a photo of your ID"),
+})
+
+// `User.state` and `User.city` are 40 characters on the API
+export const locationSchema = Yup.object({
+  state: Yup.string().oneOf<string>([...NIGERIAN_STATES], "Choose your state").required("Choose your state"),
+  city: Yup.string()
+    .trim()
+    .required("City or area is required")
+    .min(2, "Enter your city or area")
+    .max(40, "Keep it under 40 characters"),
+  address: Yup.string()
+    .trim()
+    .required("Address is required")
+    .min(5, "Enter a street or landmark customers can find")
+    .max(250, "Keep it under 250 characters"),
 })
 
 export const servicesSchema = Yup.object({
@@ -61,6 +77,7 @@ export const payoutSchema = Yup.object({
 })
 
 export type IdentityFormValues = Omit<Yup.InferType<typeof identitySchema>, "document"> & { document: File | null }
+export type LocationFormValues = Yup.InferType<typeof locationSchema>
 export type ServicesFormValues = Omit<Yup.InferType<typeof servicesSchema>, "baseCharge" | "capCharge"> & {
   baseCharge: string
   capCharge: string

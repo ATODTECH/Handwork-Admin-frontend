@@ -7,19 +7,24 @@ import {
   banksQuery,
   saveBankDetailsMutation,
   saveIdentityMutation,
+  saveLocationMutation,
   saveSkillMutation,
   serviceOptionsQuery,
 } from "@/services/account/artisan-onboarding"
 import type { ArtisanProfile } from "@/types/account/artisan"
 
-export type OnboardingStepId = "identity" | "services" | "payout"
+export type OnboardingStepId = "identity" | "location" | "services" | "payout"
 
-/** In the order the artisan completes them (mirrors the mobile app) */
-export const ONBOARDING_STEP_IDS: OnboardingStepId[] = ["identity", "services", "payout"]
+/** In the order the artisan completes them (the mobile app asks for the location at sign-up instead) */
+export const ONBOARDING_STEP_IDS: OnboardingStepId[] = ["identity", "location", "services", "payout"]
+
+/** Customers search by city and state, and staff can't approve an artisan without them */
+export const hasLocation = ({ address, state, city }: ArtisanProfile) => !!(address && state && city)
 
 /** Which steps the API already has, read from the artisan's own record */
 export const getCompletedSteps = (profile: ArtisanProfile): Record<OnboardingStepId, boolean> => ({
   identity: !!(profile.nin && profile.document),
+  location: hasLocation(profile),
   services: !!profile.skill,
   payout: profile.onboardingComplete,
 })
@@ -62,6 +67,20 @@ export const useSaveIdentity = () => {
     onSuccess: async () => {
       await refreshProfile()
       toast.success("ID details saved")
+    },
+  })
+}
+
+export const useSaveLocation = () => {
+  const userId = useUserId()
+  const refreshProfile = useRefreshProfile()
+
+  return useMutation({
+    ...saveLocationMutation(userId),
+    meta: { silentError: true },
+    onSuccess: async () => {
+      await refreshProfile()
+      toast.success("Location saved")
     },
   })
 }

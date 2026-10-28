@@ -1,14 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, CalendarClock, CircleCheckBig, Wallet, WalletCards } from "lucide-react"
+import { ArrowRight, CalendarClock, CircleCheckBig, Search, Wallet, WalletCards } from "lucide-react"
 import BookingList from "@/components/account/bookings/booking-list"
 import NotificationList from "@/components/account/notification-list"
+import PageHeader from "@/components/account/page-header"
 import QueryContent from "@/components/account/query-content"
 import SectionCard from "@/components/account/section-card"
 import StatCard from "@/components/account/stat-card"
 import { Button } from "@/components/ui/button"
 import { useMyBookings } from "@/hooks/account/use-dashboard"
+import { useAccountProfile } from "@/hooks/site/use-auth"
 import { nextBooking, sortByRecent, summarizeBookings } from "@/lib/bookings"
 import { formatNairaAmount } from "@/lib/format"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
@@ -16,9 +18,10 @@ import CategoryGrid from "./category-grid"
 import NextBookingCard from "./next-booking-card"
 import NoBookingsYet from "./no-bookings-yet"
 import PaySafelyCard from "./pay-safely-card"
-import WelcomeBanner from "./welcome-banner"
 
 const RECENT_LIMIT = 4
+
+const greeting = (hour: number) => (hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening")
 
 const ViewAllLink = ({ href, label = "View all" }: { href: string, label?: string }) => (
   <Button variant="link" size="sm" className="h-auto px-0" render={<Link href={href} />} nativeButton={false}>
@@ -32,10 +35,23 @@ const CustomerOverview = () => {
   const stats = summarizeBookings(bookings)
   const upNext = nextBooking(bookings)
   const recent = sortByRecent(bookings).slice(0, RECENT_LIMIT)
+  // Null until hydrated, so the time-of-day greeting never mismatches the server render
+  const profile = useAccountProfile()
+  const firstName = profile?.name.split(" ")[0]
+  const title = profile ? `${greeting(new Date().getHours())}${firstName ? `, ${firstName}` : ""}` : "Welcome back"
 
   return (
     <>
-      <WelcomeBanner />
+      <PageHeader
+        title={title}
+        description="Book a verified artisan and keep track of every job here."
+        actions={
+          <Button render={<Link href={ACCOUNT_ROUTES.customerArtisans} />} nativeButton={false}>
+            <Search data-icon="inline-start" />
+            Find an artisan
+          </Button>
+        }
+      />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatCard label="Active bookings" value={stats.active} hint="Requests and jobs in progress" icon={CalendarClock} tone="info" loading={isPending} />
@@ -61,7 +77,7 @@ const CustomerOverview = () => {
         </div>
       </div>
 
-      <SectionCard title="Explore categories" description="Skilled professionals for every kind of job." action={<ViewAllLink href="/categories" label="See all" />}>
+      <SectionCard title="Explore categories" description="Skilled professionals for every kind of job." action={<ViewAllLink href={ACCOUNT_ROUTES.customerArtisans} label="See all artisans" />}>
         <CategoryGrid />
       </SectionCard>
     </>

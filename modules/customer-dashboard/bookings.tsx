@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useMyBookings } from "@/hooks/account/use-dashboard"
 import { filterByGroup, sortByRecent, type BookingGroup } from "@/lib/bookings"
+import { ACCOUNT_ROUTES } from "@/lib/routes"
 import NoBookingsYet from "./no-bookings-yet"
 
 const TABS: { value: BookingGroup | "all", label: string }[] = [
@@ -35,7 +36,7 @@ const CustomerBookings = () => {
         title="My bookings"
         description="Track every request, pay deposits and balances, and see what's next."
         actions={
-          <Button render={<Link href="/categories" />} nativeButton={false}>
+          <Button render={<Link href={ACCOUNT_ROUTES.customerArtisans} />} nativeButton={false}>
             <Plus data-icon="inline-start" />
             New booking
           </Button>

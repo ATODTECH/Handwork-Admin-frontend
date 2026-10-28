@@ -11,7 +11,7 @@ import { formLevelError, toFormErrors } from "@/lib/form-errors"
 import { toApiError } from "@/lib/http/errors"
 import { IMAGE_UPLOAD, identitySchema, type IdentityFormValues } from "@/schema/validation-artisan"
 import type { IdDocumentType } from "@/types/account/artisan"
-import StepForm from "./step-form"
+import StepForm from "@/components/form/step-form"
 
 const DOCUMENT_TYPES: ChoiceOption<IdDocumentType>[] = [
   { value: "NIN", label: "NIN slip or card", icon: ScanFace },

@@ -1,15 +1,16 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRight, LayoutGrid } from "lucide-react"
+import { ACCOUNT_ROUTES } from "@/lib/routes"
 import { CATEGORY_LINKS } from "@/modules/site/categories-details/data"
 
 const tileClass = "group relative flex aspect-4/3 overflow-hidden rounded-2xl outline-none focus-visible:ring-3 focus-visible:ring-hw-primary/50"
 
-/** Photo tiles linking into the public category pages */
+/** Photo tiles opening Find an artisan, filtered to that category */
 const CategoryGrid = () => (
   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
     {CATEGORY_LINKS.map(({ id, name, image }) => (
-      <Link key={id} href={`/categories/${id}`} className={tileClass}>
+      <Link key={id} href={{ pathname: ACCOUNT_ROUTES.customerArtisans, query: { category: name } }} className={tileClass}>
         <Image
           src={image}
           alt=""
@@ -24,7 +25,7 @@ const CategoryGrid = () => (
         </span>
       </Link>
     ))}
-    <Link href="/categories" className={`${tileClass} items-center justify-center bg-[#FEF1ED] text-hw-primary ring-1 ring-hw-primary/15`}>
+    <Link href={ACCOUNT_ROUTES.customerArtisans} className={`${tileClass} items-center justify-center bg-[#FEF1ED] text-hw-primary ring-1 ring-hw-primary/15`}>
       <span className="flex flex-col items-center gap-2 text-sm font-semibold">
         <span className="flex size-11 items-center justify-center rounded-xl bg-white shadow-sm transition-transform group-hover:scale-110">
           <LayoutGrid className="size-5" />

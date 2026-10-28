@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { FileCheck2, Landmark, Wrench, type LucideIcon } from "lucide-react"
+import { FileCheck2, Landmark, MapPin, Wrench, type LucideIcon } from "lucide-react"
 import PageHeader from "@/components/account/page-header"
 import QueryContent from "@/components/account/query-content"
 import SectionCard from "@/components/account/section-card"
@@ -13,6 +13,7 @@ import { ONBOARDING_STEP_IDS, useOnboardingProgress, type OnboardingStepId } fro
 import { markAccountOnboarded } from "@/hooks/site/use-auth"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
 import IdentityStep from "./identity-step"
+import LocationStep from "./location-step"
 import PayoutStep from "./payout-step"
 import ServicesStep from "./services-step"
 
@@ -32,6 +33,13 @@ const STEPS: Record<OnboardingStepId, StepConfig> = {
     description: "Your NIN and a driver's licence, passport or NIN slip.",
     intro: "We use these to verify who you are. They're never shown to customers.",
     Form: IdentityStep,
+  },
+  location: {
+    icon: MapPin,
+    title: "Add your location",
+    description: "The state and area you work in.",
+    intro: "Customers look for artisans near them, so tell us where you're based.",
+    Form: LocationStep,
   },
   services: {
     icon: Wrench,
@@ -56,7 +64,7 @@ const OnboardingSkeleton = () => (
   </div>
 )
 
-/** The three setup steps an artisan finishes before getting jobs (same as the mobile app) */
+/** The setup steps an artisan finishes before getting jobs */
 const ArtisanOnboarding = () => {
   const router = useRouter()
   const { isPending, isError, refetch, completed, current, completedCount } = useOnboardingProgress()
@@ -76,7 +84,7 @@ const ArtisanOnboarding = () => {
 
   return (
     <>
-      <PageHeader title="Finish setting up" description="Three quick steps before you can start getting jobs." />
+      <PageHeader title="Finish setting up" description="Four quick steps before you can start getting jobs." />
 
       <QueryContent isPending={isPending} isError={isError} onRetry={refetch} isEmpty={false} empty={null} skeleton={<OnboardingSkeleton />}>
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">

@@ -14,7 +14,7 @@ import { toApiError } from "@/lib/http/errors"
 import { IMAGE_UPLOAD, MAX_WORK_PHOTOS, servicesSchema, type ServicesFormValues } from "@/schema/validation-artisan"
 import type { WorkAvailability } from "@/types/account/artisan"
 import RetryHint from "./retry-hint"
-import StepForm from "./step-form"
+import StepForm from "@/components/form/step-form"
 
 const AVAILABILITY: ChoiceOption<WorkAvailability>[] = [
   { value: "weekdays_and_weekends", label: "Any day", description: "Weekdays and weekends", icon: CalendarRange },

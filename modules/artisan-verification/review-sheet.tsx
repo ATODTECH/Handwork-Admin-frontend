@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { useApproveArtisan } from "@/hooks/admin/use-artisan-review"
 import { availabilityLabel, ID_DOCUMENT_LABELS } from "@/lib/artisans"
 import { formatActivityDate, formatNairaAmount } from "@/lib/format"
+import { formatLocation } from "@/lib/locations"
 import type { ArtisanForReview } from "@/types/admin/artisans"
 import { fullName } from "./columns"
 
@@ -100,7 +101,7 @@ const ReviewSheet = ({ artisan, onOpenChange, onRequestChanges }: ReviewSheetPro
             <DetailRow label="Email">{artisan.email}</DetailRow>
             <DetailRow label="Phone">{artisan.contact}</DetailRow>
             <DetailRow label="Address">{artisan.address}</DetailRow>
-            <DetailRow label="City / State">{[artisan.city, artisan.state].filter(Boolean).join(", ") || null}</DetailRow>
+            <DetailRow label="City / State">{formatLocation(artisan)}</DetailRow>
             <DetailRow label="Joined">{formatActivityDate(artisan.date_joined)}</DetailRow>
           </DetailSection>
 
