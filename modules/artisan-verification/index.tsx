@@ -59,7 +59,7 @@ const ArtisanVerificationIndex = () => {
   }
 
   return (
-    <section className="flex flex-1 flex-col gap-5 overflow-y-auto py-7.5 pr-8 scrollbar-thin">
+    <section className="flex flex-col gap-6">
       <PageHeader
         title={heading?.title ?? "Artisans"}
         description={heading?.description ?? "Review new artisans before customers can find and book them."}

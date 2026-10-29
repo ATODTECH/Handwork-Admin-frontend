@@ -1,16 +1,17 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, CalendarClock, CircleCheckBig, Search, Wallet, WalletCards } from "lucide-react"
+import { CalendarClock, CircleCheckBig, Search, Wallet, WalletCards } from "lucide-react"
 import BookingList from "@/components/account/bookings/booking-list"
 import NotificationList from "@/components/account/notification-list"
 import PageHeader from "@/components/account/page-header"
 import QueryContent from "@/components/account/query-content"
 import SectionCard from "@/components/account/section-card"
 import StatCard from "@/components/account/stat-card"
+import ViewAllLink from "@/components/account/view-all-link"
 import { Button } from "@/components/ui/button"
 import { useMyBookings } from "@/hooks/account/use-dashboard"
-import { useAccountProfile } from "@/hooks/site/use-auth"
+import { useGreeting } from "@/hooks/account/use-greeting"
 import { nextBooking, sortByRecent, summarizeBookings } from "@/lib/bookings"
 import { formatNairaAmount } from "@/lib/format"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
@@ -21,24 +22,13 @@ import PaySafelyCard from "./pay-safely-card"
 
 const RECENT_LIMIT = 4
 
-const greeting = (hour: number) => (hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening")
-
-const ViewAllLink = ({ href, label = "View all" }: { href: string, label?: string }) => (
-  <Button variant="link" size="sm" className="h-auto px-0" render={<Link href={href} />} nativeButton={false}>
-    {label}
-    <ArrowRight data-icon="inline-end" />
-  </Button>
-)
 
 const CustomerOverview = () => {
   const { data: bookings = [], isPending, isError, refetch } = useMyBookings()
   const stats = summarizeBookings(bookings)
   const upNext = nextBooking(bookings)
   const recent = sortByRecent(bookings).slice(0, RECENT_LIMIT)
-  // Null until hydrated, so the time-of-day greeting never mismatches the server render
-  const profile = useAccountProfile()
-  const firstName = profile?.name.split(" ")[0]
-  const title = profile ? `${greeting(new Date().getHours())}${firstName ? `, ${firstName}` : ""}` : "Welcome back"
+  const title = useGreeting()
 
   return (
     <>

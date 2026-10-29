@@ -5,7 +5,7 @@ import { ROUTES } from "@/lib/routes"
 import { usePageHeading } from "@/hooks/admin/use-page-heading"
 import Link from "next/link"
 import { useMemo, useState } from "react"
-import { userColumns } from "../dashboard/recent-users/columns"
+import { userColumns } from "./columns"
 import { DataTablePagination } from "@/components/table-data/data-table-pagination"
 import { AllUserColumnFilters, COLUMN_FILTERS } from "./constants"
 import { FilterSelect } from "@/components/shared/filter-select"
@@ -60,7 +60,7 @@ const UserManagementIndex = () => {
   const page = pageState.filterKey === filterKey ? pageState.page : 1
 
   return (
-    <section className="flex-1 flex flex-col py-7.5 pr-8 overflow-y-auto scrollbar-thin">
+    <section className="flex flex-col gap-6">
       <PageHeader
         title={headerTitle.title}
         description={headerTitle.description}

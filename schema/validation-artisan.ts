@@ -63,18 +63,24 @@ export const servicesSchema = Yup.object({
   photos: Yup.array(imageFile.required()).max(MAX_WORK_PHOTOS, `Add up to ${MAX_WORK_PHOTOS} photos`).required(),
 })
 
+/** The account holder's name isn't asked for: the API gets it from the bank through Paystack */
 export const payoutSchema = Yup.object({
-  bankName: Yup.string().required("Choose your bank"),
+  bankCode: Yup.string().required("Choose your bank"),
   accountNumber: Yup.string()
     .trim()
     .required("Account number is required")
     .matches(/^\d{10}$/, "Account number must be exactly 10 digits"),
-  accountName: Yup.string()
-    .trim()
-    .required("Account name is required")
-    .min(3, "Enter the name on the account")
-    .max(350, "Account name is too long"),
 })
+
+export const withdrawalSchema = (available: number, minimum: number) =>
+  Yup.object({
+    amount: Yup.number()
+      .transform((_, original) => (original === "" ? undefined : Number(String(original).replace(/,/g, ""))))
+      .typeError("Enter an amount")
+      .required("Enter an amount")
+      .min(minimum, `You can withdraw at least ₦${minimum.toLocaleString("en-NG")}`)
+      .max(available, `You can withdraw up to ₦${available.toLocaleString("en-NG")}`),
+  })
 
 export type IdentityFormValues = Omit<Yup.InferType<typeof identitySchema>, "document"> & { document: File | null }
 export type LocationFormValues = Yup.InferType<typeof locationSchema>

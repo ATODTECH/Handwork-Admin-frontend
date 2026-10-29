@@ -59,6 +59,9 @@ export const bookingTitle = (booking: Booking) => booking.services.join(", ") ||
 const scheduleTime = (booking: Booking) =>
   booking.scheduled_date ? new Date(`${booking.scheduled_date}T${booking.scheduled_time ?? "00:00:00"}`).getTime() : Infinity
 
+/** Soonest scheduled first; unscheduled last */
+export const sortBySchedule = (bookings: Booking[]) => [...bookings].sort((a, b) => scheduleTime(a) - scheduleTime(b))
+
 /** Newest first */
 export const sortByRecent = (bookings: Booking[]) =>
   [...bookings].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())

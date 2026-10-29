@@ -40,7 +40,7 @@ const JOB_UPDATED: Record<JobUpdate["status"], string> = {
   Accepted: "Accepted. We'll let you know when the deposit is paid.",
   Declined: "Request declined",
   "In Progress": "Job started",
-  Completed: "Marked as done. The customer will pay the rest.",
+  Completed: "Marked as done. We'll pay you once the customer confirms.",
 }
 
 /** An artisan accepting, declining, starting or completing a job */
