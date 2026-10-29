@@ -1,11 +1,16 @@
-/** Booking lifecycle, as stored by the API (`BookArtisan.status`) */
+/**
+ * Booking lifecycle, as stored by the API (`BookArtisan.status`). "Deposit Paid" and "Paid in Full"
+ * are bookings from the old 70% deposit + 30% balance flow.
+ */
 export type BookingStatus =
   | "Pending"
   | "Accepted"
   | "Declined"
+  | "Paid"
   | "Deposit Paid"
   | "In Progress"
   | "Completed"
+  | "Released"
   | "Paid in Full"
 
 /** A booking from `GET /api/my_bookings` (decimal fields arrive as strings, in naira) */
@@ -26,6 +31,8 @@ export interface Booking {
   /** HH:MM:SS */
   scheduled_time: string | null
   status: BookingStatus
+  /** When the artisan marked it done; we pay them automatically a while after */
+  completed_at: string | null
   created_at: string
   updated_at: string
 }
@@ -38,8 +45,11 @@ export interface JobUpdate {
   agreedAmount?: number
 }
 
-/** From `POST /api/book/{id}/pay-deposit/` and `/pay-balance/` */
+/** From `POST /api/book/{id}/pay`: a Paystack transaction for the full agreed price */
 export interface PaymentInit {
+  /** Resumed in Paystack's pop-up */
+  access_code: string
+  /** Paystack's own checkout page, if the pop-up can't load */
   authorization_url: string
   reference: string
   amount: string

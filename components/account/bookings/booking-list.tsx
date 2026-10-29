@@ -6,7 +6,7 @@ import { formatNairaAmount, formatSchedule, initials } from "@/lib/format"
 import type { Booking } from "@/types/account/dashboard"
 import BookingStatusBadge, { type BookingViewer } from "./booking-status-badge"
 import JobActions from "./job-actions"
-import PayBookingButton from "./pay-booking-button"
+import BookingActions from "./booking-actions"
 
 interface BookingViewProps {
   booking: Booking
@@ -57,7 +57,7 @@ const BookingRow = ({ booking, viewer = "customer" }: BookingViewProps) => (
         <span className="text-sm font-semibold text-hw-grey-900 tabular-nums">{formatNairaAmount(bookingPrice(booking))}</span>
         <BookingStatusBadge status={booking.status} viewer={viewer} />
       </div>
-      {viewer === "artisan" ? <JobActions booking={booking} /> : <PayBookingButton booking={booking} />}
+      {viewer === "artisan" ? <JobActions booking={booking} /> : <BookingActions booking={booking} />}
     </ItemActions>
   </Item>
 )

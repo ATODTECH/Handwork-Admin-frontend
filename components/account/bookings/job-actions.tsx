@@ -13,7 +13,7 @@ import type { Booking } from "@/types/account/dashboard"
 
 const MIN_PRICE = 500
 
-/** Accept with a final price. The customer then pays Handwork Expert, and we pay the artisan when the job is done */
+/** Accept with a final price. The customer then pays Handwork Expert, and we pay the artisan once they confirm the job is done */
 const AcceptDialog = ({ booking, open, onOpenChange }: { booking: Booking, open: boolean, onOpenChange: (open: boolean) => void }) => {
   const [price, setPrice] = useState(String(Math.round(Number(booking.budget)) || ""))
   const [touched, setTouched] = useState(false)
@@ -53,7 +53,7 @@ const AcceptDialog = ({ booking, open, onOpenChange }: { booking: Booking, open:
             disabled={isPending}
             description={
               !error &&
-              `You'll receive ${formatNairaAmount(artisanEarnings(amount))} after our ${PLATFORM_FEE_RATE * 100}% fee, once the customer has paid in full.`
+              `You'll receive ${formatNairaAmount(artisanEarnings(amount))} after our ${PLATFORM_FEE_RATE * 100}% fee, once the job is done and confirmed.`
             }
           />
 

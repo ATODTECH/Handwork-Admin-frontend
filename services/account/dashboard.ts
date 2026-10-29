@@ -1,7 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import { accountHttp } from "@/lib/http/client"
 import { isApiError } from "@/lib/http/errors"
-import type { PaymentKind } from "@/lib/bookings"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
 import type { AccountNotification, Booking, JobUpdate, PaymentInit } from "@/types/account/dashboard"
 
@@ -21,8 +20,13 @@ export const accountDashboardService = {
       status,
       ...(agreedAmount !== undefined && { agreed_amount: String(agreedAmount) }),
     }),
-  startPayment: ({ bookingId, kind }: { bookingId: number, kind: PaymentKind }) =>
-    accountHttp.post<PaymentInit>(`/api/book/${bookingId}/pay-${kind}/`),
+  /** Starts a Paystack transaction for the full agreed price */
+  startPayment: (bookingId: number) => accountHttp.post<PaymentInit>(`/api/book/${bookingId}/pay`),
+  /** Confirms a payment straight away, rather than waiting for Paystack's webhook */
+  verifyPayment: (bookingId: number, reference: string) =>
+    accountHttp.post<Booking>(`/api/book/${bookingId}/verify-payment`, { reference }),
+  /** The customer says the job is done, which pays the artisan */
+  confirmBooking: (bookingId: number) => accountHttp.post<Booking>(`/api/book/${bookingId}/confirm`),
 }
 
 export const myBookingsQuery = () =>
@@ -49,8 +53,8 @@ export const updateJobMutation = () =>
     mutationFn: accountDashboardService.updateJob,
   })
 
-export const startPaymentMutation = () =>
+export const confirmBookingMutation = () =>
   mutationOptions({
-    mutationKey: mutationKeys.account.startPayment,
-    mutationFn: accountDashboardService.startPayment,
+    mutationKey: mutationKeys.account.confirmBooking,
+    mutationFn: accountDashboardService.confirmBooking,
   })

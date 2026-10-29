@@ -18,7 +18,7 @@ import NoBookingsYet from "./no-bookings-yet"
 const TABS: { value: BookingGroup | "all", label: string }[] = [
   { value: "all", label: "All" },
   { value: "active", label: "Active" },
-  { value: "payment", label: "Awaiting payment" },
+  { value: "action", label: "Needs your action" },
   { value: "done", label: "Completed" },
   { value: "declined", label: "Declined" },
 ]
