@@ -4,6 +4,9 @@ import type { Booking, BookingStatus } from "@/types/account/dashboard"
 /** Share of the agreed price paid up front (`BookArtisan.DEPOSIT_PERCENTAGE` on the API) */
 export const DEPOSIT_RATE = 0.7
 
+/** Handwork Expert's cut of each job; the artisan earns the rest (10% in the API's payment code) */
+export const PLATFORM_FEE_RATE = 0.1
+
 /** The happy path every booking moves along */
 export const BOOKING_STEPS = ["Requested", "Accepted", "Deposit paid", "In progress", "Completed", "Paid"] as const
 
@@ -85,3 +88,39 @@ export const summarizeBookings = (bookings: Booking[]) => ({
 
 export const filterByGroup = (bookings: Booking[], group: BookingGroup | "all") =>
   group === "all" ? bookings : bookings.filter(({ status }) => bookingMeta(status).group === group)
+
+// The same bookings, as the artisan sees them ("jobs")
+
+export type JobGroup = "new" | "active" | "done" | "declined"
+
+/** What the artisan can do next */
+export type JobAction = "respond" | "start" | "complete"
+
+interface JobMeta {
+  /** Artisan-facing label */
+  label: string
+  tone: SemanticTone
+  group: JobGroup
+  action?: JobAction
+  hint: string
+}
+
+const JOB_META: Record<BookingStatus, JobMeta> = {
+  Pending: { label: "New request", tone: "brand", group: "new", action: "respond", hint: "Accept with your price, or decline." },
+  Accepted: { label: "Awaiting deposit", tone: "warning", group: "active", hint: "Waiting for the customer to pay the deposit." },
+  "Deposit Paid": { label: "Ready to start", tone: "info", group: "active", action: "start", hint: "Deposit paid. Start the job on the day." },
+  "In Progress": { label: "In progress", tone: "info", group: "active", action: "complete", hint: "Mark it done when you've finished." },
+  Completed: { label: "Awaiting payment", tone: "warning", group: "active", hint: "Waiting for the customer to pay the rest." },
+  "Paid in Full": { label: "Paid", tone: "success", group: "done", hint: "Fully paid. Your earnings were added to your balance." },
+  Declined: { label: "Declined", tone: "danger", group: "declined", hint: "You declined this request." },
+}
+
+const FALLBACK_JOB_META: JobMeta = { label: "Unknown", tone: "neutral", group: "active", hint: "" }
+
+export const jobMeta = (status: BookingStatus): JobMeta => JOB_META[status] ?? FALLBACK_JOB_META
+
+/** What the artisan is paid for a job once it's fully paid */
+export const artisanEarnings = (price: number) => Math.round(price * (1 - PLATFORM_FEE_RATE))
+
+export const filterJobs = (bookings: Booking[], group: JobGroup | "all") =>
+  group === "all" ? bookings : bookings.filter(({ status }) => jobMeta(status).group === group)

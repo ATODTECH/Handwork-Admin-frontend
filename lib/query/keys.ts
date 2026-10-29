@@ -36,6 +36,7 @@ export const mutationKeys = {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,
     startPayment: ["account", "bookings", "start-payment"] as const,
     bookArtisan: ["account", "bookings", "book-artisan"] as const,
+    updateJob: ["account", "bookings", "update-job"] as const,
     saveIdentity: ["account", "onboarding", "identity"] as const,
     saveLocation: ["account", "onboarding", "location"] as const,
     saveSkill: ["account", "onboarding", "skill"] as const,

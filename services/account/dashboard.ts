@@ -3,7 +3,7 @@ import { accountHttp } from "@/lib/http/client"
 import { isApiError } from "@/lib/http/errors"
 import type { PaymentKind } from "@/lib/bookings"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
-import type { AccountNotification, Booking, PaymentInit } from "@/types/account/dashboard"
+import type { AccountNotification, Booking, JobUpdate, PaymentInit } from "@/types/account/dashboard"
 
 // Router routes have no trailing slash; the hand-written payment paths do (see `setup/urls.py` on the API)
 export const accountDashboardService = {
@@ -15,6 +15,12 @@ export const accountDashboardService = {
     }),
   notifications: (signal?: AbortSignal) => accountHttp.get<AccountNotification[]>("/api/notifications", { signal }),
   markNotificationRead: (id: number) => accountHttp.patch(`/api/notifications/${id}/mark-read`),
+  /** Artisan only: accept (with the agreed price), decline, start or complete a job */
+  updateJob: ({ id, status, agreedAmount }: JobUpdate) =>
+    accountHttp.patch<Booking>(`/api/book/artisan/${id}`, {
+      status,
+      ...(agreedAmount !== undefined && { agreed_amount: String(agreedAmount) }),
+    }),
   startPayment: ({ bookingId, kind }: { bookingId: number, kind: PaymentKind }) =>
     accountHttp.post<PaymentInit>(`/api/book/${bookingId}/pay-${kind}/`),
 }
@@ -35,6 +41,12 @@ export const markNotificationReadMutation = () =>
   mutationOptions({
     mutationKey: mutationKeys.account.markNotificationRead,
     mutationFn: accountDashboardService.markNotificationRead,
+  })
+
+export const updateJobMutation = () =>
+  mutationOptions({
+    mutationKey: mutationKeys.account.updateJob,
+    mutationFn: accountDashboardService.updateJob,
   })
 
 export const startPaymentMutation = () =>

@@ -30,6 +30,14 @@ export interface Booking {
   updated_at: string
 }
 
+/** The changes an artisan can make to a booking (`PATCH /api/book/artisan/{id}`) */
+export interface JobUpdate {
+  id: number
+  status: Extract<BookingStatus, "Accepted" | "Declined" | "In Progress" | "Completed">
+  /** Naira; required when accepting */
+  agreedAmount?: number
+}
+
 /** From `POST /api/book/{id}/pay-deposit/` and `/pay-balance/` */
 export interface PaymentInit {
   authorization_url: string

@@ -6,8 +6,9 @@ import {
   myBookingsQuery,
   notificationsQuery,
   startPaymentMutation,
+  updateJobMutation,
 } from "@/services/account/dashboard"
-import type { AccountNotification } from "@/types/account/dashboard"
+import type { AccountNotification, JobUpdate } from "@/types/account/dashboard"
 
 export const useMyBookings = () => useQuery(myBookingsQuery())
 
@@ -30,6 +31,26 @@ export const useMarkNotificationRead = () => {
       )
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: queryKeys.account.notifications() }),
+  })
+}
+
+const JOB_UPDATED: Record<JobUpdate["status"], string> = {
+  Accepted: "Accepted. We'll let you know when the deposit is paid.",
+  Declined: "Request declined",
+  "In Progress": "Job started",
+  Completed: "Marked as done. The customer will pay the rest.",
+}
+
+/** An artisan accepting, declining, starting or completing a job */
+export const useUpdateJob = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...updateJobMutation(),
+    onSuccess: async (_, { status }) => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.account.bookings() })
+      toast.success(JOB_UPDATED[status])
+    },
   })
 }
 
