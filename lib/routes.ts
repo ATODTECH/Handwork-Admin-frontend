@@ -56,7 +56,7 @@ export const PAGE_HEADINGS: Record<string, { title: string, description?: string
   [ROUTES.users]: { title: "User Management" },
   [ROUTES.artisans]: { title: "Artisans", description: "Review new artisans before customers can find and book them." },
   [ROUTES.services]: { title: "Services", description: "Services And Category Management" },
-  [ROUTES.bookings]: { title: "Bookings" },
+  [ROUTES.bookings]: { title: "Bookings", description: "Follow every booking, and settle problems customers report by paying the artisan or refunding the customer." },
   [ROUTES.payouts]: { title: "Payouts", description: "Approve artisans' withdrawals. Approving sends the money to their bank through Paystack." },
   [ROUTES.reports]: { title: "Reports", description: "Review marketplace performance and download detailed reports." },
   [ROUTES.support]: { title: "Support" },

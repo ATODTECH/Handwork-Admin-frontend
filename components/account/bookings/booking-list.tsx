@@ -1,12 +1,17 @@
-import { CalendarDays, MapPin, UserRound } from "lucide-react"
+"use client"
+
+import { useState } from "react"
+import { CalendarDays, ChevronRight, MapPin, UserRound } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item"
-import { bookingPrice, bookingTitle } from "@/lib/bookings"
+import { bookingPrice, bookingTitle, priceAboveBudget } from "@/lib/bookings"
 import { formatNairaAmount, formatSchedule, initials } from "@/lib/format"
 import type { Booking } from "@/types/account/dashboard"
 import BookingStatusBadge, { type BookingViewer } from "./booking-status-badge"
 import JobActions from "./job-actions"
 import BookingActions from "./booking-actions"
+import BookingDetailsSheet from "./booking-details-sheet"
 
 interface BookingViewProps {
   booking: Booking
@@ -37,7 +42,7 @@ export const BookingFacts = ({ booking, viewer = "customer" }: BookingViewProps)
   </span>
 )
 
-const BookingRow = ({ booking, viewer = "customer" }: BookingViewProps) => (
+const BookingRow = ({ booking, viewer = "customer", onOpen }: BookingViewProps & { onOpen: () => void }) => (
   <Item variant="outline" className="rounded-xl bg-white hover:border-hw-grey-300">
     <ItemMedia>
       <Avatar className="size-11 rounded-xl after:rounded-xl">
@@ -51,23 +56,44 @@ const BookingRow = ({ booking, viewer = "customer" }: BookingViewProps) => (
       <ItemDescription>
         <BookingFacts booking={booking} viewer={viewer} />
       </ItemDescription>
+      {booking.description && <p className="line-clamp-1 text-xs text-hw-grey-700">{booking.description}</p>}
     </ItemContent>
     <ItemActions className="w-full flex-wrap justify-between gap-3 sm:w-auto sm:flex-col sm:items-end sm:justify-center">
       <div className="flex items-center gap-3">
-        <span className="text-sm font-semibold text-hw-grey-900 tabular-nums">{formatNairaAmount(bookingPrice(booking))}</span>
+        <span className="flex flex-col items-end">
+          <span className="text-sm font-semibold text-hw-grey-900 tabular-nums">{formatNairaAmount(bookingPrice(booking))}</span>
+          {priceAboveBudget(booking) > 0 && (
+            <span className="text-[11px] text-hw-grey-500 tabular-nums">Budget {formatNairaAmount(booking.budget)}</span>
+          )}
+        </span>
         <BookingStatusBadge status={booking.status} viewer={viewer} />
       </div>
-      {viewer === "artisan" ? <JobActions booking={booking} /> : <BookingActions booking={booking} />}
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <Button size="sm" variant="ghost" onClick={onOpen}>
+          Details
+          <ChevronRight data-icon="inline-end" />
+        </Button>
+        {viewer === "artisan" ? <JobActions booking={booking} /> : <BookingActions booking={booking} />}
+      </div>
     </ItemActions>
   </Item>
 )
 
-const BookingList = ({ bookings, viewer }: { bookings: Booking[], viewer?: BookingViewer }) => (
-  <ItemGroup className="gap-3">
-    {bookings.map((booking) => (
-      <BookingRow key={booking.id} booking={booking} viewer={viewer} />
-    ))}
-  </ItemGroup>
-)
+const BookingList = ({ bookings, viewer = "customer" }: { bookings: Booking[], viewer?: BookingViewer }) => {
+  const [openId, setOpenId] = useState<number | null>(null)
+  // Looked up by id, so the sheet shows the booking as it changes (e.g. after paying or accepting)
+  const open = bookings.find(({ id }) => id === openId) ?? null
+
+  return (
+    <>
+      <ItemGroup className="gap-3">
+        {bookings.map((booking) => (
+          <BookingRow key={booking.id} booking={booking} viewer={viewer} onOpen={() => setOpenId(booking.id)} />
+        ))}
+      </ItemGroup>
+      <BookingDetailsSheet booking={open} viewer={viewer} onOpenChange={(next) => !next && setOpenId(null)} />
+    </>
+  )
+}
 
 export default BookingList

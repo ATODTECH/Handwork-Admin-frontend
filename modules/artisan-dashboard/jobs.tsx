@@ -15,8 +15,8 @@ import { filterJobs, sortByRecent, type JobGroup } from "@/lib/bookings"
 const TABS: { value: JobGroup, label: string, empty: string }[] = [
   { value: "new", label: "New requests", empty: "No new requests. We'll notify you when a customer books you." },
   { value: "active", label: "Active", empty: "No jobs in progress." },
-  { value: "done", label: "Paid", empty: "Jobs appear here once the customer has paid in full." },
-  { value: "declined", label: "Declined", empty: "You haven't declined any requests." },
+  { value: "done", label: "Paid", empty: "Jobs appear here once the customer confirms and we pay you." },
+  { value: "closed", label: "Closed", empty: "Declined, cancelled and refunded jobs appear here." },
 ]
 
 /** Every booking customers have made with this artisan, grouped by what needs doing */

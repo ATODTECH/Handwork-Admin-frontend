@@ -4,10 +4,12 @@ import { isPaystackCheckout, openPaystackPopup } from "@/lib/paystack"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
 import {
   accountDashboardService,
+  cancelBookingMutation,
   confirmBookingMutation,
   markNotificationReadMutation,
   myBookingsQuery,
   notificationsQuery,
+  reportProblemMutation,
   updateJobMutation,
 } from "@/services/account/dashboard"
 import type { AccountNotification, JobUpdate } from "@/types/account/dashboard"
@@ -37,7 +39,7 @@ export const useMarkNotificationRead = () => {
 }
 
 const JOB_UPDATED: Record<JobUpdate["status"], string> = {
-  Accepted: "Accepted. We'll let you know when the deposit is paid.",
+  Accepted: "Accepted. We'll let you know when the customer pays.",
   Declined: "Request declined",
   "In Progress": "Job started",
   Completed: "Marked as done. We'll pay you once the customer confirms.",
@@ -97,6 +99,32 @@ export const useConfirmBooking = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.account.all })
       toast.success("Thanks for confirming. We've paid your artisan.")
+    },
+  })
+}
+
+/** The customer cancels a booking they haven't paid for (or turns down the artisan's price) */
+export const useCancelBooking = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...cancelBookingMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.account.all })
+      toast.success("Booking cancelled. We've let the artisan know.")
+    },
+  })
+}
+
+/** The customer reports a problem with a paid job; we hold the payment until our team settles it */
+export const useReportProblem = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...reportProblemMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.account.all })
+      toast.success("Problem reported. We're holding your payment and will contact you shortly.")
     },
   })
 }

@@ -1,11 +1,15 @@
 /**
- * Booking lifecycle, as stored by the API (`BookArtisan.status`). "Deposit Paid" and "Paid in Full"
- * are bookings from the old 70% deposit + 30% balance flow.
+ * Booking lifecycle, as stored by the API (`BookArtisan.status`). The customer can cancel before paying
+ * (Cancelled) and report a problem once paid (Disputed); staff settle it as Released or Refunded.
+ * "Deposit Paid" and "Paid in Full" are bookings from the old 70% deposit + 30% balance flow.
  */
 export type BookingStatus =
   | "Pending"
   | "Accepted"
   | "Declined"
+  | "Cancelled"
+  | "Disputed"
+  | "Refunded"
   | "Paid"
   | "Deposit Paid"
   | "In Progress"
@@ -33,6 +37,18 @@ export interface Booking {
   status: BookingStatus
   /** When the artisan marked it done; we pay them automatically a while after */
   completed_at: string | null
+  fully_paid_at: string | null
+  released_at: string | null
+  cancelled_at: string | null
+  cancellation_reason: string
+  /** When the customer reported a problem, which holds the payment for staff */
+  disputed_at: string | null
+  dispute_reason: string
+  resolved_at: string | null
+  /** Staff's note when they settled the problem */
+  resolution_note: string
+  /** The other side's phone number, shared once the job is paid for */
+  contact: string | null
   created_at: string
   updated_at: string
 }
