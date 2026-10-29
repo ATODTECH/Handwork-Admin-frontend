@@ -8,6 +8,7 @@ export const queryKeys = {
     artisansRoot: () => [...queryKeys.admin.all, "artisans"] as const,
     artisans: (status: string) => [...queryKeys.admin.artisansRoot(), status] as const,
     artisanCounts: () => [...queryKeys.admin.artisansRoot(), "counts"] as const,
+    overview: () => [...queryKeys.admin.all, "overview"] as const,
     withdrawalsRoot: () => [...queryKeys.admin.all, "withdrawals"] as const,
     withdrawals: (status: string) => [...queryKeys.admin.withdrawalsRoot(), status] as const,
     withdrawalCounts: () => [...queryKeys.admin.withdrawalsRoot(), "counts"] as const,

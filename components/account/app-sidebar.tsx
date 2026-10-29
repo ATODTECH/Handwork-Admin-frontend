@@ -24,9 +24,17 @@ import {
 import { useSignOut } from "@/hooks/site/use-auth"
 import { isNavItemActive, type DashboardNavGroup } from "./nav"
 
-const AppSidebar = ({ nav }: { nav: DashboardNavGroup[] }) => {
+interface AppSidebarProps {
+  nav: DashboardNavGroup[]
+  /** Defaults to signing out of the customer/artisan account */
+  onSignOut?: () => void
+  showSupport?: boolean
+}
+
+const AppSidebar = ({ nav, onSignOut, showSupport = true }: AppSidebarProps) => {
   const pathname = usePathname()
-  const signOut = useSignOut()
+  const signOutOfAccount = useSignOut()
+  const signOut = onSignOut ?? signOutOfAccount
   const { isMobile, setOpenMobile } = useSidebar()
   // On mobile the sidebar is a sheet: close it once a link is followed
   const closeOnMobile = () => isMobile && setOpenMobile(false)
@@ -76,7 +84,7 @@ const AppSidebar = ({ nav }: { nav: DashboardNavGroup[] }) => {
         </SidebarContent>
 
         <SidebarFooter className="gap-3 p-3">
-          <div className="relative overflow-hidden rounded-xl bg-white/6 p-4 ring-1 ring-white/10 group-data-[collapsible=icon]:hidden">
+          {showSupport && <div className="relative overflow-hidden rounded-xl bg-white/6 p-4 ring-1 ring-white/10 group-data-[collapsible=icon]:hidden">
             <div className="absolute -top-6 -right-6 size-20 rounded-full bg-hw-primary/25 blur-2xl" />
             <span className="mb-3 flex size-9 items-center justify-center rounded-lg bg-hw-primary text-white">
               <Headset className="size-4" />
@@ -92,7 +100,7 @@ const AppSidebar = ({ nav }: { nav: DashboardNavGroup[] }) => {
             >
               Contact support
             </Button>
-          </div>
+          </div>}
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton tooltip="Sign out" onClick={signOut} className="h-10">

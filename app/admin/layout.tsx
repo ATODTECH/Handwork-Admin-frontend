@@ -5,14 +5,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex flex-col h-screen overflow-hidden font-sans">
-      <div className="scrollbar-thin scrollbar-thumb-gray-200 h-screen bg-[#FFFFFF]">
-        {children}
-      </div>
-    </div>
-  )
-}
+const AdminLayout = ({ children }: { children: React.ReactNode }) => <div className="font-sans">{children}</div>
 
 export default AdminLayout

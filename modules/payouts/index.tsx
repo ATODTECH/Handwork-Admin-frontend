@@ -60,7 +60,7 @@ const PayoutsIndex = () => {
   }
 
   return (
-    <section className="flex flex-1 flex-col gap-5 overflow-y-auto py-7.5 pr-8 scrollbar-thin">
+    <section className="flex flex-col gap-6">
       <PageHeader
         title={heading?.title ?? "Payouts"}
         description={heading?.description ?? "Approve artisans' withdrawals."}
