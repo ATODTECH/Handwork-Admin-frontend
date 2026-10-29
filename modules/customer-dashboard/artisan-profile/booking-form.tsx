@@ -1,13 +1,11 @@
 "use client"
 
 import { useFormik } from "formik"
-import { ShieldCheck } from "lucide-react"
 import ComboboxField from "@/components/form/combobox-field"
 import FormField from "@/components/form/form-field"
 import { fieldState, textFieldProps, touch } from "@/components/form/formik-field-props"
 import TextareaField from "@/components/form/textarea-field"
 import { useBookArtisan } from "@/hooks/account/use-marketplace"
-import { DEPOSIT_RATE } from "@/lib/bookings"
 import { formLevelError, toFormErrors } from "@/lib/form-errors"
 import { toApiError } from "@/lib/http/errors"
 import { priceRange } from "@/lib/marketplace"
@@ -100,14 +98,6 @@ const BookingForm = ({ artisan }: { artisan: PublicArtisan }) => {
         placeholder="House number, street and area"
         autoComplete="street-address"
       />
-
-      <p className="flex gap-3 rounded-xl bg-secondary px-4 py-3 text-sm leading-relaxed text-hw-grey-700">
-        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-hw-secondary" />
-        <span>
-          You don&apos;t pay anything yet. Once the artisan accepts and agrees a price, you pay a {DEPOSIT_RATE * 100}%
-          deposit to confirm, and the rest when the job is done.
-        </span>
-      </p>
     </StepForm>
   )
 }

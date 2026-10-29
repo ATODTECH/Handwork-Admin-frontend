@@ -55,7 +55,7 @@ const CustomerOverview = () => {
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatCard label="Active bookings" value={stats.active} hint="Requests and jobs in progress" icon={CalendarClock} tone="info" loading={isPending} />
-        <StatCard label="Awaiting payment" value={stats.awaitingPayment} hint="Deposits or balances due" icon={WalletCards} tone="brand" loading={isPending} />
+        <StatCard label="Needs your action" value={stats.needsAction} hint="Payments or jobs to confirm" icon={WalletCards} tone="brand" loading={isPending} />
         <StatCard label="Completed jobs" value={stats.completed} hint="Paid in full" icon={CircleCheckBig} tone="success" loading={isPending} />
         <StatCard label="Total spent" value={formatNairaAmount(stats.totalSpent)} hint="Across all bookings" icon={Wallet} tone="warning" loading={isPending} />
       </div>

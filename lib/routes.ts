@@ -31,6 +31,7 @@ export const ACCOUNT_ROUTES = {
   customerBookings: "/dashboard/customer/bookings",
   customerArtisans: "/dashboard/customer/artisans",
   artisanHome: "/dashboard/artisan",
+  artisanJobs: "/dashboard/artisan/jobs",
   artisanOnboarding: "/dashboard/artisan/onboarding",
 } as const
 

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react"
 import BookingProgress from "@/components/account/bookings/booking-progress"
 import BookingStatusBadge from "@/components/account/bookings/booking-status-badge"
 import { BookingFacts } from "@/components/account/bookings/booking-list"
-import PayBookingButton from "@/components/account/bookings/pay-booking-button"
+import BookingActions from "@/components/account/bookings/booking-actions"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { bookingMeta, bookingPrice, bookingTitle } from "@/lib/bookings"
@@ -33,7 +33,7 @@ const NextBookingCard = ({ booking }: { booking: Booking }) => {
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-hw-grey-200/30 px-4 py-3">
         <p className="text-sm text-hw-grey-700">{hint}</p>
         <div className="flex items-center gap-2">
-          <PayBookingButton booking={booking} />
+          <BookingActions booking={booking} />
           <Button variant="ghost" size="sm" render={<Link href={ACCOUNT_ROUTES.customerBookings} />} nativeButton={false}>
             All bookings
             <ArrowRight data-icon="inline-end" />

@@ -1,9 +1,8 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import { accountHttp } from "@/lib/http/client"
 import { isApiError } from "@/lib/http/errors"
-import type { PaymentKind } from "@/lib/bookings"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
-import type { AccountNotification, Booking, PaymentInit } from "@/types/account/dashboard"
+import type { AccountNotification, Booking, JobUpdate, PaymentInit } from "@/types/account/dashboard"
 
 // Router routes have no trailing slash; the hand-written payment paths do (see `setup/urls.py` on the API)
 export const accountDashboardService = {
@@ -15,8 +14,19 @@ export const accountDashboardService = {
     }),
   notifications: (signal?: AbortSignal) => accountHttp.get<AccountNotification[]>("/api/notifications", { signal }),
   markNotificationRead: (id: number) => accountHttp.patch(`/api/notifications/${id}/mark-read`),
-  startPayment: ({ bookingId, kind }: { bookingId: number, kind: PaymentKind }) =>
-    accountHttp.post<PaymentInit>(`/api/book/${bookingId}/pay-${kind}/`),
+  /** Artisan only: accept (with the agreed price), decline, start or complete a job */
+  updateJob: ({ id, status, agreedAmount }: JobUpdate) =>
+    accountHttp.patch<Booking>(`/api/book/artisan/${id}`, {
+      status,
+      ...(agreedAmount !== undefined && { agreed_amount: String(agreedAmount) }),
+    }),
+  /** Starts a Paystack transaction for the full agreed price */
+  startPayment: (bookingId: number) => accountHttp.post<PaymentInit>(`/api/book/${bookingId}/pay`),
+  /** Confirms a payment straight away, rather than waiting for Paystack's webhook */
+  verifyPayment: (bookingId: number, reference: string) =>
+    accountHttp.post<Booking>(`/api/book/${bookingId}/verify-payment`, { reference }),
+  /** The customer says the job is done, which pays the artisan */
+  confirmBooking: (bookingId: number) => accountHttp.post<Booking>(`/api/book/${bookingId}/confirm`),
 }
 
 export const myBookingsQuery = () =>
@@ -37,8 +47,14 @@ export const markNotificationReadMutation = () =>
     mutationFn: accountDashboardService.markNotificationRead,
   })
 
-export const startPaymentMutation = () =>
+export const updateJobMutation = () =>
   mutationOptions({
-    mutationKey: mutationKeys.account.startPayment,
-    mutationFn: accountDashboardService.startPayment,
+    mutationKey: mutationKeys.account.updateJob,
+    mutationFn: accountDashboardService.updateJob,
+  })
+
+export const confirmBookingMutation = () =>
+  mutationOptions({
+    mutationKey: mutationKeys.account.confirmBooking,
+    mutationFn: accountDashboardService.confirmBooking,
   })
