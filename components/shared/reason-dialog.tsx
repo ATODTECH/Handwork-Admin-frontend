@@ -18,16 +18,22 @@ interface ReasonDialogProps {
   quickReasons: string[]
   placeholder: string
   submitLabel: string
+  /** Label of the button that closes without deciding */
+  cancelLabel?: string
+  /** Shortest reason accepted; 0 makes it optional */
+  minLength?: number
   pending: boolean
   /** Called with the trimmed reason; call `done` once it succeeded so the dialog closes */
   onSubmit: (reason: string, done: () => void) => void
 }
 
 /** A decision that needs a written reason for the person it affects (reject, request changes, ...) */
-const ReasonDialog = ({ open, onOpenChange, title, description, quickReasons, placeholder, submitLabel, pending, onSubmit }: ReasonDialogProps) => {
+const ReasonDialog = ({
+  open, onOpenChange, title, description, quickReasons, placeholder, submitLabel, cancelLabel = "Cancel", minLength = MIN_REASON, pending, onSubmit,
+}: ReasonDialogProps) => {
   const [reason, setReason] = useState("")
   const [touched, setTouched] = useState(false)
-  const error = reason.trim().length < MIN_REASON ? `Give a reason (at least ${MIN_REASON} characters).` : undefined
+  const error = reason.trim().length < minLength ? `Give a reason (at least ${minLength} characters).` : undefined
 
   const close = (next: boolean) => {
     if (next) return
@@ -62,7 +68,7 @@ const ReasonDialog = ({ open, onOpenChange, title, description, quickReasons, pl
 
           <TextareaField
             name="decision-reason"
-            label="Reason"
+            label={minLength ? "Reason" : "Reason (optional)"}
             value={reason}
             onChange={(event) => setReason(event.target.value)}
             onBlur={() => setTouched(true)}
@@ -75,7 +81,7 @@ const ReasonDialog = ({ open, onOpenChange, title, description, quickReasons, pl
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => close(false)} disabled={pending}>
-              Cancel
+              {cancelLabel}
             </Button>
             <SubmitButton pending={pending} pendingText="Sending…" size="default" variant="destructive">
               {submitLabel}

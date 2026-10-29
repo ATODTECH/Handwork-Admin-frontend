@@ -15,7 +15,8 @@ export interface AdminOverview {
   held: { amount: string, bookings: number }
   customers: { total: number, new_this_month: number }
   artisans: { approved: number, awaiting_review: number, onboarding: number }
-  bookings: MonthOnMonth<number> & { active: number }
+  /** `disputed`: problems customers reported, waiting for staff (missing before the API added it) */
+  bookings: MonthOnMonth<number> & { active: number, disputed?: number }
   withdrawals: { pending: number, pending_amount: string }
   artisans_awaiting_review: {
     id: string

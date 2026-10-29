@@ -10,10 +10,16 @@ export const RELEASE_AFTER_HOURS = 48
 /** The happy path every booking moves along */
 export const BOOKING_STEPS = ["Requested", "Accepted", "Paid", "In progress", "Done", "Confirmed"] as const
 
-export type BookingGroup = "active" | "action" | "done" | "declined"
+export type BookingGroup = "active" | "action" | "done" | "closed"
 
 /** What the customer has to do next */
 export type CustomerAction = "pay" | "confirm"
+
+/** Statuses a customer can still cancel from (`CANCELLABLE_STATUSES` in the API): before paying */
+export const CANCELLABLE: BookingStatus[] = ["Pending", "Accepted"]
+
+/** Statuses a customer can report a problem from (`DISPUTABLE_STATUSES`): paid, until the artisan is paid */
+export const REPORTABLE: BookingStatus[] = ["Paid", "In Progress", "Completed"]
 
 interface StatusMeta {
   /** Customer-facing label */
@@ -37,7 +43,16 @@ const STATUS_META: Record<BookingStatus, StatusMeta> = {
   Completed: { label: "Confirm job", tone: "brand", step: 4, group: "action", action: "confirm", hint: "The artisan says the job is done. Confirm it so we can pay them." },
   Released: { label: "Completed", tone: "success", step: 5, group: "done", hint: "All done. Thanks for using Handwork Expert!" },
   "Paid in Full": { label: "Completed", tone: "success", step: 5, group: "done", hint: "All done. Thanks for using Handwork Expert!" },
-  Declined: { label: "Declined", tone: "danger", step: -1, group: "declined", hint: "The artisan couldn't take this job. Try another artisan." },
+  Declined: { label: "Declined", tone: "danger", step: -1, group: "closed", hint: "The artisan couldn't take this job. Try another artisan." },
+  Cancelled: { label: "Cancelled", tone: "neutral", step: -1, group: "closed", hint: "You cancelled this booking." },
+  Disputed: {
+    label: "Problem reported",
+    tone: "warning",
+    step: -1,
+    group: "active",
+    hint: "We're holding your payment while our team looks into the problem. We'll contact you.",
+  },
+  Refunded: { label: "Refunded", tone: "neutral", step: -1, group: "closed", hint: "We refunded your payment. It can take a few days to reach your account." },
 }
 
 const FALLBACK_META: StatusMeta = { label: "Unknown", tone: "neutral", step: -1, group: "active", hint: "" }
@@ -47,8 +62,13 @@ export const bookingMeta = (status: BookingStatus): StatusMeta => STATUS_META[st
 /** Agreed price once the artisan accepts, otherwise the customer's budget */
 export const bookingPrice = (booking: Booking) => Number(booking.agreed_amount ?? booking.budget) || 0
 
-/** What the customer has paid on this booking (everything, once paid) */
-export const bookingAmountPaid = (booking: Booking) => (bookingMeta(booking.status).step >= 2 ? bookingPrice(booking) : 0)
+/** What the customer has paid on this booking (everything, once paid; nothing once refunded) */
+export const bookingAmountPaid = (booking: Booking) =>
+  bookingMeta(booking.status).step >= 2 || booking.status === "Disputed" ? bookingPrice(booking) : 0
+
+/** How far the artisan's price is above the customer's budget (0 when it isn't, or there's no price yet) */
+export const priceAboveBudget = (booking: Booking) =>
+  booking.agreed_amount ? Math.max(0, Number(booking.agreed_amount) - Number(booking.budget)) : 0
 
 /** When we pay the artisan if the customer neither confirms nor reports a problem */
 export const autoReleaseAt = (booking: Booking) =>
@@ -84,9 +104,27 @@ export const summarizeBookings = (bookings: Booking[]) => ({
 export const filterByGroup = (bookings: Booking[], group: BookingGroup | "all") =>
   group === "all" ? bookings : bookings.filter(({ status }) => bookingMeta(status).group === group)
 
+/** The same statuses in staff's words, for the admin console */
+const STAFF_LABELS: Record<BookingStatus, string> = {
+  Pending: "Requested",
+  Accepted: "Awaiting payment",
+  Declined: "Declined",
+  Cancelled: "Cancelled",
+  Paid: "Paid, held",
+  "Deposit Paid": "Deposit paid",
+  "In Progress": "In progress",
+  Completed: "Awaiting confirmation",
+  Disputed: "Problem reported",
+  Released: "Artisan paid",
+  "Paid in Full": "Artisan paid",
+  Refunded: "Refunded",
+}
+
+export const staffStatusLabel = (status: BookingStatus) => STAFF_LABELS[status] ?? status
+
 // The same bookings, as the artisan sees them ("jobs")
 
-export type JobGroup = "new" | "active" | "done" | "declined"
+export type JobGroup = "new" | "active" | "done" | "closed"
 
 /** What the artisan can do next */
 export type JobAction = "respond" | "start" | "complete"
@@ -114,7 +152,15 @@ const JOB_META: Record<BookingStatus, JobMeta> = {
   },
   Released: { label: "Paid", tone: "success", group: "done", hint: "Your earnings were added to your balance." },
   "Paid in Full": { label: "Paid", tone: "success", group: "done", hint: "Your earnings were added to your balance." },
-  Declined: { label: "Declined", tone: "danger", group: "declined", hint: "You declined this request." },
+  Declined: { label: "Declined", tone: "danger", group: "closed", hint: "You declined this request." },
+  Cancelled: { label: "Cancelled", tone: "neutral", group: "closed", hint: "The customer cancelled this booking." },
+  Disputed: {
+    label: "Problem reported",
+    tone: "warning",
+    group: "active",
+    hint: "The customer reported a problem. We're holding the payment while our team looks into it, and will contact you.",
+  },
+  Refunded: { label: "Refunded", tone: "neutral", group: "closed", hint: "We refunded the customer after the problem they reported." },
 }
 
 const FALLBACK_JOB_META: JobMeta = { label: "Unknown", tone: "neutral", group: "active", hint: "" }

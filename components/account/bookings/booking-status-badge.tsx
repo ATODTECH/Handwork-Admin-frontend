@@ -1,6 +1,6 @@
 import { cn } from "cn"
 import { Badge } from "@/components/ui/badge"
-import { bookingMeta, jobMeta } from "@/lib/bookings"
+import { bookingMeta, jobMeta, staffStatusLabel } from "@/lib/bookings"
 import { SEMANTIC_TONES } from "@/lib/tones"
 import type { BookingStatus } from "@/types/account/dashboard"
 
@@ -8,13 +8,14 @@ export type BookingViewer = "customer" | "artisan"
 
 interface BookingStatusBadgeProps {
   status: BookingStatus
-  /** Customers and artisans see different labels for the same status */
-  viewer?: BookingViewer
+  /** Customers, artisans and staff see different labels for the same status */
+  viewer?: BookingViewer | "staff"
   className?: string
 }
 
 const BookingStatusBadge = ({ status, viewer = "customer", className }: BookingStatusBadgeProps) => {
-  const { label, tone } = viewer === "artisan" ? jobMeta(status) : bookingMeta(status)
+  const { label, tone } =
+    viewer === "artisan" ? jobMeta(status) : viewer === "staff" ? { ...bookingMeta(status), label: staffStatusLabel(status) } : bookingMeta(status)
   const { chip, dot } = SEMANTIC_TONES[tone]
 
   return (

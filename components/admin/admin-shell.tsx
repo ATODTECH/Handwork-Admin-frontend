@@ -41,7 +41,7 @@ const ADMIN_NAV: DashboardNavGroup[] = [
       { title: "Artisans", href: ROUTES.artisans, icon: UserRoundCheck },
       { title: "Payouts", href: ROUTES.payouts, icon: Wallet },
       { title: "User management", href: ROUTES.users, icon: Users },
-      { title: "Bookings", href: ROUTES.bookings, icon: BookOpenCheck, soon: true },
+      { title: "Bookings", href: ROUTES.bookings, icon: BookOpenCheck },
       { title: "Services", href: ROUTES.services, icon: Wrench, soon: true },
     ],
   },

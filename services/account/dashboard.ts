@@ -27,6 +27,11 @@ export const accountDashboardService = {
     accountHttp.post<Booking>(`/api/book/${bookingId}/verify-payment`, { reference }),
   /** The customer says the job is done, which pays the artisan */
   confirmBooking: (bookingId: number) => accountHttp.post<Booking>(`/api/book/${bookingId}/confirm`),
+  /** The customer cancels before paying, which also turns down the artisan's price */
+  cancelBooking: ({ id, reason }: { id: number, reason?: string }) =>
+    accountHttp.post<Booking>(`/api/book/${id}/cancel`, { reason: reason ?? "" }),
+  /** The customer reports a problem once paid; we hold the payment until staff settle it */
+  reportProblem: ({ id, reason }: { id: number, reason: string }) => accountHttp.post<Booking>(`/api/book/${id}/report`, { reason }),
 }
 
 export const myBookingsQuery = () =>
@@ -51,6 +56,18 @@ export const updateJobMutation = () =>
   mutationOptions({
     mutationKey: mutationKeys.account.updateJob,
     mutationFn: accountDashboardService.updateJob,
+  })
+
+export const cancelBookingMutation = () =>
+  mutationOptions({
+    mutationKey: mutationKeys.account.cancelBooking,
+    mutationFn: accountDashboardService.cancelBooking,
+  })
+
+export const reportProblemMutation = () =>
+  mutationOptions({
+    mutationKey: mutationKeys.account.reportProblem,
+    mutationFn: accountDashboardService.reportProblem,
   })
 
 export const confirmBookingMutation = () =>

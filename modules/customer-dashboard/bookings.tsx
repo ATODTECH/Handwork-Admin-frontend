@@ -20,7 +20,7 @@ const TABS: { value: BookingGroup | "all", label: string }[] = [
   { value: "active", label: "Active" },
   { value: "action", label: "Needs your action" },
   { value: "done", label: "Completed" },
-  { value: "declined", label: "Declined" },
+  { value: "closed", label: "Closed" },
 ]
 
 const CustomerBookings = () => {
@@ -34,7 +34,7 @@ const CustomerBookings = () => {
     <>
       <PageHeader
         title="My bookings"
-        description="Track every request, pay deposits and balances, and see what's next."
+        description="Track every request, pay or turn down prices, confirm finished jobs, and report problems."
         actions={
           <Button render={<Link href={ACCOUNT_ROUTES.customerArtisans} />} nativeButton={false}>
             <Plus data-icon="inline-start" />

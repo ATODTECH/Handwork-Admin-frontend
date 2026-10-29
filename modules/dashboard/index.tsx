@@ -100,7 +100,11 @@ const Stats = ({ data, loading }: { data?: AdminOverview, loading: boolean }) =>
     <StatCard
       label="Bookings this month"
       value={data && formatCount(data.bookings.this_month)}
-      hint={data && `${monthOnMonth(data.bookings.this_month, data.bookings.last_month)} · ${formatCount(data.bookings.active)} active`}
+      hint={
+        data &&
+        `${monthOnMonth(data.bookings.this_month, data.bookings.last_month)} · ${formatCount(data.bookings.active)} active` +
+          (data.bookings.disputed ? ` · ${formatCount(data.bookings.disputed)} problems reported` : "")
+      }
       icon={BookOpenCheck}
       tone="neutral"
       loading={loading}
@@ -192,7 +196,7 @@ const DashboardOverview = () => {
               aside={
                 <>
                   <span className="text-sm font-semibold text-hw-grey-900 tabular-nums">{formatNairaAmount(booking.amount)}</span>
-                  <BookingStatusBadge status={booking.status} />
+                  <BookingStatusBadge status={booking.status} viewer="staff" />
                 </>
               }
             />

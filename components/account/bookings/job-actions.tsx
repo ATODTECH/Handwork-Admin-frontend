@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Check, CircleCheckBig, Play, X } from "lucide-react"
+import { Check, CircleCheckBig, Play, TriangleAlert, X } from "lucide-react"
 import FormField from "@/components/form/form-field"
 import SubmitButton from "@/components/form/submit-button"
 import { Button } from "@/components/ui/button"
@@ -13,12 +13,23 @@ import type { Booking } from "@/types/account/dashboard"
 
 const MIN_PRICE = 500
 
+/** What the customer asked for, in their own words */
+export const JobRequest = ({ booking }: { booking: Booking }) => (
+  <div className="flex flex-col gap-1.5 rounded-xl bg-secondary px-4 py-3">
+    <span className="text-xs font-semibold tracking-wide text-hw-grey-500 uppercase">What they need</span>
+    <p className="max-h-48 overflow-y-auto text-sm leading-relaxed whitespace-pre-line text-hw-grey-900">
+      {booking.description || "No details given."}
+    </p>
+  </div>
+)
+
 /** Accept with a final price. The customer then pays Handwork Expert, and we pay the artisan once they confirm the job is done */
 const AcceptDialog = ({ booking, open, onOpenChange }: { booking: Booking, open: boolean, onOpenChange: (open: boolean) => void }) => {
   const [price, setPrice] = useState(String(Math.round(Number(booking.budget)) || ""))
   const [touched, setTouched] = useState(false)
   const { mutate, isPending } = useUpdateJob()
   const amount = Number(price)
+  const aboveBudget = amount - Number(booking.budget)
   const error = !price ? "Enter your price for this job" : amount < MIN_PRICE ? `Your price must be at least ${formatNairaAmount(MIN_PRICE)}` : undefined
 
   const submit = (event: React.FormEvent) => {
@@ -39,6 +50,8 @@ const AcceptDialog = ({ booking, open, onOpenChange }: { booking: Booking, open:
             </DialogDescription>
           </DialogHeader>
 
+          <JobRequest booking={booking} />
+
           <FormField
             name={`price-${booking.id}`}
             label="Your price"
@@ -56,6 +69,14 @@ const AcceptDialog = ({ booking, open, onOpenChange }: { booking: Booking, open:
               `You'll receive ${formatNairaAmount(artisanEarnings(amount))} after our ${PLATFORM_FEE_RATE * 100}% fee, once the job is done and confirmed.`
             }
           />
+
+          {!error && aboveBudget > 0 && (
+            <p className="flex gap-2 rounded-lg bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-800">
+              <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
+              This is {formatNairaAmount(aboveBudget)} above their budget. They can turn it down, so explain the price if
+              you can when you speak.
+            </p>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
