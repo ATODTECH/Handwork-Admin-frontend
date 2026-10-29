@@ -67,15 +67,9 @@ export const artisanOnboardingService = {
     return accountHttp.post("/api/skill", body, { timeout: UPLOAD_TIMEOUT_MS })
   },
 
-  saveBankDetails: ({ bankName, accountNumber, accountName }: BankDetailsPayload) =>
-    accountHttp.post(
-      "/api/bank_details",
-      toFormData({
-        name: bankName,
-        account_number: accountNumber,
-        account_name: accountName,
-      }),
-    ),
+  /** The API checks the account with Paystack and fills in the holder's name */
+  saveBankDetails: ({ bankName, bankCode, accountNumber }: BankDetailsPayload) =>
+    accountHttp.post("/api/bank_details", toFormData({ name: bankName, bank_code: bankCode, account_number: accountNumber })),
 }
 
 export const artisanProfileQuery = (id: string) =>

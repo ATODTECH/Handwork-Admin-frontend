@@ -1,7 +1,7 @@
 "use client"
 
 import { ROUTES } from "@/lib/routes"
-import { BellPlus, Book, Headset, Home, ReportsIcon, ServicesIcon, Settings, Settings2, User2, Users2 } from "@/assets"
+import { BellPlus, Book, Headset, Home, ReportsIcon, ServicesIcon, Settings, Settings2, User2, Users2, Wallet } from "@/assets"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 
@@ -11,9 +11,11 @@ const SideBarHeader = () => {
     {name:"Dashboard", route:ROUTES.dashboard, icon:Home},
     {name:"User Management", route:ROUTES.users, icon:Users2},
     {name:"Artisans", route:ROUTES.artisans, icon:User2},
-    {name:"Services", route:ROUTES.services, icon:ServicesIcon},
+    // Our own icons take a colour; lucide's take a size
+    {name:"Services", route:ROUTES.services, icon:ServicesIcon, custom:true},
     {name:"Bookings", route:ROUTES.bookings, icon:Book},
-    {name:"Reports", route:ROUTES.reports, icon:ReportsIcon},
+    {name:"Payouts", route:ROUTES.payouts, icon:Wallet},
+    {name:"Reports", route:ROUTES.reports, icon:ReportsIcon, custom:true},
     {name:"Support", route:ROUTES.support, icon:Headset},
     {name:"Notifications", route:ROUTES.notifications, icon:BellPlus},
     {name:"Settings", route:ROUTES.settings, icon:Settings2},
@@ -28,7 +30,7 @@ const SideBarHeader = () => {
           href={route.route}
           className={`inline-flex gap-3 px-4 py-3 items-center text-[15px] 2xl:text-base font-normal ${pathname===route.route? " text-hw-secondary rounded-sm bg-[#EFF5FF]": "text-hw-text-neutral"}`}
         >
-          {(index===3 || index===5) ?
+          {route.custom ?
             <route.icon color={`${pathname===route.route? '#1E338A': '#7D847C'}`} 
             className="h-5 w-5" /> :
             <route.icon size={20} 

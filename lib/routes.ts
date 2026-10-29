@@ -13,6 +13,7 @@ export const ROUTES = {
   artisans: "/admin/dashboard/artisans",
   services: "/admin/dashboard/services",
   bookings: "/admin/dashboard/bookings",
+  payouts: "/admin/dashboard/payouts",
   reports: "/admin/dashboard/reports",
   support: "/admin/dashboard/support",
   notifications: "/admin/dashboard/notifications",
@@ -32,6 +33,7 @@ export const ACCOUNT_ROUTES = {
   customerArtisans: "/dashboard/customer/artisans",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
+  artisanEarnings: "/dashboard/artisan/earnings",
   artisanOnboarding: "/dashboard/artisan/onboarding",
 } as const
 
@@ -55,6 +57,7 @@ export const PAGE_HEADINGS: Record<string, { title: string, description?: string
   [ROUTES.artisans]: { title: "Artisans", description: "Review new artisans before customers can find and book them." },
   [ROUTES.services]: { title: "Services", description: "Services And Category Management" },
   [ROUTES.bookings]: { title: "Bookings" },
+  [ROUTES.payouts]: { title: "Payouts", description: "Approve artisans' withdrawals. Approving sends the money to their bank through Paystack." },
   [ROUTES.reports]: { title: "Reports", description: "Review marketplace performance and download detailed reports." },
   [ROUTES.support]: { title: "Support" },
   [ROUTES.notifications]: { title: "Notifications", description: "Stay on top of approvals, bookings, payments and support activity." },

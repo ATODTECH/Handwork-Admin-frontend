@@ -75,7 +75,10 @@ export interface SkillPayload {
 }
 
 export interface BankDetailsPayload {
+  /** The saved bank details being changed; absent when adding them */
+  id?: number
   bankName: string
+  /** Paystack's code for the bank */
+  bankCode: string
   accountNumber: string
-  accountName: string
 }

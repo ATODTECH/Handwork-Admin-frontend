@@ -8,6 +8,9 @@ export const queryKeys = {
     artisansRoot: () => [...queryKeys.admin.all, "artisans"] as const,
     artisans: (status: string) => [...queryKeys.admin.artisansRoot(), status] as const,
     artisanCounts: () => [...queryKeys.admin.artisansRoot(), "counts"] as const,
+    withdrawalsRoot: () => [...queryKeys.admin.all, "withdrawals"] as const,
+    withdrawals: (status: string) => [...queryKeys.admin.withdrawalsRoot(), status] as const,
+    withdrawalCounts: () => [...queryKeys.admin.withdrawalsRoot(), "counts"] as const,
   },
   site: {
     all: ["site"] as const,
@@ -23,6 +26,7 @@ export const queryKeys = {
     artisans: () => [...queryKeys.account.all, "artisans"] as const,
     artisan: (id: string) => [...queryKeys.account.artisans(), id] as const,
     categories: () => [...queryKeys.account.all, "categories"] as const,
+    wallet: () => [...queryKeys.account.all, "wallet"] as const,
   },
 } as const
 
@@ -31,6 +35,8 @@ export const mutationKeys = {
     signIn: ["admin", "sign-in"] as const,
     approveArtisan: ["admin", "artisans", "approve"] as const,
     rejectArtisan: ["admin", "artisans", "reject"] as const,
+    approveWithdrawal: ["admin", "withdrawals", "approve"] as const,
+    rejectWithdrawal: ["admin", "withdrawals", "reject"] as const,
   },
   account: {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,
@@ -38,6 +44,8 @@ export const mutationKeys = {
     confirmBooking: ["account", "bookings", "confirm"] as const,
     bookArtisan: ["account", "bookings", "book-artisan"] as const,
     updateJob: ["account", "bookings", "update-job"] as const,
+    requestWithdrawal: ["account", "wallet", "withdraw"] as const,
+    updateBankDetails: ["account", "wallet", "bank-details"] as const,
     saveIdentity: ["account", "onboarding", "identity"] as const,
     saveLocation: ["account", "onboarding", "location"] as const,
     saveSkill: ["account", "onboarding", "skill"] as const,

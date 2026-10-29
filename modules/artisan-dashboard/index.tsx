@@ -24,7 +24,7 @@ const ARTISAN_NAV: DashboardNavGroup[] = [
       { title: "Overview", href: ACCOUNT_ROUTES.artisanHome, icon: LayoutDashboard, exact: true },
       { title: "Job requests", href: ACCOUNT_ROUTES.artisanJobs, icon: BriefcaseBusiness },
       { title: "Schedule", href: "#", icon: CalendarDays, soon: true },
-      { title: "Earnings", href: "#", icon: Wallet, soon: true },
+      { title: "Earnings", href: ACCOUNT_ROUTES.artisanEarnings, icon: Wallet },
       { title: "Reviews", href: "#", icon: Star, soon: true },
     ],
   },
