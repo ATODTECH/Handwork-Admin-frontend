@@ -2,15 +2,17 @@
 
 import { useFormik } from "formik"
 import ComboboxField from "@/components/form/combobox-field"
+import DateField from "@/components/form/date-field"
 import FormField from "@/components/form/form-field"
 import { fieldState, textFieldProps, touch } from "@/components/form/formik-field-props"
 import TextareaField from "@/components/form/textarea-field"
+import TimeField from "@/components/form/time-field"
 import { useBookArtisan } from "@/hooks/account/use-marketplace"
 import { formLevelError, toFormErrors } from "@/lib/form-errors"
 import { toApiError } from "@/lib/http/errors"
 import { priceRange } from "@/lib/marketplace"
 import StepForm from "@/components/form/step-form"
-import { bookingSchema, todayIso, type BookingFormValues } from "@/schema/validation-booking"
+import { bookingSchema, type BookingFormValues } from "@/schema/validation-booking"
 import type { PublicArtisan } from "@/types/account/marketplace"
 
 const DESCRIPTION_MAX = 1000
@@ -88,8 +90,21 @@ const BookingForm = ({ artisan }: { artisan: PublicArtisan }) => {
       />
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <FormField {...textFieldProps(formik, "date")} label="Date" type="date" min={todayIso()} />
-        <FormField {...textFieldProps(formik, "time")} label="Time" type="time" />
+        <DateField
+          {...fieldState(formik, "date")}
+          label="Date"
+          disablePast
+          value={formik.values.date}
+          onValueChange={(date) => formik.setFieldValue("date", date)}
+          onTouch={touch(formik, "date")}
+        />
+        <TimeField
+          {...fieldState(formik, "time")}
+          label="Time"
+          value={formik.values.time}
+          onValueChange={(time) => formik.setFieldValue("time", time)}
+          onTouch={touch(formik, "time")}
+        />
       </div>
 
       <FormField
