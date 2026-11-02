@@ -15,6 +15,7 @@ export const queryKeys = {
     bookingsRoot: () => [...queryKeys.admin.all, "bookings"] as const,
     bookings: (status: string) => [...queryKeys.admin.bookingsRoot(), status] as const,
     bookingCounts: () => [...queryKeys.admin.bookingsRoot(), "counts"] as const,
+    bookingMessages: (id: number) => [...queryKeys.admin.bookingsRoot(), id, "messages"] as const,
   },
   site: {
     all: ["site"] as const,
@@ -31,6 +32,8 @@ export const queryKeys = {
     artisan: (id: string) => [...queryKeys.account.artisans(), id] as const,
     categories: () => [...queryKeys.account.all, "categories"] as const,
     wallet: () => [...queryKeys.account.all, "wallet"] as const,
+    conversations: () => [...queryKeys.account.all, "conversations"] as const,
+    messages: (bookingId: number) => [...queryKeys.account.all, "messages", bookingId] as const,
   },
 } as const
 
@@ -57,11 +60,16 @@ export const mutationKeys = {
     saveLocation: ["account", "onboarding", "location"] as const,
     saveSkill: ["account", "onboarding", "skill"] as const,
     saveBankDetails: ["account", "onboarding", "bank-details"] as const,
+    sendMessage: ["account", "messages", "send"] as const,
+    markMessagesRead: ["account", "messages", "read"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,
     register: ["site", "register"] as const,
     contact: ["site", "contact"] as const,
     subscribe: ["site", "subscribe"] as const,
+    requestResetCode: ["site", "password-reset", "request-code"] as const,
+    verifyResetCode: ["site", "password-reset", "verify-code"] as const,
+    resetPassword: ["site", "password-reset", "reset"] as const,
   },
 } as const

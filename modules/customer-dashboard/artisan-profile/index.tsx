@@ -17,7 +17,7 @@ import { formatLocation } from "@/lib/locations"
 import { artisanName, priceRange } from "@/lib/marketplace"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
 import type { PublicArtisan } from "@/types/account/marketplace"
-import { VerifiedBadge } from "../find-artisan/artisan-card"
+import { VerifiedBadge } from "@/components/shared/artisan-card"
 import BookingForm from "./booking-form"
 
 const BackLink = () => (

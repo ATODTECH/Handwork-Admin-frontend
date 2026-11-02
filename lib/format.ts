@@ -43,6 +43,12 @@ export const formatActivityDate = (iso: string, now = new Date()) => {
   return DAY.format(date)
 }
 
+/** "3:05 pm" in Lagos time */
+export const formatTime = (iso: string) => TIME.format(new Date(iso))
+
+/** Groups timestamps by Lagos calendar day */
+export const dayKey = (iso: string) => DAY_KEY.format(new Date(iso))
+
 export const formatActivityDay = (iso: string, now = new Date()) => {
   const date = new Date(iso)
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
