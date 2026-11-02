@@ -19,7 +19,7 @@ const MAX_RECONNECT_DELAY_MS = 30_000
 /** Adds a message to a booking's cached chat, once (the sender gets it back from the socket too) */
 const addMessage = (queryClient: QueryClient, bookingId: number, message: ChatMessage) =>
   queryClient.setQueryData<ChatMessage[]>(queryKeys.account.messages(bookingId), (current = []) =>
-    current.some(({ id }) => id === message.id) ? current : [...current, message],
+    current.some(({ id }) => String(id) === String(message.id)) ? current : [...current, message],
   )
 
 /** Every booking as a conversation; kept fresh so unread counts update */
