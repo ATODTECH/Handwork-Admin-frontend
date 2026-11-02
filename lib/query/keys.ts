@@ -63,5 +63,8 @@ export const mutationKeys = {
     register: ["site", "register"] as const,
     contact: ["site", "contact"] as const,
     subscribe: ["site", "subscribe"] as const,
+    requestResetCode: ["site", "password-reset", "request-code"] as const,
+    verifyResetCode: ["site", "password-reset", "verify-code"] as const,
+    resetPassword: ["site", "password-reset", "reset"] as const,
   },
 } as const

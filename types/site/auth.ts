@@ -4,6 +4,16 @@ export interface LoginType {
   password: string
 }
 
+export interface ResetCodePayload {
+  email: string
+  code: string
+}
+
+export interface ResetPasswordPayload {
+  email: string
+  password: string
+}
+
 export interface OnboardingLevel {
   level_1: boolean
   level_2: boolean

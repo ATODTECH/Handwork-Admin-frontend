@@ -8,8 +8,9 @@ import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import type { AccountRole } from "@/lib/auth/session";
+import { ACCOUNT_ROUTES } from "@/lib/routes";
 import { toFormErrors } from "@/lib/form-errors";
 
 
@@ -173,6 +174,7 @@ export const LoginFormField = ({
   onclick?: (val: string, mode: string) => void
 }) => {
   const {mutate: LoginUser, isPending} = useSiteSignIn()
+  const router = useRouter()
   const [focusedField, setFocusedField] = useState<FieldName | null>(null)
 
   const formik = useFormik<LoginFormValues>({
@@ -201,7 +203,7 @@ export const LoginFormField = ({
       error={formik.errors[config.name as keyof typeof formik.values]}
       touched={formik.touched[config.name as keyof typeof formik.values]}
       isPending={isPending}
-      forgotPassword={(val)=> toast("coming soon!")}
+      forgotPassword={() => router.push(ACCOUNT_ROUTES.forgotPassword)}
       autoComplete={config.autoComplete}
       onFocus={() => setFocusedField(config.name)}
       onBlur={(e) => {

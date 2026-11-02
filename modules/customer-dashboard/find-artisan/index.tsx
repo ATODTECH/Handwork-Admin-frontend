@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useArtisans, useCategories } from "@/hooks/account/use-marketplace"
 import { NIGERIAN_STATES } from "@/lib/locations"
 import { filterArtisans, hasFilters, NO_FILTERS, type ArtisanFilters } from "@/lib/marketplace"
-import ArtisanCard from "./artisan-card"
+import ArtisanCard from "@/components/shared/artisan-card"
 
 const STATE_OPTIONS = NIGERIAN_STATES.map((state) => ({ value: state, label: state }))
 

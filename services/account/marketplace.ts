@@ -7,10 +7,12 @@ import type { BookingPayload, PublicArtisan, ServiceCategory } from "@/types/acc
 
 // Router routes have no trailing slash (see `setup/urls.py` on the API)
 export const marketplaceService = {
+  // Public reads skip the token: the public site uses them too, and an expired session
+  // there shouldn't bounce a visitor to sign-in
   /** Only artisans staff have approved */
-  artisans: (signal?: AbortSignal) => accountHttp.get<PublicArtisan[]>("/api/artisan", { signal }),
-  artisan: (id: string, signal?: AbortSignal) => accountHttp.get<PublicArtisan>(`/api/artisan/${id}`, { signal }),
-  categories: (signal?: AbortSignal) => accountHttp.get<ServiceCategory[]>("/api/category", { signal }),
+  artisans: (signal?: AbortSignal) => accountHttp.get<PublicArtisan[]>("/api/artisan", { signal, skipAuth: true }),
+  artisan: (id: string, signal?: AbortSignal) => accountHttp.get<PublicArtisan>(`/api/artisan/${id}`, { signal, skipAuth: true }),
+  categories: (signal?: AbortSignal) => accountHttp.get<ServiceCategory[]>("/api/category", { signal, skipAuth: true }),
 
   bookArtisan: ({ artisanId, serviceIds, description, budget, address, date, time }: BookingPayload) =>
     accountHttp.post<Booking>("/api/book/artisan", {

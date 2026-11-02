@@ -26,6 +26,7 @@ export const ROUTES = {
 export const ACCOUNT_ROUTES = {
   login: "/login",
   register: "/register",
+  forgotPassword: "/forgot-password",
   /** Single entry point: redirects to the signed-in role's own dashboard */
   dashboard: "/dashboard",
   customerHome: "/dashboard/customer",

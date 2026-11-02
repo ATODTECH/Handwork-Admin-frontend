@@ -1,68 +1,65 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
-import { ChevronDown, MapPin, PhoneCall, Star } from "lucide-react"
+import Link from "next/link"
+import { Search, SearchX } from "lucide-react"
+import EmptyState from "@/components/account/empty-state"
+import QueryContent from "@/components/account/query-content"
+import ComboboxField from "@/components/form/combobox-field"
+import FormField from "@/components/form/form-field"
+import ArtisanCard from "@/components/shared/artisan-card"
 import { JoinNetwork } from "@/components/site/join-network"
 import { Pagination } from "@/components/site/pagination"
-import type { CategoryDetails } from "./data"
-
-// Base prices are stored in NGN (the source of truth). Everything else is derived.
-const CURRENCIES = [
-  { code: "NGN", symbol: "₦", rate: 1 },
-  { code: "USD", symbol: "$", rate: 1 / 1600 },
-  { code: "GBP", symbol: "£", rate: 1 / 2050 },
-  { code: "EUR", symbol: "€", rate: 1 / 1750 },
-  { code: "GHS", symbol: "₵", rate: 1 / 105 },
-]
-
-type Currency = typeof CURRENCIES[number]
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useArtisans, useCategories } from "@/hooks/account/use-marketplace"
+import { NIGERIAN_STATES } from "@/lib/locations"
+import { filterArtisans } from "@/lib/marketplace"
 
 const PAGE_SIZE = 9
 
-function formatPrice(priceNGN: string, currency: Currency) {
-  const converted = Number(priceNGN) * currency.rate
-  // Whole naira has no decimals; converted foreign currencies keep up to 2.
-  const decimals = currency.code === "NGN" ? 0 : converted < 100 ? 2 : 0
-  return `${currency.symbol}${converted.toLocaleString(undefined, {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  })}`
-}
+const STATE_OPTIONS = NIGERIAN_STATES.map((state) => ({ value: state, label: state }))
 
-/** Currency and sub-category filters are shown but disabled until listings come from the API */
-const DisabledFilter = ({ label }: { label: string }) => (
-  <button
-    disabled
-    className="flex items-center gap-1.5 bg-[#B6B6B6] rounded-lg px-3 py-2 text-sm font-medium text-primary-white cursor-not-allowed"
-  >
-    <span>{label}</span>
-    <ChevronDown size={14} />
-  </button>
+const ResultsSkeleton = () => (
+  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true" aria-label="Loading">
+    {Array.from({ length: 6 }, (_, i) => (
+      <Skeleton key={i} className="h-80 rounded-2xl bg-white" />
+    ))}
+  </div>
 )
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }, (_, i) => (
-        <Star
-          key={i}
-          size={14}
-          className={i < rating ? "fill-secondary-orange text-orange-400" : "text-slate-200"}
-        />
-      ))}
-    </div>
-  )
-}
-
-export const CategoryDetailsIndex = ({ id, details }: { id: string, details: CategoryDetails }) => {
-  const { category, categoryList } = details
-  const [currency] = useState<Currency>(CURRENCIES[0])
+/** Approved artisans offering any service in one category, for visitors; booking signs them in first */
+export const CategoryDetailsIndex = ({ id, category }: { id: string, category: string }) => {
+  const artisans = useArtisans()
+  const categories = useCategories()
+  const [query, setQuery] = useState("")
+  const [serviceId, setServiceId] = useState<number | null>(null)
+  const [state, setState] = useState<string | null>(null)
   const [page, setPage] = useState(1)
 
-  const totalPages = Math.ceil(categoryList.length / PAGE_SIZE)
+  const services = categories.data?.find(({ name }) => name.toLowerCase() === category.toLowerCase())?.service ?? []
+  const serviceOptions = services.map(({ id: value, name: label }) => ({ value, label }))
+
+  const inCategory = filterArtisans(artisans.data ?? [], categories.data ?? [], { query, category, state })
+  const results = serviceId ? inCategory.filter(({ skill }) => skill?.services.some(({ id }) => id === serviceId)) : inCategory
+  const filtered = query.trim() !== "" || !!serviceId || !!state
+
+  const totalPages = Math.ceil(results.length / PAGE_SIZE)
   const start = (page - 1) * PAGE_SIZE
-  const visible = categoryList.slice(start, start + PAGE_SIZE)
+  const visible = results.slice(start, start + PAGE_SIZE)
+
+  // Any filter change starts again from the first page
+  const filterBy = <T,>(set: (value: T) => void) => (value: T) => {
+    set(value)
+    setPage(1)
+  }
+
+  const clearFilters = () => {
+    setQuery("")
+    setServiceId(null)
+    setState(null)
+    setPage(1)
+  }
 
   return (
     <section className="w-full flex flex-col items-center relative">
@@ -72,69 +69,82 @@ export const CategoryDetailsIndex = ({ id, details }: { id: string, details: Cat
           <span className="flex flex-nowrap text-base font-medium text-[#858585] select-none">{id} / categories </span>
         </div>
 
-        <div className="w-full flex flex-col items-center relative px-4 p-16 sm:px-16 xl:px-28 bg-[#F9F7F7]">
-          <div className="flex w-[95%] 425xl:w-full 1280xl:w-[95%] items-center justify-end gap-3 mb-6">
-            <DisabledFilter label={currency.symbol} />
-            <DisabledFilter label="Sub Category" />
+        <div className="w-full flex flex-col gap-6 relative px-4 p-16 sm:px-16 xl:px-28 bg-[#F9F7F7]">
+          <div className="grid gap-4 rounded-2xl bg-white p-4 ring-1 ring-hw-border sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+            <div className="sm:col-span-2 lg:col-span-1">
+              <FormField
+                name="category-search"
+                label="Search"
+                type="search"
+                placeholder="Name or area, e.g. Ikeja"
+                startAddon={<Search />}
+                value={query}
+                onChange={(event) => filterBy(setQuery)(event.target.value)}
+              />
+            </div>
+            <ComboboxField
+              name="category-service"
+              label="Service"
+              placeholder={categories.isPending ? "Loading…" : "All services"}
+              disabled={categories.isPending || categories.isError}
+              options={serviceOptions}
+              value={serviceId}
+              onValueChange={filterBy(setServiceId)}
+            />
+            <ComboboxField
+              name="category-state"
+              label="State"
+              placeholder="All states"
+              options={STATE_OPTIONS}
+              value={state}
+              onValueChange={filterBy(setState)}
+            />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 w-[95%] 425xl:w-full 1280xl:w-[95%]">
-            {visible.map((card, index) => (
-              <div key={start + index} className="flex flex-col rounded-xl bg-white overflow-hidden">
-                <div className="relative w-auto h-40">
-                  <Image
-                    src={card.backdropImage}
-                    alt={card.title}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover object-top text-sm font-semibold italic"
-                  />
-                  {/* Avatar + price pill + negotiable */}
-                  <div className="absolute w-full px-3 bottom-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={card.avatar}
-                        alt=""
-                        className="w-8 h-8 shrink-0 rounded-full object-cover border"
-                      />
-                      <span className="text-sm font-semibold text-primary-white whitespace-nowrap backdrop-blur-xl backdrop-brightness-90 rounded-md">
-                        {formatPrice(card.amount, currency)}
-                      </span>
-                    </div>
-                    {card.negotiable && (
-                      <span className="bg-secondary-orange text-white text-xs font-medium px-3 py-1.5 rounded-lg select-none">
-                        Negotiable
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="pt-6 pb-4 px-4">
-                  <h3 className="text-sm font-medium text-slate-800 leading-snug mb-2 line-clamp-2">
-                    {card.title}
-                  </h3>
 
-                  <StarRating rating={card.ratings} />
-
-                  <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
-                    <div className="flex items-center gap-1.5">
-                      <div className="rounded-full border border-dashed p-2">
-                        <PhoneCall size={13} />
-                      </div>
-                      <span>{card.phoneNumber}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span>{card.location}</span>
-                      <div className="rounded-full border border-dashed p-2">
-                        <MapPin size={13} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <QueryContent
+            isPending={artisans.isPending || categories.isPending}
+            isError={artisans.isError || categories.isError}
+            onRetry={() => {
+              void artisans.refetch()
+              void categories.refetch()
+            }}
+            isEmpty={!results.length}
+            skeleton={<ResultsSkeleton />}
+            empty={
+              <EmptyState
+                icon={SearchX}
+                title={filtered ? "No artisans match your search" : `No ${category} artisans yet`}
+                description={
+                  filtered
+                    ? "Try another service or area, or clear the filters."
+                    : "We're checking new artisans all the time. Have a look at another category in the meantime."
+                }
+                action={
+                  filtered ? (
+                    <Button variant="outline" onClick={clearFilters}>Clear filters</Button>
+                  ) : (
+                    <Button variant="outline" render={<Link href="/categories" />} nativeButton={false}>All categories</Button>
+                  )
+                }
+              />
+            }
+          >
+            <div className="flex flex-col gap-4">
+              <p className="text-sm text-hw-grey-500" aria-live="polite">
+                {results.length} verified {results.length === 1 ? "artisan" : "artisans"}
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {visible.map((artisan) => (
+                  <ArtisanCard key={artisan.id} artisan={artisan} />
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="flex w-full justify-center pt-16">
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
-          </div>
+              {totalPages > 1 && (
+                <div className="flex w-full justify-center pt-12">
+                  <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+                </div>
+              )}
+            </div>
+          </QueryContent>
         </div>
 
         <JoinNetwork className="my-16 pt-36 px-4 p-16 sm:px-16 xl:px-28" />

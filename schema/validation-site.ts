@@ -37,6 +37,17 @@ const nameField = (label: string) =>
     .min(2, `${label} must be at least 2 characters`)
     .max(100, `${label} is too long`)
 
+// Mirrors the API's rule, so users aren't bounced after submitting
+const newPassword = () =>
+  Yup
+    .string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).+$/,
+      "Use an uppercase letter, a lowercase letter, a number and a symbol"
+    )
+
 export const registerSchema = Yup.object({
   firstName: nameField("First name"),
   lastName: nameField("Last name"),
@@ -45,15 +56,7 @@ export const registerSchema = Yup.object({
     .trim()
     .required("Email is required")
     .email("Enter a valid email address"),
-  // Mirrors the API's rule, so users aren't bounced after submitting
-  password: Yup
-    .string()
-    .required("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .matches(
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).+$/,
-      "Use an uppercase letter, a lowercase letter, a number and a symbol"
-    ),
+  password: newPassword(),
   countryCode: Yup.string().required(),
   phone: Yup
     .string()
@@ -86,6 +89,18 @@ export const loginSchema = Yup.object({
 })
 
 
+export const resetCodeSchema = Yup.object({
+  code: Yup.string()
+    .required("Enter the code from the email")
+    .matches(/^\d{6}$/, "The code is 6 digits"),
+})
+
+export const newPasswordSchema = Yup.object({
+  password: newPassword(),
+  confirmPassword: Yup.string()
+    .required("Type the password again")
+    .oneOf([Yup.ref("password")], "The passwords don't match"),
+})
 
 export type LoginFormValues = Yup.InferType<typeof loginSchema>
 export type RegisterFormValues = Yup.InferType<typeof registerSchema>
