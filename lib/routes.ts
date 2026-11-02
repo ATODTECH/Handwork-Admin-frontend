@@ -32,14 +32,22 @@ export const ACCOUNT_ROUTES = {
   customerHome: "/dashboard/customer",
   customerBookings: "/dashboard/customer/bookings",
   customerArtisans: "/dashboard/customer/artisans",
+  customerMessages: "/dashboard/customer/messages",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
   artisanEarnings: "/dashboard/artisan/earnings",
+  artisanMessages: "/dashboard/artisan/messages",
   artisanOnboarding: "/dashboard/artisan/onboarding",
 } as const
 
 /** An artisan's profile and booking form, for customers */
 export const customerArtisanRoute = (id: string) => `${ACCOUNT_ROUTES.customerArtisans}/${id}` as const
+
+/** Messages, opened on one booking's conversation when `bookingId` is given */
+export const messagesRoute = (viewer: "customer" | "artisan", bookingId?: number) => {
+  const base = viewer === "customer" ? ACCOUNT_ROUTES.customerMessages : ACCOUNT_ROUTES.artisanMessages
+  return bookingId ? `${base}?booking=${bookingId}` : base
+}
 
 /** Where each role lands after signing in */
 export const accountHome = (role: "USER" | "ARTISAN", onboarded: boolean) =>

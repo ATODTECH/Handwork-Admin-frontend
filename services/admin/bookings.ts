@@ -1,6 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import { http } from "@/lib/http/client"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
+import type { ChatMessage } from "@/types/account/messages"
 import type { BookingCounts, BookingFilter, BookingForStaff, ResolveBooking } from "@/types/admin/bookings"
 
 // Staff-only endpoints; router routes have no trailing slash
@@ -8,6 +9,8 @@ export const adminBookingsService = {
   list: (status: BookingFilter, signal?: AbortSignal) =>
     http.get<BookingForStaff[]>("/api/admin/bookings", { params: { status }, signal }),
   counts: (signal?: AbortSignal) => http.get<BookingCounts>("/api/admin/bookings/counts", { signal }),
+  /** The booking's chat between customer and artisan, read-only */
+  messages: (id: number, signal?: AbortSignal) => http.get<ChatMessage[]>(`/api/admin/bookings/${id}/messages`, { signal }),
   /** Settles a reported problem: pays the artisan, or refunds the customer through Paystack */
   resolve: ({ id, outcome, note }: ResolveBooking) =>
     http.post<BookingForStaff>(`/api/admin/bookings/${id}/resolve`, { outcome, note }),
@@ -29,4 +32,10 @@ export const resolveBookingMutation = () =>
   mutationOptions({
     mutationKey: mutationKeys.admin.resolveBooking,
     mutationFn: adminBookingsService.resolve,
+  })
+
+export const adminBookingMessagesQuery = (id: number) =>
+  queryOptions({
+    queryKey: queryKeys.admin.bookingMessages(id),
+    queryFn: ({ signal }) => adminBookingsService.messages(id, signal),
   })

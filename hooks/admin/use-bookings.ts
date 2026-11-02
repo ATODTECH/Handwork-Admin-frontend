@@ -2,12 +2,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { formatNairaAmount } from "@/lib/format"
 import { queryKeys } from "@/lib/query/keys"
-import { adminBookingCountsQuery, adminBookingsQuery, resolveBookingMutation } from "@/services/admin/bookings"
+import { adminBookingCountsQuery, adminBookingMessagesQuery, adminBookingsQuery, resolveBookingMutation } from "@/services/admin/bookings"
 import type { BookingFilter } from "@/types/admin/bookings"
 
 export const useAdminBookings = (status: BookingFilter) => useQuery(adminBookingsQuery(status))
 
 export const useAdminBookingCounts = () => useQuery(adminBookingCountsQuery())
+
+export const useAdminBookingMessages = (id: number) => useQuery(adminBookingMessagesQuery(id))
 
 /** Settling a problem moves the booking between tabs and changes the dashboard's figures, so refetch both */
 export const useResolveBooking = () => {

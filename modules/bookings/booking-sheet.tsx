@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { artisanEarnings } from "@/lib/bookings"
 import { formatActivityDate, formatNairaAmount, formatSchedule } from "@/lib/format"
 import type { BookingForStaff, BookingPerson } from "@/types/admin/bookings"
+import BookingMessages from "./booking-messages"
 import { bookingAmount, bookingServices } from "./columns"
 
 const Person = ({ title, person }: { title: string, person: BookingPerson | null }) => (
@@ -72,6 +73,8 @@ const BookingSheet = ({ booking, onOpenChange, onResolve }: BookingSheetProps) =
           {booking.released_at && <DetailRow label="Artisan paid">{formatActivityDate(booking.released_at)}</DetailRow>}
           {booking.cancelled_at && <DetailRow label="Cancelled">{formatActivityDate(booking.cancelled_at)}</DetailRow>}
         </DetailSection>
+
+        <BookingMessages bookingId={booking.id} />
 
         {booking.status === "Disputed" && (
           <div className="pt-5">

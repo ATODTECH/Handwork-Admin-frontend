@@ -8,6 +8,8 @@ export interface DashboardNavItem {
   exact?: boolean
   /** Shown but not clickable until the page exists */
   soon?: boolean
+  /** A count shown beside the title, e.g. unread messages; hidden at 0 */
+  badge?: number
 }
 
 export interface DashboardNavGroup {

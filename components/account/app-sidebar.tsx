@@ -72,6 +72,12 @@ const AppSidebar = ({ nav, onSignOut, showSupport = true }: AppSidebarProps) => 
                         <item.icon />
                         <span>{item.title}</span>
                       </SidebarMenuButton>
+                      {!item.soon && !!item.badge && (
+                        <SidebarMenuBadge className="top-2.5! rounded-full bg-hw-primary px-1.5 text-[11px] font-semibold text-white tabular-nums">
+                          <span className="sr-only">Unread: </span>
+                          {item.badge > 99 ? "99+" : item.badge}
+                        </SidebarMenuBadge>
+                      )}
                       {item.soon && (
                         <SidebarMenuBadge className="top-2.5! rounded-full bg-white/10 px-2 text-[10px] text-white/70">Soon</SidebarMenuBadge>
                       )}

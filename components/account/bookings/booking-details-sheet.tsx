@@ -1,10 +1,13 @@
 "use client"
 
-import { Phone } from "lucide-react"
+import Link from "next/link"
+import { MessageSquareText, Phone } from "lucide-react"
 import { DetailSheet } from "@/components/shared/detail-sheet"
 import { DetailRow, DetailSection } from "@/components/shared/details-part"
+import { Button } from "@/components/ui/button"
 import { artisanEarnings, bookingMeta, bookingPrice, bookingTitle, jobMeta, priceAboveBudget } from "@/lib/bookings"
 import { formatActivityDate, formatNairaAmount, formatSchedule } from "@/lib/format"
+import { messagesRoute } from "@/lib/routes"
 import type { Booking } from "@/types/account/dashboard"
 import BookingActions from "./booking-actions"
 import BookingProgress from "./booking-progress"
@@ -76,6 +79,15 @@ const BookingDetailsSheet = ({ booking, viewer, onOpenChange }: BookingDetailsSh
             ) : (
               <p className="pt-1 text-xs text-hw-grey-500">Phone numbers are shared once the job is paid for.</p>
             )}
+            <Button
+              variant="outline"
+              className="mt-2 w-full"
+              render={<Link href={messagesRoute(viewer, booking.id)} />}
+              nativeButton={false}
+            >
+              <MessageSquareText data-icon="inline-start" />
+              Message {isArtisan ? "the customer" : "the artisan"}
+            </Button>
           </DetailSection>
 
           {booking.cancellation_reason && <Note title="Why it was cancelled">{booking.cancellation_reason}</Note>}
