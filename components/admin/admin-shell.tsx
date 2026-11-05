@@ -42,7 +42,7 @@ const ADMIN_NAV: DashboardNavGroup[] = [
       { title: "Payouts", href: ROUTES.payouts, icon: Wallet },
       { title: "User management", href: ROUTES.users, icon: Users },
       { title: "Bookings", href: ROUTES.bookings, icon: BookOpenCheck },
-      { title: "Services", href: ROUTES.services, icon: Wrench, soon: true },
+      { title: "Services", href: ROUTES.services, icon: Wrench },
     ],
   },
   {

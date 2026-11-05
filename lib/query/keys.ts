@@ -16,6 +16,11 @@ export const queryKeys = {
     bookings: (status: string) => [...queryKeys.admin.bookingsRoot(), status] as const,
     bookingCounts: () => [...queryKeys.admin.bookingsRoot(), "counts"] as const,
     bookingMessages: (id: number) => [...queryKeys.admin.bookingsRoot(), id, "messages"] as const,
+    usersRoot: () => [...queryKeys.admin.all, "users"] as const,
+    users: (status: string) => [...queryKeys.admin.usersRoot(), status] as const,
+    userCounts: () => [...queryKeys.admin.usersRoot(), "counts"] as const,
+    services: () => [...queryKeys.admin.all, "services"] as const,
+    categories: () => [...queryKeys.admin.all, "categories"] as const,
   },
   site: {
     all: ["site"] as const,
@@ -46,6 +51,11 @@ export const mutationKeys = {
     approveWithdrawal: ["admin", "withdrawals", "approve"] as const,
     rejectWithdrawal: ["admin", "withdrawals", "reject"] as const,
     resolveBooking: ["admin", "bookings", "resolve"] as const,
+    deactivateUser: ["admin", "users", "deactivate"] as const,
+    reactivateUser: ["admin", "users", "reactivate"] as const,
+    createService: ["admin", "services", "create"] as const,
+    updateService: ["admin", "services", "update"] as const,
+    deleteService: ["admin", "services", "delete"] as const,
   },
   account: {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,

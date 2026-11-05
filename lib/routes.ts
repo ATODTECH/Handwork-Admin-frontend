@@ -64,9 +64,9 @@ export const accountArea = (role: "USER" | "ARTISAN") =>
  */
 export const PAGE_HEADINGS: Record<string, { title: string, description?: string }> = {
   [ROUTES.dashboard]: { title: "Dashboard" },
-  [ROUTES.users]: { title: "User Management" },
+  [ROUTES.users]: { title: "User Management", description: "Find any account, and deactivate one if you need to." },
   [ROUTES.artisans]: { title: "Artisans", description: "Review new artisans before customers can find and book them." },
-  [ROUTES.services]: { title: "Services", description: "Services And Category Management" },
+  [ROUTES.services]: { title: "Services", description: "The services artisans can offer. Hidden services stay with artisans who already offer them, but new artisans can't choose them and they leave the category lists." },
   [ROUTES.bookings]: { title: "Bookings", description: "Follow every booking, and settle problems customers report by paying the artisan or refunding the customer." },
   [ROUTES.payouts]: { title: "Payouts", description: "Approve artisans' withdrawals. Approving sends the money to their bank through Paystack." },
   [ROUTES.reports]: { title: "Reports", description: "Review marketplace performance and download detailed reports." },

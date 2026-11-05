@@ -1,28 +1,25 @@
-type Role = "user" | "artisan";
-type Status = "Verified" | "Not verified"
-type emailVerified = "Verified" | "Not verified"
-type phoneVerified = "Verified" | "Not verified"
-type idDocVerified = "Pending" | "Verified" | "Not verified"
-type nin = "Provided" | "Not provided"
-type bvn = "Provided" | "Not provided"
-type uploadedDoc = "Provided" | "Not provided"
+export type UserFilter = "customers" | "artisans" | "staff" | "deactivated"
 
-interface Users {
-  id: string;
-  name: string;
-  role: Role;
-  email: string;
-  phone: string;
-  status: Status;
-  address: string;
-  state: string;
-  country: string;
-  emailVerified: emailVerified;
-  phoneVerified: phoneVerified;
-  idDocVerified?: idDocVerified;
-  nin?: nin;
-  bvn?: bvn;
-  uploadedDocType?: uploadedDoc;
-  uploadedDoc?: uploadedDoc;
-  joinedAt: string;
+export type UserCounts = Record<UserFilter, number>
+
+/** An account as staff see it, from `GET /api/admin/users` */
+export interface AdminUser {
+  id: string
+  name: string
+  email: string
+  contact: string
+  role: "USER" | "ARTISAN"
+  is_staff: boolean
+  is_active: boolean
+  profile_image: string | null
+  address: string | null
+  city: string | null
+  state: string | null
+  date_joined: string
+  last_login: string | null
+  verification_status: "PENDING" | "APPROVED" | "REJECTED"
+  wallet_balance: string
+  bookings: number
+  /** Not yet finished, cancelled or settled */
+  open_bookings: number
 }
