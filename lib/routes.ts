@@ -33,10 +33,12 @@ export const ACCOUNT_ROUTES = {
   customerBookings: "/dashboard/customer/bookings",
   customerArtisans: "/dashboard/customer/artisans",
   customerMessages: "/dashboard/customer/messages",
+  customerSettings: "/dashboard/customer/settings",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
   artisanEarnings: "/dashboard/artisan/earnings",
   artisanMessages: "/dashboard/artisan/messages",
+  artisanSettings: "/dashboard/artisan/settings",
   artisanOnboarding: "/dashboard/artisan/onboarding",
 } as const
 

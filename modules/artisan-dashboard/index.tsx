@@ -7,6 +7,7 @@ import {
   LifeBuoy,
   MessageSquareText,
   Star,
+  UserRoundCog,
   Wallet,
 } from "lucide-react"
 import DashboardShell from "@/components/account/dashboard-shell"
@@ -28,7 +29,10 @@ const artisanNav = (unread: number): DashboardNavGroup[] => [
   },
   {
     label: "Account",
-    items: [{ title: "Help & support", href: "/contact", icon: LifeBuoy }],
+    items: [
+      { title: "Profile & settings", href: ACCOUNT_ROUTES.artisanSettings, icon: UserRoundCog },
+      { title: "Help & support", href: "/contact", icon: LifeBuoy },
+    ],
   },
 ]
 

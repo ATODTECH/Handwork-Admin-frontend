@@ -44,7 +44,17 @@ const EmailStep = ({ onSent }: { onSent: (email: string) => void }) => {
   )
 }
 
-const CodeStep = ({ email, onVerified, onChangeEmail }: { email: string, onVerified: () => void, onChangeEmail: () => void }) => {
+export const CodeStep = ({
+  email,
+  onVerified,
+  onChangeEmail,
+  changeEmailLabel = "Use a different email",
+}: {
+  email: string
+  onVerified: () => void
+  onChangeEmail: () => void
+  changeEmailLabel?: string
+}) => {
   const verify = useVerifyResetCode()
   const resend = useRequestResetCode()
   const formik = useFormik({
@@ -80,7 +90,7 @@ const CodeStep = ({ email, onVerified, onChangeEmail }: { email: string, onVerif
       <SubmitButton pending={verify.isPending} pendingText="Checking…" className="w-full">Continue</SubmitButton>
       <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
         <Button type="button" variant="link" className="h-auto p-0" onClick={onChangeEmail}>
-          Use a different email
+          {changeEmailLabel}
         </Button>
         <Button type="button" variant="link" className="h-auto p-0" onClick={sendAgain} disabled={resend.isPending}>
           {resend.isPending ? "Sending…" : "Send a new code"}
@@ -90,7 +100,7 @@ const CodeStep = ({ email, onVerified, onChangeEmail }: { email: string, onVerif
   )
 }
 
-const PasswordStep = ({ email, onDone, onExpired }: { email: string, onDone: () => void, onExpired: () => void }) => {
+export const PasswordStep = ({ email, onDone, onExpired }: { email: string, onDone: () => void, onExpired: () => void }) => {
   const { mutate, isPending } = useResetPassword()
   const formik = useFormik({
     initialValues: { password: "", confirmPassword: "" },

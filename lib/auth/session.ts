@@ -103,6 +103,9 @@ export const accountSession = {
     }
   },
 
+  /** Keeps the name in the header current after the profile changes */
+  setName: (name: string) => writeCookie(ACCOUNT_NAME_COOKIE, name, MAX_AGE_SECONDS),
+
   /** Lets the route guard into the artisan dashboard once onboarding is done */
   markOnboarded: () => writeCookie(ACCOUNT_ONBOARDED_COOKIE, "1", MAX_AGE_SECONDS),
 
