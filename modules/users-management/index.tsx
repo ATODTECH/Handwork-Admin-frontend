@@ -1,155 +1,174 @@
 "use client"
 
-import { DataTable } from "@/components/table-data/data-table"
-import { ROUTES } from "@/lib/routes"
-import { usePageHeading } from "@/hooks/admin/use-page-heading"
-import Link from "next/link"
 import { useMemo, useState } from "react"
-import { userColumns } from "./columns"
-import { DataTablePagination } from "@/components/table-data/data-table-pagination"
-import { AllUserColumnFilters, COLUMN_FILTERS } from "./constants"
-import { FilterSelect } from "@/components/shared/filter-select"
-import { DetailSheet } from "@/components/shared/detail-sheet"
-import { UseAvatar } from "@/components/shared/use-avatar"
+import Link from "next/link"
+import { Search } from "lucide-react"
+import FormField from "@/components/form/form-field"
+import { FilterTabs, type FilterTab } from "@/components/shared/filter-tabs"
 import { PageHeader } from "@/components/shared/page-header"
-import { Badge } from "@/components/ui/badge"
-import { DetailRow, DetailSection } from "@/components/shared/details-part"
-import { TONE_STYLES } from "@/lib/tones"
+import ReasonDialog from "@/components/shared/reason-dialog"
+import { DataTable } from "@/components/table-data/data-table"
+import { DataTablePagination } from "@/components/table-data/data-table-pagination"
 import { Button } from "@/components/ui/button"
-import { cn } from "cn"
-import { toast } from "sonner"
+import { usePageHeading } from "@/hooks/admin/use-page-heading"
+import { useAdminUserCounts, useAdminUsers, useDeactivateUser } from "@/hooks/admin/use-users"
+import { formatNairaAmount } from "@/lib/format"
+import { ROUTES } from "@/lib/routes"
+import type { AdminUser, UserFilter } from "@/types/admin/users"
+import { userColumns } from "./columns"
+import UserSheet from "./user-sheet"
 
+const PAGE_SIZE = 10
 
-export const USER_PAGE_SIZE = 8
-
-// Dummy Data
-export const SAMPLE_USERS: Users[] = [
-  { id:"1", name:"Lawal Halima", role:"user", email:"lawalhalima@gmail.com", phone:"08136401829", status:"Verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-02"},
-  { id:"2", name:"Chukwuemeka Eze", role:"artisan", email:"c.eze.artisan@gmail.com", phone:"08022334455", status:"Not verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-03"},
-  { id:"3", name:"Amina Bello", role:"user", email:"amina.bello@yahoo.com", phone:"07055678901", status:"Not verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-03"},
-  { id:"4", name:"Tunde Fashola", role:"artisan", email:"t.fashola@artisan.ng", phone:"08099887766", status:"Verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-04"},
-  { id:"5", name:"Ngozi Obi", role:"user", email:"ngozi.obi@gmail.com", phone:"08031122334", status:"Not verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-04"},
-  { id:"6", name:"Samuel Adeyemi", role:"artisan", email:"sam.adeyemi@artisan.ng", phone:"09012345678", status:"Not verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-05"},
-  { id:"7", name:"Fatima Garba", role:"user", email:"fatima.garba@yahoo.com", phone:"08077665544", status:"Not verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-05"},
-  { id:"8", name:"Babatunde Okafor", role:"artisan", email:"b.okafor.craft@gmail.com", phone:"08154433221", status:"Not verified", address:"House 20, close rebuild street, Ikeja", state:"Lagos", country:"Nigeria", emailVerified:"Not verified", phoneVerified:"Not verified", joinedAt:"2025-07-06"},
+const TABS: { value: UserFilter, label: string }[] = [
+  { value: "customers", label: "Customers" },
+  { value: "artisans", label: "Artisans" },
+  { value: "staff", label: "Staff" },
+  { value: "deactivated", label: "Deactivated" },
 ]
 
-const noop = () => toast("coming soon!")
+const EMPTY: Record<UserFilter, string> = {
+  customers: "No customers yet.",
+  artisans: "No artisans yet.",
+  staff: "No staff accounts.",
+  deactivated: "No deactivated accounts.",
+}
 
-const NO_RECENTUSER: Users[] = []
+const QUICK_REASONS = [
+  "We received reports of misconduct on this account.",
+  "The details on this account look false.",
+  "This account broke our terms of use.",
+]
 
+const matchesSearch = (user: AdminUser, terms: string[]) => {
+  const haystack = [user.name, user.email, user.contact, user.city, user.state].filter(Boolean).join(" ").toLowerCase()
+  return terms.every((term) => haystack.includes(term))
+}
+
+/** What's still going on with the account, so staff know what they'd be interrupting */
+const deactivateWarning = ({ open_bookings, wallet_balance }: AdminUser) => {
+  const warnings = []
+  if (open_bookings) warnings.push(`${open_bookings} open ${open_bookings === 1 ? "booking stays" : "bookings stay"} as they are`)
+  if (Number(wallet_balance) > 0) warnings.push(`${formatNairaAmount(wallet_balance)} stays in their wallet`)
+  return warnings.length ? ` Note: ${warnings.join(", and ")}.` : ""
+}
+
+/** Every account by type. Staff can deactivate an account and undo it later */
 const UserManagementIndex = () => {
-  const headerTitle = usePageHeading()
-  const [data, setData] = useState(SAMPLE_USERS)
-  const [filter, setFilter] = useState<AllUserColumnFilters["filter"]>()
-  const [reviewing, setReviewing] = useState<Users | null>(null)
+  const heading = usePageHeading()
+  const [status, setStatus] = useState<UserFilter>("customers")
+  const [query, setQuery] = useState("")
+  const [page, setPage] = useState(1)
+  const [viewingId, setViewingId] = useState<string | null>(null)
+  const [deactivating, setDeactivating] = useState<AdminUser | null>(null)
 
-  const filters = useMemo<AllUserColumnFilters>(
-    () => ({filter: filter === "all" ? undefined : filter }),
-    [filter],
-  )
-  const hasFilters = filter !== undefined
+  const list = useAdminUsers(status)
+  const counts = useAdminUserCounts()
+  const { mutate: deactivate, isPending } = useDeactivateUser()
 
-  const total = data?.length ?? NO_RECENTUSER
+  const users = useMemo(() => {
+    const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+    return (list.data ?? []).filter((user) => matchesSearch(user, terms))
+  }, [list.data, query])
+  const viewing = list.data?.find(({ id }) => id === viewingId) ?? null
+  const columns = useMemo(() => userColumns(({ id }) => setViewingId(id)), [])
+  const tabs: FilterTab<UserFilter>[] = TABS.map((tab) => ({ ...tab, count: counts.data?.[tab.value] }))
 
-  const columns = useMemo(() => userColumns((val)=> setReviewing(val)), [])
-
-  const filterKey = JSON.stringify(filters)
-  const [pageState, setPageState] = useState({ filterKey, page: 1 })
-  if (pageState.filterKey !== filterKey) setPageState({ filterKey, page: 1 })
-  const page = pageState.filterKey === filterKey ? pageState.page : 1
+  const lastPage = Math.max(1, Math.ceil(users.length / PAGE_SIZE))
+  const currentPage = Math.min(page, lastPage)
+  const pageRows = users.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   return (
     <section className="flex flex-col gap-6">
       <PageHeader
-        title={headerTitle.title}
-        description={headerTitle.description}
-        action={(
-          <Link
-            href={ROUTES.artisans}
-            className=" px-7 py-3 2xl:px-9.75 2xl:py-4 rounded-lg bg-secondary-blue text-[15px] 2xl:text-base text-hw-base-white"
-          >
-            Approve Artisan
-          </Link>
-        )}
+        title={heading?.title ?? "User Management"}
+        description={heading?.description ?? "Every customer, artisan and staff account."}
+        action={
+          <Button variant="outline" render={<Link href={ROUTES.artisans} />} nativeButton={false}>
+            Review artisans
+          </Button>
+        }
       />
 
-      {/* Table */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="-mx-1 max-w-full overflow-x-auto px-1 pb-1">
+          <FilterTabs
+            label="Account type"
+            tabs={tabs}
+            value={status}
+            onChange={(next) => {
+              setStatus(next)
+              setPage(1)
+            }}
+            className="w-fit"
+          />
+        </div>
+        <div className="w-full sm:w-80">
+          <FormField
+            name="user-search"
+            label="Search"
+            type="search"
+            placeholder="Name, email, phone or area"
+            startAddon={<Search />}
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value)
+              setPage(1)
+            }}
+          />
+        </div>
+      </div>
+
       <DataTable
         label="Users"
         columns={columns}
-        data={data}
+        data={pageRows}
         getRowId={(row) => row.id}
-        filterBy={filter}
-        tableFilters={
-          <FilterSelect label="Users" filter="Filter"  options={COLUMN_FILTERS} value={filter} onChange={setFilter} />
-        }
-        skeletonRows={USER_PAGE_SIZE}
-        emptyMessage={filters.filter==="all" ? "No match for the current filter." : "No user yet."}
+        isLoading={list.isPending}
+        isRefreshing={list.isFetching && !list.isPending}
+        error={list.error}
+        onRetry={() => list.refetch()}
+        isRetrying={list.isRefetching}
+        skeletonRows={5}
+        emptyMessage={query.trim() ? "Nobody matches your search." : EMPTY[status]}
         className="rounded-xl bg-hw-base-white"
         footer={
-          <DataTablePagination
-            page={page}
-            pageSize={USER_PAGE_SIZE}
-            total={total}
-            onPageChange={(next) => setPageState({ filterKey, page: next })}
-            noun={{ one: "user", other: "users" }}
-          />
+          users.length > PAGE_SIZE && (
+            <DataTablePagination
+              page={currentPage}
+              pageSize={PAGE_SIZE}
+              total={users.length}
+              onPageChange={setPage}
+              noun={{ one: "user", other: "users" }}
+            />
+          )
         }
       />
 
-      {/* modal */}
-      <DetailSheet
-        open={reviewing !== null}
-        onOpenChange={(open) => !open && setReviewing(null)}
-        title="User"
-      >
-        {reviewing && 
-        <div className=" divide-y divide-hw-grey-200">
-          <div className="flex gap-4 pb-3">
-            <UseAvatar src="" name={reviewing.name} aspectRatio="h-14 w-14" />
-            <div className="flex flex-col gap-1.5">
-              <span className=" text-lg font-semibold text-hw-grey-900">{reviewing.name}</span>
-              <Badge variant={"outline"} className={" text-sm font-medium text-hw-secondary bg-[#E9EBF3]"}>{reviewing.role}</Badge>
-            </div>
-          </div>
+      <UserSheet user={viewing} onOpenChange={(open) => !open && setViewingId(null)} onDeactivate={setDeactivating} />
 
-          <DetailSection title="Personal & account information">
-            <DetailRow label="Full Name">{reviewing.name}</DetailRow>
-            <DetailRow label="Date Joined">{reviewing.joinedAt}</DetailRow>
-            <DetailRow label="Account Status" className={TONE_STYLES[reviewing.status].text}>{reviewing.status}</DetailRow>
-          </DetailSection>
-
-          <DetailSection title="Contact & location">
-            <DetailRow label="Email Address">{reviewing.email}</DetailRow>
-            <DetailRow label="Phone Number">{reviewing.phone}</DetailRow>
-            <DetailRow label="Contact Address">{reviewing.address}</DetailRow>
-            <DetailRow label="State">{reviewing.state}</DetailRow>
-            <DetailRow label="Country">{reviewing.country}</DetailRow>
-          </DetailSection>
-
-          <DetailSection title="Verification">
-            <DetailRow label="Email Verification">{reviewing.emailVerified}</DetailRow>
-            <DetailRow label="Phone Verification">{reviewing.phoneVerified}</DetailRow>
-            <DetailRow label="Identity Verification">{reviewing.idDocVerified ?? "Not required"}</DetailRow>
-            <DetailRow label="NIN">{reviewing.nin ?? "Not required"}</DetailRow>
-            <DetailRow label="BVN">{reviewing.bvn ?? "Not required"}</DetailRow>
-            <DetailRow label="Document Type">{reviewing.uploadedDocType ?? "Not required"}</DetailRow>
-            <DetailRow label="Uploaded Document">{reviewing.uploadedDoc ?? "Not required"}</DetailRow>
-          </DetailSection>
-
-          <DetailSection title="Professional & payment details">
-            <p className="text-[#626773] text-xs leading-[160%] font-normal">
-              Not applicable to the User role. Work profile, portfolio, bank details and payout preferences are artisan only.
-            </p>
-          </DetailSection>
-
-          <div className="flex items-center justify-between gap-3 pt-5">
-            <Button onClick={noop} className={cn("py-5", TONE_STYLES.Suspend.chip)}>Suspend</Button>
-            <Button onClick={noop} className={cn("py-5", TONE_STYLES.Disable.chip)}>Disable</Button>
-          </div>
-        </div>}
-      </DetailSheet>
+      <ReasonDialog
+        open={deactivating !== null}
+        onOpenChange={(open) => !open && setDeactivating(null)}
+        title={`Deactivate ${deactivating?.name ?? "this account"}?`}
+        description={`They won't be able to sign in, and we'll email them this reason. You can undo this later.${deactivating ? deactivateWarning(deactivating) : ""}`}
+        quickReasons={QUICK_REASONS}
+        placeholder="Why is this account being deactivated?"
+        submitLabel="Deactivate account"
+        pending={isPending}
+        onSubmit={(reason, done) => {
+          if (!deactivating) return
+          deactivate(
+            { id: deactivating.id, reason },
+            {
+              onSuccess: () => {
+                done()
+                setViewingId(null)
+              },
+            },
+          )
+        }}
+      />
     </section>
   )
 }
