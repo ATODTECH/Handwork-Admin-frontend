@@ -21,7 +21,7 @@ const customerNav = (unread: number): DashboardNavGroup[] => [
     label: "Account",
     items: [
       { title: "Refer & earn", href: "#", icon: Gift, soon: true },
-      { title: "Profile & settings", href: "#", icon: UserRoundCog, soon: true },
+      { title: "Profile & settings", href: ACCOUNT_ROUTES.customerSettings, icon: UserRoundCog },
       { title: "Help & support", href: "/contact", icon: LifeBuoy },
     ],
   },

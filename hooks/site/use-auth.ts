@@ -118,6 +118,12 @@ export const markAccountOnboarded = () => {
   notifyProfileChange()
 }
 
+/** Show the account's new name straight away */
+export const markAccountRenamed = (name: string) => {
+  accountSession.setName(name)
+  notifyProfileChange()
+}
+
 let cachedKey = ""
 let cachedProfile: AccountProfile | null = null
 

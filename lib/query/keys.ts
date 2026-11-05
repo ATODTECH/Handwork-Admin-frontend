@@ -33,6 +33,7 @@ export const queryKeys = {
     categories: () => [...queryKeys.account.all, "categories"] as const,
     wallet: () => [...queryKeys.account.all, "wallet"] as const,
     conversations: () => [...queryKeys.account.all, "conversations"] as const,
+    profile: () => [...queryKeys.account.all, "profile"] as const,
     messages: (bookingId: number) => [...queryKeys.account.all, "messages", bookingId] as const,
   },
 } as const
@@ -62,6 +63,8 @@ export const mutationKeys = {
     saveBankDetails: ["account", "onboarding", "bank-details"] as const,
     sendMessage: ["account", "messages", "send"] as const,
     markMessagesRead: ["account", "messages", "read"] as const,
+    updateProfile: ["account", "profile", "update"] as const,
+    deleteAccount: ["account", "profile", "delete"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,
