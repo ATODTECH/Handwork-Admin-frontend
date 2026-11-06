@@ -38,6 +38,9 @@ export interface Booking {
   /** When the artisan marked it done; we pay them automatically a while after */
   completed_at: string | null
   fully_paid_at: string | null
+  /** Only bookings from the old deposit flow have a deposit_paid_at */
+  deposit_amount: string | null
+  deposit_paid_at: string | null
   released_at: string | null
   cancelled_at: string | null
   cancellation_reason: string

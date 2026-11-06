@@ -6,40 +6,9 @@ import Link from "next/link"
 import { CATEGORY_LINKS } from "@/modules/site/categories-details/data"
 import { Pagination } from "@/components/site/pagination"
 
-const caption = "ATOD TECH offers a diverse array of expertly crafted services, seamlessly merging creativity."
-const brands = ["Happiness store", "Grace kampala", "Joyce store", "Anointed store", "G&D gadgets", "Kano price"]
-
-// placeholder data until the categories API is wired up
-const categories = CATEGORY_LINKS.map(({ id, name, image }) => ({ name: id, icon: image, category: name, caption, brands }))
+const categories = CATEGORY_LINKS.map(({ id, name, image, description }) => ({ name: id, icon: image, category: name, caption: description }))
 
 const PAGE_SIZE = 5
-
-const BrandTicker = ({ brands }: { brands: string[] }) => {
-  // rendered twice so the -50% marquee loops seamlessly
-  const row = (
-    <div className="flex whitespace-nowrap gap-4">
-      {brands.map((brand, i) => (
-        <span key={brand} className="flex items-center gap-4 text-[1rem]">
-          <span className="text-sm font-medium text-[#F3F5FF] hover:text-secondary-orange">{brand}</span>
-          <span className={`text-sm text-primary-white ${i === brands.length - 1 ? "mr-4" : ""}`}>|</span>
-        </span>
-      ))}
-    </div>
-  )
-
-  return (
-    <div className="flex flex-wrap select-none relative w-full sm:max-w-[90%] lg:w-fit overflow-hidden rounded-[.625rem] bg-secondary-blue px-6 py-4 z-0">
-      <div className="absolute w-10 h-auto inset-0 left-0 bg-linear-to-r from-secondary-blue via-secondary-blue to-[#151327]/0 z-20"></div>
-      <div className="flex w-max marquee-content" style={{ "--char-count": brands.length } as React.CSSProperties}>
-        {row}
-        {row}
-      </div>
-      <div className="flex absolute w-full h-full top-0 left-0 justify-end pointer-events-none">
-        <div className="w-10 h-full bg-linear-to-l to-[#151327]/0 via-secondary-blue from-secondary-blue z-20"></div>
-      </div>
-    </div>
-  )
-}
 
 export const CategoriesContent = () => {
   const [page, setPage] = useState(1)
@@ -53,7 +22,7 @@ export const CategoriesContent = () => {
         <div className="flex flex-col items-center w-full max-w-[90%]">
           <h3 className="font-semibold text-center text-2xl 425xl:text-3xl sm:text-4xl lg:text-[2.75rem] lg:leading-14 text-secondary-orange w-[80%] lg:w-[70%] mb-6.25">Discover Our Full Range Of Services</h3>
           <p className="text-[#858585] tracking-[2%] text-center text-[1rem]">
-            Artisan’s Attic offers a diverse array of expertly crafted services, seamlessly  merging creativity and technology to deliver solutions that exceed and drive digital success
+            Find verified artisans across Nigeria, from plumbers and tailors to mechanics and developers. Pick a category to see who&apos;s available.
           </p>
         </div>
         <div className="flex flex-col 425xl:items-center sm:items-start text-primary-text w-full gap-13.25">
@@ -66,8 +35,10 @@ export const CategoriesContent = () => {
                   </div>
                   <span className="text-[1rem] leading-6 tracking-[1.5%] font-bold">{item.category}</span>
                 </div>
-                <p className="text-[1rem] leading-6 font-medium w-full sm:w-[80%] lg:w-[70%] mb-10">{item.caption}</p>
-                <BrandTicker brands={item.brands} />
+                <p className="text-[1rem] leading-6 font-medium w-full sm:w-[80%] lg:w-[70%] mb-6">{item.caption}</p>
+                <Link href={`/categories/${item.name}`} className="w-fit text-sm font-bold text-secondary-orange underline-offset-4 hover:underline lg:hidden">
+                  View All Service
+                </Link>
               </div>
               <div className="hidden sm:flex relative h-fit lg:h-auto sm:w-[35%] max-w-[40%] rounded-2xl overflow-hidden">
                 <Image src={item.icon} alt={item.category} className="h-full w-full object-cover" />

@@ -22,7 +22,7 @@ const artisanNav = (unread: number): DashboardNavGroup[] => [
       { title: "Overview", href: ACCOUNT_ROUTES.artisanHome, icon: LayoutDashboard, exact: true },
       { title: "Job requests", href: ACCOUNT_ROUTES.artisanJobs, icon: BriefcaseBusiness },
       { title: "Messages", href: ACCOUNT_ROUTES.artisanMessages, icon: MessageSquareText, badge: unread },
-      { title: "Schedule", href: "#", icon: CalendarDays, soon: true },
+      { title: "Schedule", href: ACCOUNT_ROUTES.artisanSchedule, icon: CalendarDays },
       { title: "Earnings", href: ACCOUNT_ROUTES.artisanEarnings, icon: Wallet },
       { title: "Reviews", href: "#", icon: Star, soon: true },
     ],

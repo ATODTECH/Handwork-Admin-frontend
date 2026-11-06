@@ -84,7 +84,9 @@ export const withdrawalSchema = (available: number, minimum: number) =>
 
 export type IdentityFormValues = Omit<Yup.InferType<typeof identitySchema>, "document"> & { document: File | null }
 export type LocationFormValues = Yup.InferType<typeof locationSchema>
-export type ServicesFormValues = Omit<Yup.InferType<typeof servicesSchema>, "baseCharge" | "capCharge"> & {
+/** After validating: the amounts are numbers */
+export type ServicesValues = Yup.InferType<typeof servicesSchema>
+export type ServicesFormValues = Omit<ServicesValues, "baseCharge" | "capCharge"> & {
   baseCharge: string
   capCharge: string
 }

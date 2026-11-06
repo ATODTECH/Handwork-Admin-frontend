@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Hourglass, TriangleAlert } from "lucide-react"
 import SectionCard from "@/components/account/section-card"
 import VerificationBadge from "@/components/shared/verification-badge"
@@ -40,6 +41,13 @@ const VerificationStatus = () => {
           </p>
         )}
         <IdentityStep />
+        <p className="text-sm text-hw-grey-700">
+          Is it about your services, prices or work photos? Change them in{" "}
+          <Link href="/dashboard/artisan/settings" className="font-medium text-hw-primary underline underline-offset-2">
+            Profile &amp; settings
+          </Link>
+          . Saving there also sends your profile back for review.
+        </p>
       </div>
     </SectionCard>
   )

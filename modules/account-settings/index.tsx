@@ -9,6 +9,7 @@ import DeleteSection from "./delete-section"
 import DetailsForm from "./details-form"
 import PasswordSection from "./password-section"
 import PhotoSection from "./photo-section"
+import WorkSection from "./work-section"
 
 const SettingsSkeleton = () => (
   <div className="flex flex-col gap-4" aria-busy="true" aria-label="Loading">
@@ -34,6 +35,11 @@ const AccountSettings = () => {
             <SectionCard title="Your details">
               <DetailsForm details={details} isArtisan={role === "ARTISAN"} />
             </SectionCard>
+            {role === "ARTISAN" && details.skill && (
+              <SectionCard title="Your services" description="What customers see on your profile: services, prices, work days and photos.">
+                <WorkSection skill={details.skill} />
+              </SectionCard>
+            )}
             <SectionCard title="Password">
               <PasswordSection email={details.email} />
             </SectionCard>

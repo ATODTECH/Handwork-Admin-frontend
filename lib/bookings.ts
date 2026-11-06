@@ -1,3 +1,4 @@
+import { formatSchedule } from "@/lib/format"
 import type { SemanticTone } from "@/lib/tones"
 import type { Booking, BookingStatus } from "@/types/account/dashboard"
 
@@ -62,9 +63,61 @@ export const bookingMeta = (status: BookingStatus): StatusMeta => STATUS_META[st
 /** Agreed price once the artisan accepts, otherwise the customer's budget */
 export const bookingPrice = (booking: Booking) => Number(booking.agreed_amount ?? booking.budget) || 0
 
+/** An old booking where only the 70% deposit has been paid */
+const isDepositOnly = (booking: Booking) => !!booking.deposit_paid_at && !booking.fully_paid_at
+
 /** What the customer has paid on this booking (everything, once paid; nothing once refunded) */
-export const bookingAmountPaid = (booking: Booking) =>
-  bookingMeta(booking.status).step >= 2 || booking.status === "Disputed" ? bookingPrice(booking) : 0
+export const bookingAmountPaid = (booking: Booking) => {
+  if (isDepositOnly(booking)) return Number(booking.deposit_amount) || 0
+  return bookingMeta(booking.status).step >= 2 || booking.status === "Disputed" ? bookingPrice(booking) : 0
+}
+
+export type PaymentState = "held" | "disputed" | "paid_out" | "deposit" | "refunded"
+
+export const PAYMENT_STATES: Record<PaymentState, { label: string, tone: SemanticTone, hint: string }> = {
+  held: { label: "Held by us", tone: "info", hint: "We pay the artisan once you confirm the job is done." },
+  disputed: { label: "Held: problem reported", tone: "warning", hint: "We're holding this while our team looks into the problem." },
+  paid_out: { label: "Paid to artisan", tone: "success", hint: "The job is finished and the artisan has been paid." },
+  deposit: { label: "Deposit paid", tone: "neutral", hint: "The balance is due once the job is done." },
+  refunded: { label: "Refunded", tone: "neutral", hint: "It can take a few days to reach your account." },
+}
+
+export interface BookingPayment {
+  booking: Booking
+  amount: number
+  state: PaymentState
+  /** When the customer paid */
+  paidAt: string
+}
+
+const paymentState = (booking: Booking): PaymentState => {
+  if (booking.status === "Refunded") return "refunded"
+  if (booking.status === "Disputed") return "disputed"
+  if (isDepositOnly(booking)) return "deposit"
+  return bookingMeta(booking.status).group === "done" ? "paid_out" : "held"
+}
+
+/** Every booking the customer has paid for, newest payment first */
+export const bookingPayments = (bookings: Booking[]): BookingPayment[] =>
+  bookings
+    .filter((booking) => booking.status === "Refunded" || bookingAmountPaid(booking) > 0)
+    .map((booking) => ({
+      booking,
+      amount: booking.status === "Refunded" ? bookingPrice(booking) : bookingAmountPaid(booking),
+      state: paymentState(booking),
+      paidAt: booking.fully_paid_at ?? booking.deposit_paid_at ?? booking.updated_at,
+    }))
+    .sort((a, b) => new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime())
+
+export const summarizePayments = (payments: BookingPayment[]) => {
+  const total = (...states: PaymentState[]) =>
+    payments.filter(({ state }) => states.includes(state)).reduce((sum, { amount }) => sum + amount, 0)
+  return {
+    paid: total("held", "disputed", "paid_out", "deposit"),
+    held: total("held", "disputed"),
+    refunded: total("refunded"),
+  }
+}
 
 /** How far the artisan's price is above the customer's budget (0 when it isn't, or there's no price yet) */
 export const priceAboveBudget = (booking: Booking) =>
@@ -172,3 +225,42 @@ export const artisanEarnings = (price: number) => Math.round(price * (1 - PLATFO
 
 export const filterJobs = (bookings: Booking[], group: JobGroup | "all") =>
   group === "all" ? bookings : bookings.filter(({ status }) => jobMeta(status).group === group)
+
+/** Jobs the artisan has agreed to and hasn't finished */
+const SCHEDULED_STATUSES: BookingStatus[] = ["Accepted", "Paid", "Deposit Paid", "In Progress"]
+
+export interface ScheduleDay {
+  /** YYYY-MM-DD; "overdue" and "unscheduled" are the two groups without a single day */
+  key: string
+  title: string
+  bookings: Booking[]
+}
+
+const addDays = (day: string, days: number) => {
+  const [year, month, date] = day.split("-").map(Number)
+  return new Date(Date.UTC(year, month - 1, date + days)).toISOString().slice(0, 10)
+}
+
+/**
+ * Open jobs by day, soonest first. Jobs whose date has passed come first, because they still need
+ * starting or finishing. `today` is YYYY-MM-DD, in Lagos.
+ */
+export const scheduleDays = (bookings: Booking[], today: string): ScheduleDay[] => {
+  const tomorrow = addDays(today, 1)
+  const groups = new Map<string, ScheduleDay>()
+
+  for (const booking of sortBySchedule(bookings.filter(({ status }) => SCHEDULED_STATUSES.includes(status)))) {
+    const date = booking.scheduled_date
+    const key = !date ? "unscheduled" : date < today ? "overdue" : date
+    const title =
+      key === "unscheduled" ? "Date to be agreed"
+      : key === "overdue" ? "Past their date"
+      : key === today ? `Today, ${formatSchedule(key)}`
+      : key === tomorrow ? `Tomorrow, ${formatSchedule(key)}`
+      : formatSchedule(key)
+    const group = groups.get(key) ?? { key, title, bookings: [] }
+    group.bookings.push(booking)
+    groups.set(key, group)
+  }
+  return [...groups.values()]
+}

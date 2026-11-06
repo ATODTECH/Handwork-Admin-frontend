@@ -19,7 +19,7 @@ const footerLinks = [
     item: [
       { title: "About Us", url: "/about-us" },
       { title: "Contact Us", url: "/contact" },
-      { title: "Artisan's Attic Reports", url: "/contact" },
+      { title: "Reports", url: "/contact" },
       { title: "FAQ", url: "/faq" },
     ],
   },
@@ -28,7 +28,7 @@ const footerLinks = [
     item: [
       { title: "About Us", url: "/about-us" },
       { title: "Contact", url: "/contact" },
-      { title: "Artisan's Attic Reports", url: "/contact" },
+      { title: "Reports", url: "/contact" },
     ],
   },
 ]

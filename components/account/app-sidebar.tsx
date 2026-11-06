@@ -90,7 +90,8 @@ const AppSidebar = ({ nav, onSignOut, showSupport = true }: AppSidebarProps) => 
         </SidebarContent>
 
         <SidebarFooter className="gap-3 p-3">
-          {showSupport && <div className="relative overflow-hidden rounded-xl bg-white/6 p-4 ring-1 ring-white/10 group-data-[collapsible=icon]:hidden">
+          {/* Hidden on short screens, where it would squeeze the menu; the menu has its own Help & support link */}
+          {showSupport && <div className="relative overflow-hidden rounded-xl bg-white/6 p-4 ring-1 ring-white/10 group-data-[collapsible=icon]:hidden [@media(max-height:860px)]:hidden">
             <div className="absolute -top-6 -right-6 size-20 rounded-full bg-hw-primary/25 blur-2xl" />
             <span className="mb-3 flex size-9 items-center justify-center rounded-lg bg-hw-primary text-white">
               <Headset className="size-4" />
