@@ -10,6 +10,7 @@ export type WorkAvailability = "weekdays_only" | "weekends_only" | "weekdays_and
 /** An artisan's skill, as nested in `GET /api/artisan/{id}` (decimal fields arrive as strings) */
 export interface ArtisanSkill {
   id: number
+  services: ServiceOption[]
   description: string
   base_charge: string
   cap_charge: string
@@ -20,6 +21,9 @@ export interface ArtisanSkill {
   image2: string | null
   image3: string | null
 }
+
+/** The skill's three photo fields, in order */
+export type SkillPhotoSlot = "image1" | "image2" | "image3"
 
 /** From `GET /api/artisan/{id}`: only the fields onboarding reads */
 export interface ArtisanProfile {
@@ -72,6 +76,12 @@ export interface SkillPayload {
   serviceIds: number[]
   availability: WorkAvailability
   photos: File[]
+}
+
+export interface SkillUpdate {
+  id: number
+  /** Only the fields that changed */
+  changes: FormData
 }
 
 export interface BankDetailsPayload {

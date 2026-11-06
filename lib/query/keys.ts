@@ -70,6 +70,7 @@ export const mutationKeys = {
     saveIdentity: ["account", "onboarding", "identity"] as const,
     saveLocation: ["account", "onboarding", "location"] as const,
     saveSkill: ["account", "onboarding", "skill"] as const,
+    updateSkill: ["account", "profile", "skill"] as const,
     saveBankDetails: ["account", "onboarding", "bank-details"] as const,
     sendMessage: ["account", "messages", "send"] as const,
     markMessagesRead: ["account", "messages", "read"] as const,

@@ -108,9 +108,9 @@ export const RegisterFormField = ({
       /** checkbox content */
       isCheckboxCont={(
         <div className="ml-1.5 text-[13px] lg:text-sm font-normal leading-normal">
-          I agree to Artisan&apos;s{" "}
+          I agree to Handwork Expert&apos;s{" "}
           <Link href="/policy" target="_blank" className={"text-hw-primary"}>
-            Attic Privacy Policy
+            Privacy Policy
           </Link>{" "}&amp;{" "}
           <Link href="/terms" target="_blank" className={"text-hw-primary"}>
             Terms and Conditions.

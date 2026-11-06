@@ -1,4 +1,5 @@
 import type { AccountRole } from "@/lib/auth/session"
+import type { ArtisanSkill } from "@/types/account/artisan"
 
 /** The signed-in account's own record, from `GET /api/user/{id}` or `GET /api/artisan/{id}` */
 export interface AccountDetails {
@@ -11,6 +12,8 @@ export interface AccountDetails {
   state: string | null
   city: string | null
   address: string | null
+  /** Artisans only, once they've added their services */
+  skill?: ArtisanSkill | null
 }
 
 export type AccountDetailsUpdate = Partial<Pick<AccountDetails, "first_name" | "last_name" | "contact" | "state" | "city" | "address">> & {

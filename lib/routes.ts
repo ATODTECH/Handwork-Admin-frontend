@@ -1,11 +1,3 @@
-import { UserRole } from "@/types/site/my-account";
-
-export const ROUTESITE = {
-  profile: (role: UserRole) => `/my-account/${role}/profile` as const,
-  address: (role: UserRole) => `/my-account/${role}/address` as const,
-} as const;
-
-
 export const ROUTES = {
   login: "/admin/login",
   dashboard: "/admin/dashboard/overview",
@@ -33,9 +25,11 @@ export const ACCOUNT_ROUTES = {
   customerBookings: "/dashboard/customer/bookings",
   customerArtisans: "/dashboard/customer/artisans",
   customerMessages: "/dashboard/customer/messages",
+  customerPayments: "/dashboard/customer/payments",
   customerSettings: "/dashboard/customer/settings",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
+  artisanSchedule: "/dashboard/artisan/schedule",
   artisanEarnings: "/dashboard/artisan/earnings",
   artisanMessages: "/dashboard/artisan/messages",
   artisanSettings: "/dashboard/artisan/settings",

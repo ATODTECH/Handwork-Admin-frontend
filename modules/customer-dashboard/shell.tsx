@@ -14,7 +14,7 @@ const customerNav = (unread: number): DashboardNavGroup[] => [
       { title: "My bookings", href: ACCOUNT_ROUTES.customerBookings, icon: CalendarCheck },
       { title: "Find an artisan", href: ACCOUNT_ROUTES.customerArtisans, icon: Search },
       { title: "Messages", href: ACCOUNT_ROUTES.customerMessages, icon: MessageSquareText, badge: unread },
-      { title: "Payments", href: "#", icon: CreditCard, soon: true },
+      { title: "Payments", href: ACCOUNT_ROUTES.customerPayments, icon: CreditCard },
     ],
   },
   {

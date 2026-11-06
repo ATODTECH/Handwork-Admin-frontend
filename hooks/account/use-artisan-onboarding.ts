@@ -10,6 +10,7 @@ import {
   saveLocationMutation,
   saveSkillMutation,
   serviceOptionsQuery,
+  updateSkillMutation,
 } from "@/services/account/artisan-onboarding"
 import type { ArtisanProfile } from "@/types/account/artisan"
 
@@ -95,6 +96,19 @@ export const useSaveSkill = () => {
       await refreshProfile()
       toast.success("Services added")
     },
+  })
+}
+
+/** Editing services after onboarding, from Profile & settings; the form shows any errors itself */
+export const useUpdateSkill = () => {
+  const queryClient = useQueryClient()
+  const refreshProfile = useRefreshProfile()
+
+  return useMutation({
+    ...updateSkillMutation(),
+    meta: { silentError: true },
+    onSuccess: () =>
+      Promise.all([refreshProfile(), queryClient.invalidateQueries({ queryKey: queryKeys.account.profile() })]),
   })
 }
 

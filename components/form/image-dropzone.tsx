@@ -6,9 +6,19 @@ import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import FieldFrame, { fieldErrorId, isFieldInvalid, type FieldFrameProps } from "./field-frame"
 
+/** A photo that's already saved */
+export interface ExistingImage {
+  key: string
+  url: string
+  label: string
+}
+
 interface ImageDropzoneProps extends Omit<FieldFrameProps, "className"> {
   files: File[]
   onFilesChange: (files: File[]) => void
+  /** Saved photos shown alongside new ones; they count towards `maxFiles` */
+  existing?: ExistingImage[]
+  onRemoveExisting?: (key: string) => void
   /** Called when the user first interacts, so the form can mark the field touched */
   onTouch?: () => void
   /** 1 = a single image that gets replaced */
@@ -19,6 +29,34 @@ interface ImageDropzoneProps extends Omit<FieldFrameProps, "className"> {
   hint: string
   disabled?: boolean
 }
+
+interface ImageTileProps {
+  url?: string
+  label: string
+  onRemove: () => void
+  disabled?: boolean
+}
+
+const ImageTile = ({ url, label, onRemove, disabled }: ImageTileProps) => (
+  <li className="group relative aspect-4/3 overflow-hidden rounded-xl border border-hw-border bg-muted">
+    {/* eslint-disable-next-line @next/next/no-img-element -- a local blob or an upload of any size, nothing for next/image to optimise */}
+    {url && <img src={url} alt={label} className="size-full object-cover" />}
+    <span className="absolute inset-x-0 bottom-0 truncate bg-linear-to-t from-black/60 to-transparent px-2.5 pt-6 pb-1.5 text-xs text-white">
+      {label}
+    </span>
+    <Button
+      type="button"
+      variant="secondary"
+      size="icon-xs"
+      onClick={onRemove}
+      disabled={disabled}
+      aria-label={`Remove ${label}`}
+      className="absolute top-2 right-2 rounded-full shadow-sm"
+    >
+      <X />
+    </Button>
+  </li>
+)
 
 /** A local preview for a picked file; the object URL is released when it unmounts */
 const FilePreview = ({ file, onRemove, disabled }: { file: File, onRemove: () => void, disabled?: boolean }) => {
@@ -31,26 +69,7 @@ const FilePreview = ({ file, onRemove, disabled }: { file: File, onRemove: () =>
     return () => URL.revokeObjectURL(objectUrl)
   }, [file])
 
-  return (
-    <li className="group relative aspect-4/3 overflow-hidden rounded-xl border border-hw-border bg-muted">
-      {/* eslint-disable-next-line @next/next/no-img-element -- local blob preview, nothing for next/image to optimise */}
-      {url && <img src={url} alt={file.name} className="size-full object-cover" />}
-      <span className="absolute inset-x-0 bottom-0 truncate bg-linear-to-t from-black/60 to-transparent px-2.5 pt-6 pb-1.5 text-xs text-white">
-        {file.name}
-      </span>
-      <Button
-        type="button"
-        variant="secondary"
-        size="icon-xs"
-        onClick={onRemove}
-        disabled={disabled}
-        aria-label={`Remove ${file.name}`}
-        className="absolute top-2 right-2 rounded-full shadow-sm"
-      >
-        <X />
-      </Button>
-    </li>
-  )
+  return <ImageTile url={url} label={file.name} onRemove={onRemove} disabled={disabled} />
 }
 
 /** Click-or-drop image picker with previews, type/size checks and a file limit. */
@@ -62,6 +81,8 @@ const ImageDropzone = ({
   touched,
   files,
   onFilesChange,
+  existing = [],
+  onRemoveExisting,
   onTouch,
   maxFiles = 1,
   accept,
@@ -74,7 +95,8 @@ const ImageDropzone = ({
   const [dragging, setDragging] = useState(false)
   const [rejection, setRejection] = useState<string | null>(null)
   const single = maxFiles === 1
-  const canAdd = single || files.length < maxFiles
+  const count = existing.length + files.length
+  const canAdd = single || count < maxFiles
   const showError = isFieldInvalid({ error, touched }) && !rejection
 
   const addFiles = (picked: FileList | null) => {
@@ -82,7 +104,7 @@ const ImageDropzone = ({
     if (!picked?.length) return
     const all = Array.from(picked)
     const valid = all.filter((file) => accept.includes(file.type) && file.size <= maxBytes)
-    const room = single ? 1 : maxFiles - files.length
+    const room = single ? 1 : maxFiles - count
     const accepted = valid.slice(0, room)
 
     if (valid.length < all.length) setRejection(`Some files were skipped. Use ${hint}.`)
@@ -117,8 +139,11 @@ const ImageDropzone = ({
         }}
       />
 
-      {files.length > 0 && (
+      {count > 0 && (
         <ul className={cn("grid gap-3", single ? "max-w-sm grid-cols-1" : "grid-cols-2 sm:grid-cols-3")}>
+          {existing.map(({ key, url, label: photoLabel }) => (
+            <ImageTile key={key} url={url} label={photoLabel} onRemove={() => onRemoveExisting?.(key)} disabled={disabled} />
+          ))}
           {files.map((file, index) => (
             <FilePreview key={`${file.name}-${file.lastModified}-${index}`} file={file} onRemove={() => removeAt(index)} disabled={disabled} />
           ))}
@@ -155,7 +180,7 @@ const ImageDropzone = ({
           </span>
           <span id={hintId} className="text-xs text-hw-grey-500">
             {hint}
-            {!single && ` · ${files.length}/${maxFiles} added`}
+            {!single && ` · ${count}/${maxFiles} added`}
           </span>
         </button>
       )}

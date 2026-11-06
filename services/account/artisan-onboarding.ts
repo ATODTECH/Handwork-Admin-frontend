@@ -6,12 +6,14 @@ import { COUNTRY } from "@/lib/locations"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
 import type {
   ArtisanProfile,
+  ArtisanSkill,
   Bank,
   BankDetailsPayload,
   IdentityPayload,
   LocationPayload,
   ServiceOption,
   SkillPayload,
+  SkillUpdate,
   WorkAvailability,
 } from "@/types/account/artisan"
 
@@ -67,6 +69,9 @@ export const artisanOnboardingService = {
     return accountHttp.post("/api/skill", body, { timeout: UPLOAD_TIMEOUT_MS })
   },
 
+  updateSkill: ({ id, changes }: SkillUpdate) =>
+    accountHttp.patch<ArtisanSkill>(`/api/skill/${id}`, changes, { timeout: UPLOAD_TIMEOUT_MS }),
+
   /** The API checks the account with Paystack and fills in the holder's name */
   saveBankDetails: ({ bankName, bankCode, accountNumber }: BankDetailsPayload) =>
     accountHttp.post("/api/bank_details", toFormData({ name: bankName, bank_code: bankCode, account_number: accountNumber })),
@@ -108,6 +113,12 @@ export const saveSkillMutation = () =>
   mutationOptions({
     mutationKey: mutationKeys.account.saveSkill,
     mutationFn: artisanOnboardingService.saveSkill,
+  })
+
+export const updateSkillMutation = () =>
+  mutationOptions({
+    mutationKey: mutationKeys.account.updateSkill,
+    mutationFn: artisanOnboardingService.updateSkill,
   })
 
 export const saveBankDetailsMutation = () =>
