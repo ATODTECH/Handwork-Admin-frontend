@@ -40,6 +40,8 @@ export const queryKeys = {
     conversations: () => [...queryKeys.account.all, "conversations"] as const,
     profile: () => [...queryKeys.account.all, "profile"] as const,
     messages: (bookingId: number) => [...queryKeys.account.all, "messages", bookingId] as const,
+    requests: () => [...queryKeys.account.all, "requests"] as const,
+    request: (id: number) => [...queryKeys.account.requests(), id] as const,
   },
 } as const
 
@@ -76,6 +78,10 @@ export const mutationKeys = {
     markMessagesRead: ["account", "messages", "read"] as const,
     updateProfile: ["account", "profile", "update"] as const,
     deleteAccount: ["account", "profile", "delete"] as const,
+    saveRequest: ["account", "requests", "save"] as const,
+    publishRequest: ["account", "requests", "publish"] as const,
+    closeRequest: ["account", "requests", "close"] as const,
+    deleteRequest: ["account", "requests", "delete"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,

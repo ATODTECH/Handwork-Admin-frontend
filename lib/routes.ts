@@ -23,6 +23,8 @@ export const ACCOUNT_ROUTES = {
   dashboard: "/dashboard",
   customerHome: "/dashboard/customer",
   customerBookings: "/dashboard/customer/bookings",
+  customerRequests: "/dashboard/customer/requests",
+  customerNewRequest: "/dashboard/customer/requests/new",
   customerArtisans: "/dashboard/customer/artisans",
   customerMessages: "/dashboard/customer/messages",
   customerPayments: "/dashboard/customer/payments",
@@ -38,6 +40,12 @@ export const ACCOUNT_ROUTES = {
 
 /** An artisan's profile and booking form, for customers */
 export const customerArtisanRoute = (id: string) => `${ACCOUNT_ROUTES.customerArtisans}/${id}` as const
+
+/** One of the customer's requests, with its offers */
+export const customerRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRequests}/${id}` as const
+
+/** Editing a request that hasn't had an offer accepted */
+export const customerEditRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRequests}/${id}/edit` as const
 
 /** Messages, opened on one booking's conversation when `bookingId` is given */
 export const messagesRoute = (viewer: "customer" | "artisan", bookingId?: number) => {
