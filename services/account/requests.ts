@@ -1,7 +1,15 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import { accountHttp } from "@/lib/http/client"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
-import type { JobRequest, RequestAttachment, RequestPayload } from "@/types/account/requests"
+import type {
+  AcceptOfferPayload,
+  CustomerOffer,
+  JobRequest,
+  RequestAttachment,
+  RequestMessage,
+  RequestPayload,
+  RequestThread,
+} from "@/types/account/requests"
 
 // Videos can be up to 50MB, so uploads get much longer than the default timeout
 const UPLOAD_TIMEOUT_MS = 10 * 60_000
@@ -44,6 +52,27 @@ export const requestsService = {
   },
   removeAttachment: ({ requestId, attachmentId }: { requestId: number, attachmentId: number }) =>
     accountHttp.delete<void>(`/api/requests/${requestId}/attachments/${attachmentId}`),
+
+  /** Every offer except withdrawn ones; opening them marks them viewed for the provider */
+  offers: (requestId: number, signal?: AbortSignal) =>
+    accountHttp.get<CustomerOffer[]>(`/api/requests/${requestId}/offers`, { signal }),
+  /** Creates the booking at "Accepted" with the offer's price; the customer then pays it as usual */
+  acceptOffer: ({ offerId, date, time, address }: AcceptOfferPayload) =>
+    accountHttp.post<{ offer: CustomerOffer, booking_id: number }>(`/api/offers/${offerId}/accept`, {
+      scheduled_date: date,
+      scheduled_time: time,
+      address,
+    }),
+  rejectOffer: ({ offerId, reason }: { offerId: number, reason?: string }) =>
+    accountHttp.post<CustomerOffer>(`/api/offers/${offerId}/reject`, { reason: reason ?? "" }),
+
+  // The customer's chat with one provider about the request
+  thread: ({ requestId, providerId }: { requestId: number, providerId: string }, signal?: AbortSignal) =>
+    accountHttp.get<RequestThread>(`/api/requests/${requestId}/messages`, { params: { provider: providerId }, signal }),
+  sendMessage: ({ requestId, providerId, text }: { requestId: number, providerId: string, text: string }) =>
+    accountHttp.post<RequestMessage>(`/api/requests/${requestId}/messages`, { provider: providerId, text }),
+  markThreadRead: ({ requestId, providerId }: { requestId: number, providerId: string }) =>
+    accountHttp.post<{ updated: number }>(`/api/requests/${requestId}/messages/read`, { provider: providerId }),
 }
 
 export const myRequestsQuery = () =>
@@ -66,3 +95,24 @@ export const closeRequestMutation = () =>
 
 export const deleteRequestMutation = () =>
   mutationOptions({ mutationKey: mutationKeys.account.deleteRequest, mutationFn: requestsService.remove })
+
+export const requestOffersQuery = (requestId: number) =>
+  queryOptions({
+    queryKey: queryKeys.account.requestOffers(requestId),
+    queryFn: ({ signal }) => requestsService.offers(requestId, signal),
+  })
+
+export const requestThreadQuery = (requestId: number, providerId: string) =>
+  queryOptions({
+    queryKey: queryKeys.account.requestThread(requestId, providerId),
+    queryFn: ({ signal }) => requestsService.thread({ requestId, providerId }, signal),
+  })
+
+export const acceptOfferMutation = () =>
+  mutationOptions({ mutationKey: mutationKeys.account.acceptOffer, mutationFn: requestsService.acceptOffer })
+
+export const rejectOfferMutation = () =>
+  mutationOptions({ mutationKey: mutationKeys.account.rejectOffer, mutationFn: requestsService.rejectOffer })
+
+export const sendRequestMessageMutation = () =>
+  mutationOptions({ mutationKey: mutationKeys.account.sendRequestMessage, mutationFn: requestsService.sendMessage })

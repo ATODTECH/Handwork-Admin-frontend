@@ -21,6 +21,7 @@ import { formatLocation } from "@/lib/locations"
 import { budgetLabel, FULFILMENT_OPTIONS, isEditable, STAGE_META, urgencyLabel } from "@/lib/requests"
 import { ACCOUNT_ROUTES, customerEditRequestRoute } from "@/lib/routes"
 import type { JobRequest, RequestAttachment } from "@/types/account/requests"
+import OffersSection from "./offers/offers-section"
 import RequestStageBadge from "./request-stage-badge"
 
 const CLOSE_REASONS = ["I found someone else", "I don't need it any more", "The offers were too expensive"]
@@ -146,24 +147,14 @@ const RequestActions = ({ request }: { request: JobRequest }) => {
   )
 }
 
-const OffersSummary = ({ request }: { request: JobRequest }) => {
-  if (request.booking_id) {
-    return (
-      <SectionCard title="Booking" description={STAGE_META[request.stage].hint}>
-        <Button render={<Link href={ACCOUNT_ROUTES.customerBookings} />} nativeButton={false}>
-          Open My bookings
-        </Button>
-      </SectionCard>
-    )
-  }
-  if (request.status === "DRAFT" || request.status === "CLOSED") return null
-  return (
-    <SectionCard title="Offers">
-      <p className="text-3xl font-semibold tabular-nums text-hw-grey-900">{request.offer_count}</p>
-      <p className="text-sm text-hw-grey-500">{request.offer_count === 1 ? "offer so far" : "offers so far"}</p>
-    </SectionCard>
-  )
-}
+/** Once an offer is accepted, the booking carries on in My bookings */
+const BookingCard = ({ request }: { request: JobRequest }) => (
+  <SectionCard title="Booking" description={STAGE_META[request.stage].hint}>
+    <Button render={<Link href={ACCOUNT_ROUTES.customerBookings} />} nativeButton={false}>
+      Open My bookings
+    </Button>
+  </SectionCard>
+)
 
 const RequestDetails = ({ request }: { request: JobRequest }) => {
   const { data: categories = [] } = useCategories()
@@ -186,6 +177,9 @@ const RequestDetails = ({ request }: { request: JobRequest }) => {
         {request.close_reason && <p className="text-sm text-hw-grey-700">Reason: {request.close_reason}</p>}
         <RequestActions request={request} />
       </Card>
+
+      {request.booking_id && <BookingCard request={request} />}
+      {request.status !== "DRAFT" && !request.booking_id && <OffersSection request={request} />}
 
       <SectionCard title="What you need">
         <div className="flex flex-col gap-5">
@@ -236,13 +230,13 @@ const RequestDetails = ({ request }: { request: JobRequest }) => {
 }
 
 const PageSkeleton = () => (
-  <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]" aria-busy="true" aria-label="Loading">
-    <Skeleton className="h-[36rem] rounded-2xl" />
+  <div className="mx-auto flex w-full max-w-4xl flex-col gap-6" aria-busy="true" aria-label="Loading">
     <Skeleton className="h-48 rounded-2xl" />
+    <Skeleton className="h-[28rem] rounded-2xl" />
   </div>
 )
 
-/** One of the customer's requests: what they asked for, where it stands and its offers */
+/** One of the customer's requests: where it stands, its offers, and what was asked for */
 const RequestPage = ({ id }: { id: number }) => {
   const { data: request, isPending, isError, error, refetch } = useRequest(id)
   const notFound = isError && isApiError(error) && error.status === 404
@@ -255,11 +249,8 @@ const RequestPage = ({ id }: { id: number }) => {
       ) : (
         <QueryContent isPending={isPending} isError={isError} onRetry={refetch} isEmpty={!request} empty={null} skeleton={<PageSkeleton />}>
           {request && (
-            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+            <div className="mx-auto w-full max-w-4xl">
               <RequestDetails request={request} />
-              <div className="flex flex-col gap-6 lg:sticky lg:top-24">
-                <OffersSummary request={request} />
-              </div>
             </div>
           )}
         </QueryContent>

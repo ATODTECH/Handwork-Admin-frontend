@@ -42,6 +42,8 @@ export const queryKeys = {
     messages: (bookingId: number) => [...queryKeys.account.all, "messages", bookingId] as const,
     requests: () => [...queryKeys.account.all, "requests"] as const,
     request: (id: number) => [...queryKeys.account.requests(), id] as const,
+    requestOffers: (id: number) => [...queryKeys.account.requests(), id, "offers"] as const,
+    requestThread: (id: number, providerId: string) => [...queryKeys.account.requests(), id, "thread", providerId] as const,
   },
 } as const
 
@@ -82,6 +84,9 @@ export const mutationKeys = {
     publishRequest: ["account", "requests", "publish"] as const,
     closeRequest: ["account", "requests", "close"] as const,
     deleteRequest: ["account", "requests", "delete"] as const,
+    acceptOffer: ["account", "offers", "accept"] as const,
+    rejectOffer: ["account", "offers", "reject"] as const,
+    sendRequestMessage: ["account", "requests", "send-message"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,

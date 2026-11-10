@@ -6,7 +6,14 @@ import type { ChatMessage, Conversation } from "@/types/account/messages"
 
 // The chat router keeps Django's trailing slashes (`chat/urls.py` on the API); `/api/conversations` doesn't
 export const messagesService = {
-  conversations: (signal?: AbortSignal) => accountHttp.get<Conversation[]>("/api/conversations", { signal }),
+  /**
+   * Booking chats only. The API also lists chats about requests (before an offer is accepted, `booking_id`
+   * null); those open from the request page instead.
+   */
+  conversations: (signal?: AbortSignal) =>
+    accountHttp
+      .get<Conversation[]>("/api/conversations", { signal })
+      .then((conversations) => conversations.filter(({ booking_id }) => booking_id !== null)),
   messages: (bookingId: number, signal?: AbortSignal) => accountHttp.get<ChatMessage[]>(`/api/chat/${bookingId}/`, { signal }),
   /** Also pushed to everyone on the booking's WebSocket */
   send: ({ bookingId, text }: { bookingId: number, text: string }) =>

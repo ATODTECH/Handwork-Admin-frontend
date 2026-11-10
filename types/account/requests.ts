@@ -95,3 +95,87 @@ export interface RequestPayload {
   visibility?: RequestVisibility
   target_provider?: string | null
 }
+
+/** What an offer can be. "EXPIRED" is worked out from `valid_until`. */
+export type OfferStatus = "SUBMITTED" | "ACCEPTED" | "REJECTED" | "WITHDRAWN" | "EXPIRED"
+
+/** The terms a provider can revise; each revision keeps a copy of the earlier ones */
+export interface OfferTerms {
+  price: string
+  description: string
+  completion_days: number
+  materials_included: boolean
+  labour_included: boolean
+  additional_charges: string
+  warranty: string
+  assumptions: string
+  /** A preliminary price: the final one depends on seeing the job */
+  is_estimate: boolean
+  /** YYYY-MM-DD */
+  valid_until: string | null
+}
+
+/** What a customer sees about a provider when comparing offers: no contact details */
+export interface OfferProvider {
+  id: string
+  name: string
+  profile_image: string | null
+  state: string | null
+  city: string | null
+  verified: boolean
+  /** From reviews tied to paid jobs only */
+  average_rating: number | null
+  review_count: number
+  completed_jobs: number
+  /** YYYY-MM-DD */
+  member_since: string
+  services: string[]
+  work_photos: string[]
+  charges: { lowest: string, highest: string } | null
+}
+
+/** An offer on the customer's request, from `GET /api/requests/{id}/offers` */
+export interface CustomerOffer extends OfferTerms {
+  id: number
+  request: number
+  currency: string
+  status: OfferStatus
+  viewed_at: string | null
+  rejection_note: string
+  revision_count: number
+  booking_id: number | null
+  created_at: string
+  updated_at: string
+  provider: OfferProvider
+  /** Earlier terms, oldest first */
+  revisions: { terms: OfferTerms, created_at: string }[]
+}
+
+/** The final agreement when accepting: when the job happens and where */
+export interface AcceptOfferPayload {
+  offerId: number
+  /** YYYY-MM-DD */
+  date: string
+  /** HH:MM */
+  time: string
+  address: string
+}
+
+/** A message in a request chat (same shape as a booking chat's) */
+export interface RequestMessage {
+  id: number
+  sender: string
+  sender_name: string
+  sender_role: string
+  text: string
+  /** Removed by staff after a report */
+  hidden: boolean
+  timestamp: string
+  is_read: boolean
+}
+
+export interface RequestThread {
+  messages: RequestMessage[]
+  /** False once the request stops taking offers */
+  can_send: boolean
+}

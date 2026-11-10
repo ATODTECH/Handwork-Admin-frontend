@@ -4,12 +4,17 @@ import { toast } from "sonner"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
 import { ACCOUNT_ROUTES, customerRequestRoute } from "@/lib/routes"
 import {
+  acceptOfferMutation,
   closeRequestMutation,
   deleteRequestMutation,
   myRequestsQuery,
   publishRequestMutation,
+  rejectOfferMutation,
+  requestOffersQuery,
   requestQuery,
   requestsService,
+  requestThreadQuery,
+  sendRequestMessageMutation,
 } from "@/services/account/requests"
 import type { JobRequest, RequestAttachment, RequestPayload } from "@/types/account/requests"
 
@@ -120,3 +125,55 @@ export const useDeleteRequest = () => {
     },
   })
 }
+
+// A request chat has no WebSocket in the web yet, so it refreshes while open
+const THREAD_REFRESH_MS = 10_000
+
+/** The offers on one of the customer's requests (only while it's had any chance of getting some) */
+export const useRequestOffers = (requestId: number, enabled = true) =>
+  useQuery({ ...requestOffersQuery(requestId), enabled })
+
+/** Accepts an offer, then opens My bookings so the customer can pay for it */
+export const useAcceptOffer = () => {
+  const queryClient = useQueryClient()
+  const router = useRouter()
+  return useMutation({
+    ...acceptOfferMutation(),
+    meta: { silentError: true },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.account.requests() }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.account.bookings() }),
+      ])
+      toast.success("Offer accepted. Pay for it to confirm the booking.")
+      router.push(ACCOUNT_ROUTES.customerBookings)
+    },
+  })
+}
+
+export const useRejectOffer = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...rejectOfferMutation(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.account.requests() })
+      toast.success("Offer turned down. We've let the provider know.")
+    },
+  })
+}
+
+/** The customer's chat with one provider about a request, refreshed while it's open */
+export const useRequestThread = (requestId: number, providerId: string, open: boolean) =>
+  useQuery({ ...requestThreadQuery(requestId, providerId), enabled: open, refetchInterval: open ? THREAD_REFRESH_MS : false })
+
+export const useSendRequestMessage = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...sendRequestMessageMutation(),
+    meta: { silentError: true },
+    onSuccess: (_, { requestId, providerId }) =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.account.requestThread(requestId, providerId) }),
+  })
+}
+
+export const useMarkRequestThreadRead = () => useMutation({ mutationFn: requestsService.markThreadRead })
