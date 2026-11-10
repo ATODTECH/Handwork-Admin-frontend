@@ -12,7 +12,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { useChatMessages, useChatSocket, useMarkMessagesRead, useSendMessage } from "@/hooks/account/use-messages"
 import { accountSession } from "@/lib/auth/session"
-import type { Conversation } from "@/types/account/messages"
+import type { BookingConversation } from "@/types/account/messages"
 import { conversationTitle } from "./conversation-list"
 import MessageTimeline from "./message-timeline"
 
@@ -28,7 +28,7 @@ const ThreadSkeleton = () => (
 )
 
 interface ChatThreadProps {
-  conversation: Conversation
+  conversation: BookingConversation
   viewer: BookingViewer
   /** Small screens show the list or the thread; this goes back to the list */
   onBack: () => void

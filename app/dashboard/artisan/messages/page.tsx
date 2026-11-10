@@ -1,15 +1,19 @@
 import { Metadata } from "next"
 import MessagesView from "@/components/account/messages/messages-view"
+import { bookingChatKey, REQUEST_CHAT_KEY } from "@/lib/routes"
 
 export const metadata: Metadata = {
   title: "Messages",
 }
 
-/** `?booking=` opens that booking's conversation */
+/** `?booking=` opens that booking's conversation, `?chat=r<request>-<provider>` a request's */
 const ArtisanMessagesPage = async ({ searchParams }: PageProps<"/dashboard/artisan/messages">) => {
-  const { booking } = await searchParams
+  const { booking, chat } = await searchParams
   const bookingId = Number(booking)
-  return <MessagesView viewer="artisan" initialBookingId={Number.isInteger(bookingId) && bookingId > 0 ? bookingId : undefined} />
+  const initialKey = Number.isInteger(bookingId) && bookingId > 0
+    ? bookingChatKey(bookingId)
+    : typeof chat === "string" && REQUEST_CHAT_KEY.test(chat) ? chat : undefined
+  return <MessagesView viewer="artisan" initialKey={initialKey} />
 }
 
 export default ArtisanMessagesPage

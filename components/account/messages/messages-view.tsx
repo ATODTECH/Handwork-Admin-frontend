@@ -12,24 +12,25 @@ import { Button } from "@/components/ui/button"
 import { useConversations } from "@/hooks/account/use-messages"
 import { ACCOUNT_ROUTES, messagesRoute } from "@/lib/routes"
 import ChatThread from "./chat-thread"
-import ConversationList from "./conversation-list"
+import ConversationList, { conversationKey } from "./conversation-list"
+import RequestChatThread from "./request-chat-thread"
 
 interface MessagesViewProps {
   viewer: BookingViewer
-  /** From `?booking=`, e.g. the booking details' Message button */
-  initialBookingId?: number
+  /** From `?booking=` or `?chat=`, e.g. the booking details' Message button */
+  initialKey?: string
 }
 
 /** Conversations on the left, the open one on the right; one at a time on small screens */
-const MessagesView = ({ viewer, initialBookingId }: MessagesViewProps) => {
+const MessagesView = ({ viewer, initialKey }: MessagesViewProps) => {
   const conversations = useConversations()
-  const [selectedId, setSelectedId] = useState<number | null>(initialBookingId ?? null)
-  const selected = conversations.data?.find(({ booking_id }) => booking_id === selectedId) ?? null
+  const [selectedKey, setSelectedKey] = useState<string | null>(initialKey ?? null)
+  const selected = conversations.data?.find((conversation) => conversationKey(conversation) === selectedKey) ?? null
 
-  const select = (bookingId: number | null) => {
-    setSelectedId(bookingId)
+  const select = (key: string | null) => {
+    setSelectedKey(key)
     // Keep the URL shareable without a navigation
-    window.history.replaceState(null, "", messagesRoute(viewer, bookingId ?? undefined))
+    window.history.replaceState(null, "", messagesRoute(viewer, key ?? undefined))
   }
 
   const isCustomer = viewer === "customer"
@@ -40,8 +41,8 @@ const MessagesView = ({ viewer, initialBookingId }: MessagesViewProps) => {
         title="Messages"
         description={
           isCustomer
-            ? "Talk to the artisans you've booked. Each booking has its own conversation."
-            : "Talk to your customers. Each job has its own conversation."
+            ? "Talk to providers about your requests and bookings. Each has its own conversation."
+            : "Talk to customers about their requests and your jobs. Each has its own conversation."
         }
       />
 
@@ -57,8 +58,8 @@ const MessagesView = ({ viewer, initialBookingId }: MessagesViewProps) => {
             title="No conversations yet"
             description={
               isCustomer
-                ? "Once you book an artisan, you can message them here about the job."
-                : "When a customer books you, you can message them here about the job."
+                ? "When a provider sends you an offer or a question, or you book one, you can message them here."
+                : "Ask a customer about their request, or message them about a job you're booked for."
             }
             action={
               isCustomer && (
@@ -72,17 +73,21 @@ const MessagesView = ({ viewer, initialBookingId }: MessagesViewProps) => {
       >
         <div className="grid h-[calc(100dvh-13rem)] min-h-112 overflow-hidden rounded-2xl bg-white ring-1 ring-hw-border lg:grid-cols-[22rem_minmax(0,1fr)]">
           <div className={cn("min-h-0 overflow-y-auto border-hw-grey-200 scrollbar-thin lg:border-r", selected && "hidden lg:block")}>
-            <ConversationList conversations={conversations.data ?? []} selectedId={selectedId} onSelect={select} />
+            <ConversationList conversations={conversations.data ?? []} selectedKey={selectedKey} onSelect={select} />
           </div>
           <div className={cn("min-h-0", !selected && "hidden lg:block")}>
             {selected ? (
               // key: start each conversation fresh (draft, socket, scroll)
-              <ChatThread key={selected.booking_id} conversation={selected} viewer={viewer} onBack={() => select(null)} />
+              selected.kind === "booking" ? (
+                <ChatThread key={selectedKey} conversation={selected} viewer={viewer} onBack={() => select(null)} />
+              ) : (
+                <RequestChatThread key={selectedKey} conversation={selected} viewer={viewer} onBack={() => select(null)} />
+              )
             ) : (
               <EmptyState
                 icon={MessagesSquare}
                 title="Pick a conversation"
-                description="Choose a booking on the left to see its messages."
+                description="Choose a conversation on the left to see its messages."
                 className="h-full rounded-none border-0 bg-transparent"
               />
             )}

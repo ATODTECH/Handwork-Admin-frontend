@@ -19,6 +19,7 @@ import CategoryGrid from "./category-grid"
 import NextBookingCard from "./next-booking-card"
 import NoBookingsYet from "./no-bookings-yet"
 import PaySafelyCard from "./pay-safely-card"
+import { PostRequestButton } from "./requests"
 
 const RECENT_LIMIT = 4
 
@@ -34,12 +35,15 @@ const CustomerOverview = () => {
     <>
       <PageHeader
         title={title}
-        description="Book a verified artisan and keep track of every job here."
+        description="Post what you need and compare offers, or book a verified artisan directly."
         actions={
-          <Button render={<Link href={ACCOUNT_ROUTES.customerArtisans} />} nativeButton={false}>
-            <Search data-icon="inline-start" />
-            Find an artisan
-          </Button>
+          <>
+            <Button variant="outline" render={<Link href={ACCOUNT_ROUTES.customerArtisans} />} nativeButton={false}>
+              <Search data-icon="inline-start" />
+              Find an artisan
+            </Button>
+            <PostRequestButton />
+          </>
         }
       />
 

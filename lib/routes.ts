@@ -23,12 +23,16 @@ export const ACCOUNT_ROUTES = {
   dashboard: "/dashboard",
   customerHome: "/dashboard/customer",
   customerBookings: "/dashboard/customer/bookings",
+  customerRequests: "/dashboard/customer/requests",
+  customerNewRequest: "/dashboard/customer/requests/new",
   customerArtisans: "/dashboard/customer/artisans",
   customerMessages: "/dashboard/customer/messages",
   customerPayments: "/dashboard/customer/payments",
   customerSettings: "/dashboard/customer/settings",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
+  artisanFindWork: "/dashboard/artisan/requests",
+  artisanOffers: "/dashboard/artisan/offers",
   artisanSchedule: "/dashboard/artisan/schedule",
   artisanEarnings: "/dashboard/artisan/earnings",
   artisanMessages: "/dashboard/artisan/messages",
@@ -39,10 +43,25 @@ export const ACCOUNT_ROUTES = {
 /** An artisan's profile and booking form, for customers */
 export const customerArtisanRoute = (id: string) => `${ACCOUNT_ROUTES.customerArtisans}/${id}` as const
 
-/** Messages, opened on one booking's conversation when `bookingId` is given */
-export const messagesRoute = (viewer: "customer" | "artisan", bookingId?: number) => {
+/** One of the customer's requests, with its offers */
+export const customerRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRequests}/${id}` as const
+
+/** Editing a request that hasn't had an offer accepted */
+export const customerEditRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRequests}/${id}/edit` as const
+
+/** A customer's request as a provider sees it, with their offer */
+export const artisanRequestRoute = (id: number) => `${ACCOUNT_ROUTES.artisanFindWork}/${id}` as const
+
+/** Identifies a conversation in Messages: a booking's, or a request's with one provider */
+export const bookingChatKey = (bookingId: number) => `b${bookingId}`
+export const requestChatKey = (requestId: number, providerId: string) => `r${requestId}-${providerId}`
+export const REQUEST_CHAT_KEY = /^r\d+-[0-9a-fA-F-]{32,36}$/
+
+/** Messages, opened on one conversation: `?booking=12` for a booking's, `?chat=r3-…` for a request's */
+export const messagesRoute = (viewer: "customer" | "artisan", conversationKey?: string) => {
   const base = viewer === "customer" ? ACCOUNT_ROUTES.customerMessages : ACCOUNT_ROUTES.artisanMessages
-  return bookingId ? `${base}?booking=${bookingId}` : base
+  if (!conversationKey) return base
+  return conversationKey.startsWith("b") ? `${base}?booking=${conversationKey.slice(1)}` : `${base}?chat=${conversationKey}`
 }
 
 /** Where each role lands after signing in */

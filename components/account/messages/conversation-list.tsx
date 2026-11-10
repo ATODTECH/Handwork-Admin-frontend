@@ -2,9 +2,18 @@ import { Lock } from "lucide-react"
 import { cn } from "cn"
 import { UseAvatar } from "@/components/shared/use-avatar"
 import { formatActivityDay, formatTime, dayKey } from "@/lib/format"
+import { bookingChatKey, requestChatKey } from "@/lib/routes"
 import type { Conversation } from "@/types/account/messages"
 
-export const conversationTitle = ({ services }: Pick<Conversation, "services">) => services.join(", ") || "Service request"
+/** What the conversation is about: the request's title, or the booking's services */
+export const conversationTitle = (conversation: Conversation) =>
+  conversation.kind === "request" ? conversation.request_title : conversation.services.join(", ") || "Service request"
+
+/** The key Messages selects a conversation by (and puts in the URL) */
+export const conversationKey = (conversation: Conversation) =>
+  conversation.kind === "request"
+    ? requestChatKey(conversation.request_id, conversation.provider_id)
+    : bookingChatKey(conversation.booking_id)
 
 /** "3:05 pm" today, otherwise the day */
 const lastActivity = ({ last_message, created_at }: Conversation) => {
@@ -19,22 +28,23 @@ const preview = ({ last_message, can_send }: Conversation) => {
 
 interface ConversationListProps {
   conversations: Conversation[]
-  selectedId: number | null
-  onSelect: (bookingId: number) => void
+  selectedKey: string | null
+  onSelect: (key: string) => void
 }
 
-/** One row per booking, most recent activity first */
-const ConversationList = ({ conversations, selectedId, onSelect }: ConversationListProps) => (
+/** One row per booking, and per request chat before a booking; most recent activity first */
+const ConversationList = ({ conversations, selectedKey, onSelect }: ConversationListProps) => (
   <ul className="flex flex-col divide-y divide-hw-grey-200" aria-label="Conversations">
     {conversations.map((conversation) => {
-      const selected = conversation.booking_id === selectedId
+      const key = conversationKey(conversation)
+      const selected = key === selectedKey
       const unread = conversation.unread > 0
 
       return (
-        <li key={conversation.booking_id}>
+        <li key={key}>
           <button
             type="button"
-            onClick={() => onSelect(conversation.booking_id)}
+            onClick={() => onSelect(key)}
             aria-current={selected || undefined}
             className={cn(
               "flex w-full items-start gap-3 px-4 py-3.5 text-left transition-colors outline-none hover:bg-hw-grey-200/30 focus-visible:bg-hw-grey-200/40",
@@ -49,7 +59,12 @@ const ConversationList = ({ conversations, selectedId, onSelect }: ConversationL
                 </span>
                 <span className="shrink-0 text-xs text-hw-grey-500 tabular-nums">{lastActivity(conversation)}</span>
               </div>
-              <span className="truncate text-xs text-hw-grey-500">{conversationTitle(conversation)}</span>
+              <span className="flex min-w-0 items-center gap-1.5 text-xs text-hw-grey-500">
+                {conversation.kind === "request" && (
+                  <span className="shrink-0 rounded bg-[#EFF5FF] px-1.5 py-px text-[10px] font-semibold text-hw-secondary uppercase">Request</span>
+                )}
+                <span className="truncate">{conversationTitle(conversation)}</span>
+              </span>
               <div className="flex items-center justify-between gap-2">
                 <span className={cn("truncate text-[13px]", unread ? "font-medium text-hw-grey-900" : "text-hw-grey-500")}>
                   {preview(conversation)}

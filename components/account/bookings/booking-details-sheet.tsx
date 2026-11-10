@@ -7,7 +7,7 @@ import { DetailRow, DetailSection } from "@/components/shared/details-part"
 import { Button } from "@/components/ui/button"
 import { artisanEarnings, bookingMeta, bookingPrice, bookingTitle, jobMeta, priceAboveBudget } from "@/lib/bookings"
 import { formatActivityDate, formatNairaAmount, formatSchedule } from "@/lib/format"
-import { messagesRoute } from "@/lib/routes"
+import { bookingChatKey, messagesRoute } from "@/lib/routes"
 import type { Booking } from "@/types/account/dashboard"
 import BookingActions from "./booking-actions"
 import BookingProgress from "./booking-progress"
@@ -82,7 +82,7 @@ const BookingDetailsSheet = ({ booking, viewer, onOpenChange }: BookingDetailsSh
             <Button
               variant="outline"
               className="mt-2 w-full"
-              render={<Link href={messagesRoute(viewer, booking.id)} />}
+              render={<Link href={messagesRoute(viewer, bookingChatKey(booking.id))} />}
               nativeButton={false}
             >
               <MessageSquareText data-icon="inline-start" />

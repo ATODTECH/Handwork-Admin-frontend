@@ -1,6 +1,6 @@
 "use client"
 
-import { CalendarCheck, CreditCard, Gift, LayoutDashboard, LifeBuoy, MessageSquareText, Search, UserRoundCog } from "lucide-react"
+import { CalendarCheck, ClipboardList, CreditCard, Gift, LayoutDashboard, LifeBuoy, MessageSquareText, Search, UserRoundCog } from "lucide-react"
 import DashboardShell from "@/components/account/dashboard-shell"
 import type { DashboardNavGroup } from "@/components/account/nav"
 import { useUnreadMessages } from "@/hooks/account/use-messages"
@@ -11,6 +11,7 @@ const customerNav = (unread: number): DashboardNavGroup[] => [
     label: "Menu",
     items: [
       { title: "Overview", href: ACCOUNT_ROUTES.customerHome, icon: LayoutDashboard, exact: true },
+      { title: "My requests", href: ACCOUNT_ROUTES.customerRequests, icon: ClipboardList },
       { title: "My bookings", href: ACCOUNT_ROUTES.customerBookings, icon: CalendarCheck },
       { title: "Find an artisan", href: ACCOUNT_ROUTES.customerArtisans, icon: Search },
       { title: "Messages", href: ACCOUNT_ROUTES.customerMessages, icon: MessageSquareText, badge: unread },
