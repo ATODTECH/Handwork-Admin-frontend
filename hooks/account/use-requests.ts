@@ -16,7 +16,8 @@ import {
   requestThreadQuery,
   sendRequestMessageMutation,
 } from "@/services/account/requests"
-import type { JobRequest, RequestAttachment, RequestPayload } from "@/types/account/requests"
+import { markAllRead } from "@/lib/requests"
+import type { JobRequest, RequestAttachment, RequestPayload, RequestThread } from "@/types/account/requests"
 
 export const useMyRequests = () => useQuery(myRequestsQuery())
 
@@ -171,9 +172,22 @@ export const useSendRequestMessage = () => {
   return useMutation({
     ...sendRequestMessageMutation(),
     meta: { silentError: true },
-    onSuccess: (_, { requestId, providerId }) =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.account.requestThread(requestId, providerId) }),
+    onSuccess: (_, { requestId, providerId }) => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.account.requestThread(requestId, providerId) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.account.conversations() })
+    },
   })
 }
 
-export const useMarkRequestThreadRead = () => useMutation({ mutationFn: requestsService.markThreadRead })
+/** Marks the provider's messages read, here and in the unread counts */
+export const useMarkRequestThreadRead = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: requestsService.markThreadRead,
+    meta: { silentError: true },
+    onSuccess: (_, { requestId, providerId }) => {
+      queryClient.setQueryData<RequestThread>(queryKeys.account.requestThread(requestId, providerId), markAllRead)
+      void queryClient.invalidateQueries({ queryKey: queryKeys.account.conversations() })
+    },
+  })
+}

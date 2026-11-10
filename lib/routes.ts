@@ -52,10 +52,16 @@ export const customerEditRequestRoute = (id: number) => `${ACCOUNT_ROUTES.custom
 /** A customer's request as a provider sees it, with their offer */
 export const artisanRequestRoute = (id: number) => `${ACCOUNT_ROUTES.artisanFindWork}/${id}` as const
 
-/** Messages, opened on one booking's conversation when `bookingId` is given */
-export const messagesRoute = (viewer: "customer" | "artisan", bookingId?: number) => {
+/** Identifies a conversation in Messages: a booking's, or a request's with one provider */
+export const bookingChatKey = (bookingId: number) => `b${bookingId}`
+export const requestChatKey = (requestId: number, providerId: string) => `r${requestId}-${providerId}`
+export const REQUEST_CHAT_KEY = /^r\d+-[0-9a-fA-F-]{32,36}$/
+
+/** Messages, opened on one conversation: `?booking=12` for a booking's, `?chat=r3-…` for a request's */
+export const messagesRoute = (viewer: "customer" | "artisan", conversationKey?: string) => {
   const base = viewer === "customer" ? ACCOUNT_ROUTES.customerMessages : ACCOUNT_ROUTES.artisanMessages
-  return bookingId ? `${base}?booking=${bookingId}` : base
+  if (!conversationKey) return base
+  return conversationKey.startsWith("b") ? `${base}?booking=${conversationKey.slice(1)}` : `${base}?chat=${conversationKey}`
 }
 
 /** Where each role lands after signing in */

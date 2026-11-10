@@ -1,5 +1,5 @@
 import type { SemanticTone } from "@/lib/tones"
-import type { Fulfilment, JobRequest, RequestStage, Urgency } from "@/types/account/requests"
+import type { Fulfilment, JobRequest, RequestStage, RequestThread, Urgency } from "@/types/account/requests"
 
 /** Mirrors the API's limits on `POST /api/requests/{id}/attachments` */
 export const REQUEST_MEDIA = {
@@ -119,3 +119,7 @@ export const budgetLabel = (
   if (!range) return "Open to offers"
   return budget_flexible ? `${range} (flexible)` : range
 }
+
+/** A request chat with every message read: what marking it read leaves in the cache */
+export const markAllRead = (thread: RequestThread | undefined) =>
+  thread && { ...thread, messages: thread.messages.map((message) => ({ ...message, is_read: true })) }

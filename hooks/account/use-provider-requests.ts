@@ -8,7 +8,8 @@ import {
   providerThreadQuery,
   requestFeedQuery,
 } from "@/services/account/requests"
-import type { RequestFeedFilters } from "@/types/account/requests"
+import type { RequestFeedFilters, RequestThread } from "@/types/account/requests"
+import { markAllRead } from "@/lib/requests"
 
 // Request chats have no WebSocket in the web yet, so an open chat refreshes on a timer
 const THREAD_REFRESH_MS = 10_000
@@ -90,8 +91,22 @@ export const useSendProviderMessage = () => {
   return useMutation({
     mutationFn: providerRequestsService.sendMessage,
     meta: { silentError: true },
-    onSuccess: (_, { requestId }) => queryClient.invalidateQueries({ queryKey: queryKeys.account.providerThread(requestId) }),
+    onSuccess: (_, { requestId }) => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.account.providerThread(requestId) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.account.conversations() })
+    },
   })
 }
 
-export const useMarkProviderThreadRead = () => useMutation({ mutationFn: providerRequestsService.markThreadRead })
+/** Marks the customer's messages read, here and in the unread counts */
+export const useMarkProviderThreadRead = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: providerRequestsService.markThreadRead,
+    meta: { silentError: true },
+    onSuccess: (_, requestId) => {
+      queryClient.setQueryData<RequestThread>(queryKeys.account.providerThread(requestId), markAllRead)
+      void queryClient.invalidateQueries({ queryKey: queryKeys.account.conversations() })
+    },
+  })
+}
