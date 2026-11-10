@@ -44,6 +44,12 @@ export const queryKeys = {
     request: (id: number) => [...queryKeys.account.requests(), id] as const,
     requestOffers: (id: number) => [...queryKeys.account.requests(), id, "offers"] as const,
     requestThread: (id: number, providerId: string) => [...queryKeys.account.requests(), id, "thread", providerId] as const,
+    // The provider side: someone else's requests, and the provider's own offers
+    providerRequests: () => [...queryKeys.account.all, "provider-requests"] as const,
+    requestFeed: (filters: object) => [...queryKeys.account.providerRequests(), "feed", filters] as const,
+    providerRequest: (id: number) => [...queryKeys.account.providerRequests(), id] as const,
+    providerThread: (id: number) => [...queryKeys.account.providerRequests(), id, "thread"] as const,
+    myOffers: () => [...queryKeys.account.all, "my-offers"] as const,
   },
 } as const
 
@@ -87,6 +93,10 @@ export const mutationKeys = {
     acceptOffer: ["account", "offers", "accept"] as const,
     rejectOffer: ["account", "offers", "reject"] as const,
     sendRequestMessage: ["account", "requests", "send-message"] as const,
+    bookmarkRequest: ["account", "requests", "bookmark"] as const,
+    sendOffer: ["account", "offers", "send"] as const,
+    reviseOffer: ["account", "offers", "revise"] as const,
+    withdrawOffer: ["account", "offers", "withdraw"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,

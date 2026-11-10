@@ -5,7 +5,11 @@ import type {
   AcceptOfferPayload,
   CustomerOffer,
   JobRequest,
+  OfferPayload,
+  ProviderOffer,
+  ProviderRequest,
   RequestAttachment,
+  RequestFeedFilters,
   RequestMessage,
   RequestPayload,
   RequestThread,
@@ -75,6 +79,38 @@ export const requestsService = {
     accountHttp.post<{ updated: number }>(`/api/requests/${requestId}/messages/read`, { provider: providerId }),
 }
 
+/** The provider side: finding requests and sending offers */
+export const providerRequestsService = {
+  feed: ({ all, saved, category, state, search }: RequestFeedFilters, signal?: AbortSignal) =>
+    accountHttp.get<ProviderRequest[]>("/api/requests/feed", {
+      signal,
+      params: {
+        ...(all && { all: "true" }),
+        ...(saved && { saved: "true" }),
+        ...(category && { category }),
+        ...(state && { state }),
+        ...(search?.trim() && { search: search.trim() }),
+      },
+    }),
+  get: (id: number, signal?: AbortSignal) => accountHttp.get<ProviderRequest>(`/api/requests/${id}`, { signal }),
+  save: ({ id, saved }: { id: number, saved: boolean }) =>
+    saved ? accountHttp.post<{ saved: boolean }>(`/api/requests/${id}/save`) : accountHttp.delete<{ saved: boolean }>(`/api/requests/${id}/save`),
+
+  offers: (signal?: AbortSignal) => accountHttp.get<ProviderOffer[]>("/api/offers", { signal }),
+  /** Also re-sends an offer after it was withdrawn or turned down */
+  send: ({ requestId, terms }: { requestId: number, terms: OfferPayload }) =>
+    accountHttp.post<ProviderOffer>("/api/offers", { request: requestId, ...terms }),
+  /** Only the changed terms; the customer sees the earlier ones too */
+  revise: ({ id, changes }: { id: number, changes: Partial<OfferPayload> }) => accountHttp.patch<ProviderOffer>(`/api/offers/${id}`, changes),
+  withdraw: (id: number) => accountHttp.post<ProviderOffer>(`/api/offers/${id}/withdraw`),
+
+  // The provider's chat with the customer: always their own, so no provider id
+  thread: (requestId: number, signal?: AbortSignal) => accountHttp.get<RequestThread>(`/api/requests/${requestId}/messages`, { signal }),
+  sendMessage: ({ requestId, text }: { requestId: number, text: string }) =>
+    accountHttp.post<RequestMessage>(`/api/requests/${requestId}/messages`, { text }),
+  markThreadRead: (requestId: number) => accountHttp.post<{ updated: number }>(`/api/requests/${requestId}/messages/read`),
+}
+
 export const myRequestsQuery = () =>
   queryOptions({
     queryKey: queryKeys.account.requests(),
@@ -116,3 +152,27 @@ export const rejectOfferMutation = () =>
 
 export const sendRequestMessageMutation = () =>
   mutationOptions({ mutationKey: mutationKeys.account.sendRequestMessage, mutationFn: requestsService.sendMessage })
+
+export const requestFeedQuery = (filters: RequestFeedFilters) =>
+  queryOptions({
+    queryKey: queryKeys.account.requestFeed(filters),
+    queryFn: ({ signal }) => providerRequestsService.feed(filters, signal),
+  })
+
+export const providerRequestQuery = (id: number) =>
+  queryOptions({
+    queryKey: queryKeys.account.providerRequest(id),
+    queryFn: ({ signal }) => providerRequestsService.get(id, signal),
+  })
+
+export const myOffersQuery = () =>
+  queryOptions({
+    queryKey: queryKeys.account.myOffers(),
+    queryFn: ({ signal }) => providerRequestsService.offers(signal),
+  })
+
+export const providerThreadQuery = (requestId: number) =>
+  queryOptions({
+    queryKey: queryKeys.account.providerThread(requestId),
+    queryFn: ({ signal }) => providerRequestsService.thread(requestId, signal),
+  })

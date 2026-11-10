@@ -31,6 +31,8 @@ export const ACCOUNT_ROUTES = {
   customerSettings: "/dashboard/customer/settings",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
+  artisanFindWork: "/dashboard/artisan/requests",
+  artisanOffers: "/dashboard/artisan/offers",
   artisanSchedule: "/dashboard/artisan/schedule",
   artisanEarnings: "/dashboard/artisan/earnings",
   artisanMessages: "/dashboard/artisan/messages",
@@ -46,6 +48,9 @@ export const customerRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRe
 
 /** Editing a request that hasn't had an offer accepted */
 export const customerEditRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRequests}/${id}/edit` as const
+
+/** A customer's request as a provider sees it, with their offer */
+export const artisanRequestRoute = (id: number) => `${ACCOUNT_ROUTES.artisanFindWork}/${id}` as const
 
 /** Messages, opened on one booking's conversation when `bookingId` is given */
 export const messagesRoute = (viewer: "customer" | "artisan", bookingId?: number) => {

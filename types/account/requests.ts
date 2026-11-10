@@ -179,3 +179,71 @@ export interface RequestThread {
   /** False once the request stops taking offers */
   can_send: boolean
 }
+
+/** A provider's own offer (`/api/offers`, and `my_offer` on a request) */
+export interface ProviderOffer extends OfferTerms {
+  id: number
+  request: number
+  currency: string
+  status: OfferStatus
+  /** When the customer first looked at it (or at the latest revision) */
+  viewed_at: string | null
+  rejection_note: string
+  revision_count: number
+  booking_id: number | null
+  created_at: string
+  updated_at: string
+  /** Only in the `/api/offers` list */
+  request_summary?: {
+    id: number
+    reference: string
+    title: string
+    stage: RequestStage
+    customer: string
+    state: string
+    city: string
+    deadline: string | null
+  }
+}
+
+/** A request as a provider sees it: no address or private files until their offer is accepted */
+export interface ProviderRequest {
+  id: number
+  reference: string
+  title: string
+  category: { id: number, name: string } | null
+  services: { id: number, name: string }[]
+  description: string
+  details: RequestDetails
+  fulfilment: Fulfilment
+  state: string
+  city: string
+  /** Only once their offer is accepted */
+  address: string | null
+  budget_min: string | null
+  budget_max: string | null
+  budget_flexible: boolean
+  deadline: string | null
+  urgency: Urgency
+  /** Sent to this provider only */
+  private: boolean
+  customer: { first_name: string, member_since: string }
+  attachments: RequestAttachment[]
+  stage: RequestStage
+  offer_count: number
+  my_offer: ProviderOffer | null
+  saved: boolean
+  published_at: string | null
+  expires_at: string | null
+}
+
+export interface RequestFeedFilters {
+  /** Every open request, not only those for services the provider offers */
+  all?: boolean
+  saved?: boolean
+  category?: number
+  state?: string
+  search?: string
+}
+
+export type OfferPayload = Omit<OfferTerms, "price"> & { price: string }

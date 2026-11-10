@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, CalendarDays, ClipboardX, Film, Lock, MapPin, Pencil, RotateCw, Send, Timer, Trash2, Wallet } from "lucide-react"
+import { ArrowLeft, ClipboardX, Lock, Pencil, RotateCw, Send, Trash2 } from "lucide-react"
 import EmptyState from "@/components/account/empty-state"
+import { DetailsGrid, MediaGallery, WhereAndWhen } from "@/components/account/requests/request-facts"
 import QueryContent from "@/components/account/query-content"
 import SectionCard from "@/components/account/section-card"
 import ReasonDialog from "@/components/shared/reason-dialog"
@@ -15,12 +16,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
 import { useCategories } from "@/hooks/account/use-marketplace"
 import { useCloseRequest, useDeleteRequest, usePublishRequest, useRequest } from "@/hooks/account/use-requests"
-import { formatActivityDate, formatNairaAmount, formatSchedule } from "@/lib/format"
+import { formatActivityDate } from "@/lib/format"
 import { isApiError } from "@/lib/http/errors"
-import { formatLocation } from "@/lib/locations"
-import { budgetLabel, FULFILMENT_OPTIONS, isEditable, STAGE_META, urgencyLabel } from "@/lib/requests"
+import { isEditable, STAGE_META } from "@/lib/requests"
 import { ACCOUNT_ROUTES, customerEditRequestRoute } from "@/lib/routes"
-import type { JobRequest, RequestAttachment } from "@/types/account/requests"
+import type { JobRequest } from "@/types/account/requests"
 import OffersSection from "./offers/offers-section"
 import RequestStageBadge from "./request-stage-badge"
 
@@ -31,48 +31,6 @@ export const BackToRequests = () => (
     <ArrowLeft data-icon="inline-start" />
     My requests
   </Button>
-)
-
-const Fact = ({ icon: Icon, label, children }: { icon: typeof MapPin, label: string, children: React.ReactNode }) => (
-  <div className="flex items-start gap-3">
-    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-hw-grey-700">
-      <Icon className="size-4" />
-    </span>
-    <div className="flex min-w-0 flex-col">
-      <span className="text-xs text-hw-grey-500">{label}</span>
-      <span className="text-sm text-hw-grey-900">{children}</span>
-    </div>
-  </div>
-)
-
-const MediaGallery = ({ attachments }: { attachments: RequestAttachment[] }) => (
-  <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-    {attachments.map((attachment, index) => (
-      <li key={attachment.id} className="relative aspect-4/3 overflow-hidden rounded-xl border border-hw-border bg-muted">
-        {attachment.url && attachment.kind === "IMAGE" && (
-          <a href={attachment.url} target="_blank" rel="noreferrer" className="block size-full">
-            {/* eslint-disable-next-line @next/next/no-img-element -- a signed storage link */}
-            <img src={attachment.url} alt={`Photo ${index + 1}`} className="size-full object-cover" />
-          </a>
-        )}
-        {attachment.url && attachment.kind === "VIDEO" && (
-          <video src={attachment.url} controls playsInline preload="metadata" className="size-full bg-black object-contain" aria-label={`Video ${index + 1}`} />
-        )}
-        <div className="pointer-events-none absolute top-2 left-2 flex gap-1">
-          {attachment.kind === "VIDEO" && (
-            <span className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] text-white">
-              <Film className="size-3" /> Video
-            </span>
-          )}
-          {attachment.private && (
-            <span className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] text-white">
-              <Lock className="size-3" /> Private
-            </span>
-          )}
-        </div>
-      </li>
-    ))}
-  </ul>
 )
 
 const DeleteDraftDialog = ({ request, open, onOpenChange }: { request: JobRequest, open: boolean, onOpenChange: (open: boolean) => void }) => {
@@ -160,9 +118,6 @@ const RequestDetails = ({ request }: { request: JobRequest }) => {
   const { data: categories = [] } = useCategories()
   const category = categories.find(({ id }) => id === request.category)
   const services = category?.service.filter(({ id }) => request.services.includes(id)).map(({ name }) => name) ?? []
-  const fulfilment = FULFILMENT_OPTIONS.find(({ value }) => value === request.fulfilment)?.label
-  const where = request.fulfilment === "REMOTE" ? "Remote" : [request.address, formatLocation(request)].filter(Boolean).join(", ")
-  const details = Object.entries(request.details)
 
   return (
     <div className="flex min-w-0 flex-col gap-6">
@@ -192,16 +147,7 @@ const RequestDetails = ({ request }: { request: JobRequest }) => {
             </div>
           )}
           <p className="text-sm leading-relaxed whitespace-pre-line text-hw-grey-700">{request.description}</p>
-          {details.length > 0 && (
-            <dl className="grid gap-3 sm:grid-cols-2">
-              {details.map(([key, value]) => (
-                <div key={key} className="rounded-lg bg-muted/60 px-3 py-2">
-                  <dt className="text-xs text-hw-grey-500">{key}</dt>
-                  <dd className="text-sm text-hw-grey-900">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
+          <DetailsGrid details={request.details} />
         </div>
       </SectionCard>
 
@@ -212,12 +158,7 @@ const RequestDetails = ({ request }: { request: JobRequest }) => {
       )}
 
       <SectionCard title="Where and when">
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Fact icon={MapPin} label={fulfilment ?? "Where"}>{where || "Not set"}</Fact>
-          <Fact icon={Wallet} label="Budget">{budgetLabel(request, formatNairaAmount)}</Fact>
-          <Fact icon={CalendarDays} label="Needed by">{request.deadline ? formatSchedule(request.deadline) : "No date set"}</Fact>
-          <Fact icon={Timer} label="Urgency">{urgencyLabel(request.urgency)}</Fact>
-        </div>
+        <WhereAndWhen request={request} />
         {request.published_at && (
           <p className="mt-5 text-xs text-hw-grey-500">
             Published {formatActivityDate(request.published_at)}
