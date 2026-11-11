@@ -24,6 +24,10 @@ export const queryKeys = {
     reportsRoot: () => [...queryKeys.admin.all, "reports"] as const,
     reports: (status: string) => [...queryKeys.admin.reportsRoot(), status] as const,
     reportCounts: () => [...queryKeys.admin.reportsRoot(), "counts"] as const,
+    requestsRoot: () => [...queryKeys.admin.all, "requests"] as const,
+    requests: (status: string) => [...queryKeys.admin.requestsRoot(), status] as const,
+    requestCounts: () => [...queryKeys.admin.requestsRoot(), "counts"] as const,
+    request: (id: number) => [...queryKeys.admin.requestsRoot(), "detail", id] as const,
   },
   site: {
     all: ["site"] as const,
@@ -73,6 +77,8 @@ export const mutationKeys = {
     updateService: ["admin", "services", "update"] as const,
     deleteService: ["admin", "services", "delete"] as const,
     resolveReport: ["admin", "reports", "resolve"] as const,
+    closeRequest: ["admin", "requests", "close"] as const,
+    withdrawOffer: ["admin", "offers", "withdraw"] as const,
   },
   account: {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,
