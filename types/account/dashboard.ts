@@ -52,6 +52,10 @@ export interface Booking {
   resolution_note: string
   /** The other side's phone number, shared once the job is paid for */
   contact: string | null
+  /** The request this booking came from, when it came from an accepted offer */
+  request_id?: number | null
+  /** The customer's review of this job, once they've left one (fetch it by id for the text) */
+  review?: { id: number, star: number } | null
   created_at: string
   updated_at: string
 }

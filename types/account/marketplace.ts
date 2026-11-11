@@ -1,4 +1,5 @@
 import type { WorkAvailability } from "./artisan"
+import type { ReviewSummary } from "./reviews"
 
 /** A service as nested in an artisan's skill and in a category */
 export interface ServiceRef {
@@ -26,6 +27,8 @@ export interface PublicArtisan {
   city: string | null
   isAvailable: boolean
   skill: PublicSkill | null
+  /** Verified reviews only; missing on API deploys from before reviews */
+  review_summary?: ReviewSummary
 }
 
 /** From `GET /api/category` */

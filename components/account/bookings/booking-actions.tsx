@@ -3,7 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { cn } from "cn"
-import { CircleAlert, CircleCheckBig, CreditCard, X } from "lucide-react"
+import { CircleAlert, CircleCheckBig, CreditCard, Star, X } from "lucide-react"
+import ReviewDialog from "@/components/account/reviews/review-dialog"
 import SubmitButton from "@/components/form/submit-button"
 import ReasonDialog from "@/components/shared/reason-dialog"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useCancelBooking, useConfirmBooking, usePayBooking, useReportProblem } from "@/hooks/account/use-dashboard"
 import { autoReleaseAt, bookingMeta, bookingPrice, bookingTitle, CANCELLABLE, REPORTABLE } from "@/lib/bookings"
 import { formatNairaAmount } from "@/lib/format"
+import { canReview } from "@/lib/reviews"
 import type { Booking } from "@/types/account/dashboard"
 
 const RELEASE_DATE = new Intl.DateTimeFormat("en-NG", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })
@@ -112,15 +114,16 @@ interface BookingActionsProps {
   expanded?: boolean
 }
 
-/** What the customer can do with a booking right now: pay or turn down the price, confirm the job or report a problem */
+/** What the customer can do with a booking right now: pay or turn down the price, confirm the job, report a problem or review it */
 const BookingActions = ({ booking, className, expanded = false }: BookingActionsProps) => {
   const { action } = bookingMeta(booking.status)
   const pay = usePayBooking()
-  const [dialog, setDialog] = useState<"confirm" | "cancel" | "report" | null>(null)
+  const [dialog, setDialog] = useState<"confirm" | "cancel" | "report" | "review" | null>(null)
   const closeDialog = (open: boolean) => !open && setDialog(null)
   const canCancel = CANCELLABLE.includes(booking.status) && (expanded || action === "pay")
   const canReport = REPORTABLE.includes(booking.status) && (expanded || action === "confirm")
-  if (!action && !canCancel && !canReport) return null
+  const reviewable = canReview(booking)
+  if (!action && !canCancel && !canReport && !reviewable) return null
 
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)}>
@@ -154,6 +157,19 @@ const BookingActions = ({ booking, className, expanded = false }: BookingActions
           Confirm job done
         </Button>
       )}
+      {reviewable && (
+        <Button size="sm" variant="outline" onClick={() => setDialog("review")}>
+          <Star data-icon="inline-start" />
+          Leave a review
+        </Button>
+      )}
+      <ReviewDialog
+        open={dialog === "review"}
+        onOpenChange={closeDialog}
+        providerName={booking.artisan.split(" ")[0] || booking.artisan}
+        jobTitle={bookingTitle(booking)}
+        bookingId={booking.id}
+      />
       <ConfirmDialog booking={booking} open={dialog === "confirm"} onOpenChange={closeDialog} />
       <CancelDialog booking={booking} open={dialog === "cancel"} onOpenChange={closeDialog} />
       <ReportDialog booking={booking} open={dialog === "report"} onOpenChange={closeDialog} />

@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, CalendarDays, MapPin, UserRoundX, Wallet } from "lucide-react"
+import { ArrowLeft, CalendarDays, MapPin, Star, UserRoundX, Wallet } from "lucide-react"
+import ProviderReviewsSection from "@/components/account/reviews/provider-reviews-section"
 import EmptyState from "@/components/account/empty-state"
 import QueryContent from "@/components/account/query-content"
 import SectionCard from "@/components/account/section-card"
@@ -14,6 +15,7 @@ import { useArtisan } from "@/hooks/account/use-marketplace"
 import { availabilityLabel } from "@/lib/artisans"
 import { isApiError } from "@/lib/http/errors"
 import { formatLocation } from "@/lib/locations"
+import { reviewCountLabel } from "@/lib/reviews"
 import { artisanName, priceRange } from "@/lib/marketplace"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
 import type { PublicArtisan } from "@/types/account/marketplace"
@@ -59,6 +61,13 @@ const ArtisanDetails = ({ artisan }: { artisan: PublicArtisan }) => {
               <Fact icon={MapPin}>{formatLocation(artisan) ?? "Location not set"}</Fact>
               {skill && <Fact icon={Wallet}>{priceRange(skill)}</Fact>}
               {skill && <Fact icon={CalendarDays}>{availabilityLabel(skill)}</Fact>}
+              {artisan.review_summary && (
+                <Fact icon={Star}>
+                  {artisan.review_summary.average === null
+                    ? "No reviews yet"
+                    : `${artisan.review_summary.average.toFixed(1)} · ${reviewCountLabel(artisan.review_summary.count)}`}
+                </Fact>
+              )}
             </div>
           </div>
         </div>
@@ -89,6 +98,8 @@ const ArtisanDetails = ({ artisan }: { artisan: PublicArtisan }) => {
           </div>
         </SectionCard>
       )}
+
+      <ProviderReviewsSection providerId={artisan.id} />
     </div>
   )
 }

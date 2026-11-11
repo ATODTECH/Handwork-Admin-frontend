@@ -35,6 +35,7 @@ export const ACCOUNT_ROUTES = {
   artisanOffers: "/dashboard/artisan/offers",
   artisanSchedule: "/dashboard/artisan/schedule",
   artisanEarnings: "/dashboard/artisan/earnings",
+  artisanReviews: "/dashboard/artisan/reviews",
   artisanMessages: "/dashboard/artisan/messages",
   artisanSettings: "/dashboard/artisan/settings",
   artisanOnboarding: "/dashboard/artisan/onboarding",

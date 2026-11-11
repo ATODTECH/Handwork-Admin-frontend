@@ -50,6 +50,9 @@ export const queryKeys = {
     providerRequest: (id: number) => [...queryKeys.account.providerRequests(), id] as const,
     providerThread: (id: number) => [...queryKeys.account.providerRequests(), id, "thread"] as const,
     myOffers: () => [...queryKeys.account.all, "my-offers"] as const,
+    reviews: () => [...queryKeys.account.all, "reviews"] as const,
+    providerReviews: (providerId: string) => [...queryKeys.account.reviews(), "provider", providerId] as const,
+    review: (id: number) => [...queryKeys.account.reviews(), id] as const,
   },
 } as const
 
@@ -97,6 +100,9 @@ export const mutationKeys = {
     sendOffer: ["account", "offers", "send"] as const,
     reviseOffer: ["account", "offers", "revise"] as const,
     withdrawOffer: ["account", "offers", "withdraw"] as const,
+    leaveReview: ["account", "reviews", "leave"] as const,
+    editReview: ["account", "reviews", "edit"] as const,
+    replyToReview: ["account", "reviews", "reply"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,
