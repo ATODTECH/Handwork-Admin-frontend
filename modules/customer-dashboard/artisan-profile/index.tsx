@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { ArrowLeft, CalendarDays, MapPin, Star, UserRoundX, Wallet } from "lucide-react"
+import ReportButton from "@/components/account/reports/report-dialog"
 import ProviderReviewsSection from "@/components/account/reviews/provider-reviews-section"
 import EmptyState from "@/components/account/empty-state"
 import QueryContent from "@/components/account/query-content"
@@ -70,6 +71,7 @@ const ArtisanDetails = ({ artisan }: { artisan: PublicArtisan }) => {
               )}
             </div>
           </div>
+          <ReportButton target={{ type: "USER", id: artisan.id }} subject={name} className="self-start sm:ml-auto" />
         </div>
       </Card>
 

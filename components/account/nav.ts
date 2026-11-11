@@ -10,6 +10,8 @@ export interface DashboardNavItem {
   soon?: boolean
   /** A count shown beside the title, e.g. unread messages; hidden at 0 */
   badge?: number
+  /** Read before the count by screen readers; defaults to "Unread" */
+  badgeLabel?: string
 }
 
 export interface DashboardNavGroup {

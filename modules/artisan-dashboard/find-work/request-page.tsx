@@ -6,6 +6,7 @@ import { ArrowLeft, Bookmark, ClipboardX, Lock, Pencil, ShieldCheck, Undo2, Zap 
 import { cn } from "cn"
 import EmptyState from "@/components/account/empty-state"
 import QueryContent from "@/components/account/query-content"
+import ReportButton from "@/components/account/reports/report-dialog"
 import ChatPanel from "@/components/account/requests/chat-panel"
 import { DetailsGrid, MediaGallery, WhereAndWhen } from "@/components/account/requests/request-facts"
 import SectionCard from "@/components/account/section-card"
@@ -203,10 +204,13 @@ const RequestView = ({ request }: { request: ProviderRequest }) => {
             {request.urgency === "URGENT" && <Badge className="bg-[#FFF0EF] text-[#C2271D]"><Zap /> Urgent</Badge>}
             {!takesOffers(request) && !request.my_offer && <Badge variant="secondary">No longer taking offers</Badge>}
           </div>
-          <Button variant="outline" size="sm" disabled={save.isPending} onClick={() => save.mutate({ id: request.id, saved: !request.saved })}>
-            <Bookmark data-icon="inline-start" className={cn(request.saved && "fill-hw-secondary text-hw-secondary")} />
-            {request.saved ? "Saved" : "Save"}
-          </Button>
+          <div className="flex items-center gap-1">
+            <ReportButton target={{ type: "REQUEST", id: request.id }} subject={`${request.customer.first_name}'s request`} />
+            <Button variant="outline" size="sm" disabled={save.isPending} onClick={() => save.mutate({ id: request.id, saved: !request.saved })}>
+              <Bookmark data-icon="inline-start" className={cn(request.saved && "fill-hw-secondary text-hw-secondary")} />
+              {request.saved ? "Saved" : "Save"}
+            </Button>
+          </div>
         </div>
         <h1 className="text-2xl font-semibold tracking-tight text-hw-grey-900">{request.title}</h1>
         <p className="text-sm text-hw-grey-500">

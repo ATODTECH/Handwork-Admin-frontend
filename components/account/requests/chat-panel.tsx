@@ -62,7 +62,7 @@ const ChatPanel = ({ thread, isPending, isError, onRetry, onSend, sending, sendE
           isEmpty={!messages.length}
           empty={<EmptyState icon={MessageSquareText} title="No messages yet" description={emptyText} className="border-0 bg-transparent" />}
         >
-          <MessageTimeline messages={messages} isOwn={(message) => message.sender === myId} />
+          <MessageTimeline messages={messages} isOwn={(message) => message.sender === myId} reportable />
         </QueryContent>
         <div ref={bottomRef} />
       </div>

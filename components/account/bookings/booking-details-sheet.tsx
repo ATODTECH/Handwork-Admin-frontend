@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { MessageSquareText, Phone } from "lucide-react"
+import ReportButton from "@/components/account/reports/report-dialog"
 import BookingReview from "@/components/account/reviews/booking-review"
 import { DetailSheet } from "@/components/shared/detail-sheet"
 import { DetailRow, DetailSection } from "@/components/shared/details-part"
@@ -89,6 +90,12 @@ const BookingDetailsSheet = ({ booking, viewer, onOpenChange }: BookingDetailsSh
               <MessageSquareText data-icon="inline-start" />
               Message {isArtisan ? "the customer" : "the artisan"}
             </Button>
+            <ReportButton
+              target={{ type: "BOOKING", id: booking.id }}
+              subject="a problem with this booking"
+              label={`Report ${isArtisan ? "the customer" : "the artisan"}`}
+              className="mt-1 w-full"
+            />
           </DetailSection>
 
           {booking.cancellation_reason && <Note title="Why it was cancelled">{booking.cancellation_reason}</Note>}

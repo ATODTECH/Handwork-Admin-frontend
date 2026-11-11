@@ -60,7 +60,7 @@ const ArtisanReviews = () => {
             {shown.length ? (
               <div className="flex flex-col divide-y divide-hw-grey-200">
                 {shown.map((review) => (
-                  <ReviewCard key={review.id} review={review} canReply className="py-5 first:pt-0 last:pb-0" />
+                  <ReviewCard key={review.id} review={review} canReply reportable className="py-5 first:pt-0 last:pb-0" />
                 ))}
               </div>
             ) : (

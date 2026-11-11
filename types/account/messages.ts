@@ -10,6 +10,8 @@ export interface ChatMessage {
   sender_name: string
   sender_role: string
   text: string
+  /** Removed by staff after a report (the text then says so); missing over the WebSocket */
+  hidden?: boolean
   timestamp: string
   is_read: boolean
 }

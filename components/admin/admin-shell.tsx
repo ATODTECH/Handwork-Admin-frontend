@@ -6,6 +6,7 @@ import {
   BookOpenCheck,
   ChartColumn,
   ChevronDown,
+  Flag,
   Globe,
   Headset,
   LayoutDashboard,
@@ -31,9 +32,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAdminSignOut } from "@/hooks/admin/use-admin-auth"
+import { useAdminReportCounts } from "@/hooks/admin/use-reports"
 import { ROUTES } from "@/lib/routes"
 
-const ADMIN_NAV: DashboardNavGroup[] = [
+const adminNav = (openReports: number): DashboardNavGroup[] => [
   {
     label: "Manage",
     items: [
@@ -43,6 +45,7 @@ const ADMIN_NAV: DashboardNavGroup[] = [
       { title: "User management", href: ROUTES.users, icon: Users },
       { title: "Bookings", href: ROUTES.bookings, icon: BookOpenCheck },
       { title: "Services", href: ROUTES.services, icon: Wrench },
+      { title: "Reported content", href: ROUTES.reportedContent, icon: Flag, badge: openReports, badgeLabel: "Open reports" },
     ],
   },
   {
@@ -95,8 +98,9 @@ const AdminMenu = () => {
 /** The admin console in the same frame as the customer and artisan dashboards */
 const AdminShell = ({ children }: { children: React.ReactNode }) => {
   const signOut = useAdminSignOut()
+  const { data: reportCounts } = useAdminReportCounts()
   return (
-    <DashboardShell nav={ADMIN_NAV} headerActions={<AdminMenu />} onSignOut={signOut} showSupport={false}>
+    <DashboardShell nav={adminNav(reportCounts?.open ?? 0)} headerActions={<AdminMenu />} onSignOut={signOut} showSupport={false}>
       {children}
     </DashboardShell>
   )

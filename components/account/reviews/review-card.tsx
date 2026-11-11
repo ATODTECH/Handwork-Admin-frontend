@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { cn } from "cn"
 import { BadgeCheck, MessageSquareReply, Pencil } from "lucide-react"
+import ReportButton from "@/components/account/reports/report-dialog"
 import SubmitButton from "@/components/form/submit-button"
 import TextareaField from "@/components/form/textarea-field"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -66,11 +67,13 @@ interface ReviewCardProps {
   actions?: React.ReactNode
   /** Leave out the reviewer's name and avatar (when it's the viewer's own review) */
   compact?: boolean
+  /** Offer "Report" (the provider reporting a review of them) */
+  reportable?: boolean
   className?: string
 }
 
 /** One review with its stars, words, job and the provider's reply */
-const ReviewCard = ({ review, canReply = false, actions, compact = false, className }: ReviewCardProps) => {
+const ReviewCard = ({ review, canReply = false, actions, compact = false, reportable = false, className }: ReviewCardProps) => {
   const [replying, setReplying] = useState(false)
 
   return (
@@ -102,6 +105,7 @@ const ReviewCard = ({ review, canReply = false, actions, compact = false, classN
           </div>
         </div>
         {actions}
+        {reportable && <ReportButton target={{ type: "REVIEW", id: review.id }} subject={`${review.client}'s review`} size="xs" />}
       </div>
 
       {review.message ? (

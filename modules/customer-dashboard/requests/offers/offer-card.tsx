@@ -4,6 +4,7 @@ import { useState } from "react"
 import { BadgeCheck, Briefcase, ChevronDown, CircleAlert, History, MapPin, MessageSquareText, Star } from "lucide-react"
 import { cn } from "cn"
 import { UseAvatar } from "@/components/shared/use-avatar"
+import ReportButton from "@/components/account/reports/report-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -177,22 +178,21 @@ const OfferCard = ({ offer, canAccept, canMessage, onAccept, onReject, onMessage
 
       {offer.rejection_note && !open && <p className="text-xs text-hw-grey-500">Note: {offer.rejection_note}</p>}
 
-      {(open || canMessage) && (
-        <div className="flex flex-wrap gap-2 border-t border-hw-border pt-4">
-          {open && canAccept && <Button onClick={onAccept}>Accept offer</Button>}
-          {canMessage && (
-            <Button variant="outline" onClick={onMessage}>
-              <MessageSquareText data-icon="inline-start" />
-              Message
-            </Button>
-          )}
-          {open && (
-            <Button variant="ghost" onClick={onReject}>
-              Turn down
-            </Button>
-          )}
-        </div>
-      )}
+      <div className="flex flex-wrap items-center gap-2 border-t border-hw-border pt-4">
+        {open && canAccept && <Button onClick={onAccept}>Accept offer</Button>}
+        {canMessage && (
+          <Button variant="outline" onClick={onMessage}>
+            <MessageSquareText data-icon="inline-start" />
+            Message
+          </Button>
+        )}
+        {open && (
+          <Button variant="ghost" onClick={onReject}>
+            Turn down
+          </Button>
+        )}
+        <ReportButton target={{ type: "OFFER", id: offer.id }} subject={`${provider.name.split(" ")[0]}'s offer`} className="ml-auto" />
+      </div>
     </Card>
   )
 }

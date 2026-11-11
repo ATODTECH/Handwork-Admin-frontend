@@ -99,7 +99,7 @@ const ChatThread = ({ conversation, viewer, onBack }: ChatThreadProps) => {
             />
           }
         >
-          <MessageTimeline messages={list} isOwn={(message) => message.sender === myId} />
+          <MessageTimeline messages={list} isOwn={(message) => message.sender === myId} reportable />
         </QueryContent>
         <div ref={bottomRef} />
       </div>
