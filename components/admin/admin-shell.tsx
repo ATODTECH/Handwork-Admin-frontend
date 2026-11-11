@@ -53,7 +53,7 @@ const adminNav = (openReports: number): DashboardNavGroup[] => [
   {
     label: "Insights",
     items: [
-      { title: "Reports", href: ROUTES.reports, icon: ChartColumn, soon: true },
+      { title: "Reports", href: ROUTES.reports, icon: ChartColumn },
       { title: "Support", href: ROUTES.support, icon: Headset, soon: true },
       { title: "Notifications", href: ROUTES.notifications, icon: BellRing, soon: true },
       { title: "Settings", href: ROUTES.settings, icon: Settings, soon: true },
