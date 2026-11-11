@@ -43,7 +43,7 @@ const BookingReview = ({ booking, viewer }: { booking: Booking, viewer: "custome
           />
           {isCustomer && !editable && (
             <p className="pt-2 text-xs text-hw-grey-500">
-              {review.reply ? "The provider has replied, so your review can't be changed." : `Reviews can be changed for ${REVIEW_EDIT_DAYS} days.`}
+              {review.reply ? "The artisan has replied, so your review can't be changed." : `Reviews can be changed for ${REVIEW_EDIT_DAYS} days.`}
             </p>
           )}
           {editable && (

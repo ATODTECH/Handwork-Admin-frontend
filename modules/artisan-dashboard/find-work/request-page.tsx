@@ -275,7 +275,7 @@ const ProviderRequestPage = ({ id }: { id: number }) => {
         <EmptyState
           icon={ClipboardX}
           title={status === 403 ? "Requests open up once you're approved" : "This request isn't available"}
-          description={status === 403 ? "Our team is reviewing your account." : "It may have been closed, or it was sent to another provider."}
+          description={status === 403 ? "Our team is reviewing your account." : "It may have been closed, or it was sent to another artisan."}
         />
       ) : (
         <QueryContent isPending={isPending} isError={isError} onRetry={refetch} isEmpty={!request} empty={null} skeleton={<PageSkeleton />}>

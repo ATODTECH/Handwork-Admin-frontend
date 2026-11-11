@@ -32,7 +32,7 @@ export const useCloseRequest = () => {
     ...closeRequestMutation(),
     onSuccess: async ({ reference }) => {
       await refresh()
-      toast.success(`${reference} closed. We've told the customer and any providers who offered.`)
+      toast.success(`${reference} closed. We've told the customer and any artisans who offered.`)
     },
   })
 }

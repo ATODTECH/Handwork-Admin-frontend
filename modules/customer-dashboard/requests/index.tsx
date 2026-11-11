@@ -95,7 +95,7 @@ const CustomerRequests = () => {
     <>
       <PageHeader
         title="My requests"
-        description="Describe what you need once, get offers from providers, and pick the best one."
+        description="Describe what you need once, get offers from artisans, and pick the best one."
         actions={<PostRequestButton />}
       />
       <SectionCard title="Requests" contentClassName="flex flex-col gap-5">
@@ -124,7 +124,7 @@ const CustomerRequests = () => {
             <EmptyState
               icon={ClipboardList}
               title={tab === "all" ? "No requests yet" : `No ${tabLabel} requests`}
-              description="Post what you need, with photos or a video, and providers will send you offers to compare."
+              description="Post what you need, with photos or a video, and artisans will send you offers to compare."
               action={tab === "all" ? <PostRequestButton /> : undefined}
             />
           }

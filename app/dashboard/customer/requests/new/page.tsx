@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Post a request",
 }
 
-const NewRequestPage = () => <NewRequest />
+/** `?provider=<id>` makes it a quote request sent only to that provider */
+const NewRequestPage = async ({ searchParams }: PageProps<"/dashboard/customer/requests/new">) => {
+  const { provider } = await searchParams
+  return <NewRequest providerId={typeof provider === "string" && provider ? provider : undefined} />
+}
 
 export default NewRequestPage

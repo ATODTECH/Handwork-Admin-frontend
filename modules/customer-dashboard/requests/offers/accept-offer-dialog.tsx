@@ -143,7 +143,7 @@ const AcceptOfferDialog = ({ request, offer, onOpenChange }: AcceptOfferDialogPr
 
             <p className="flex items-start gap-2 text-xs text-hw-grey-500">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-hw-secondary" />
-              Next you pay {formatNairaAmount(offer.price)} to confirm. We hold it and only pay the provider once you confirm the
+              Next you pay {formatNairaAmount(offer.price)} to confirm. We hold it and only pay the artisan once you confirm the
               job is done.
             </p>
 

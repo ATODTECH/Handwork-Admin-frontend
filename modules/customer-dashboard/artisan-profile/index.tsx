@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, CalendarDays, MapPin, Star, UserRoundX, Wallet } from "lucide-react"
+import { ArrowLeft, CalendarDays, FileText, MapPin, Star, UserRoundX, Wallet } from "lucide-react"
 import ReportButton from "@/components/account/reports/report-dialog"
 import ProviderReviewsSection from "@/components/account/reviews/provider-reviews-section"
 import EmptyState from "@/components/account/empty-state"
@@ -18,7 +18,7 @@ import { isApiError } from "@/lib/http/errors"
 import { formatLocation } from "@/lib/locations"
 import { reviewCountLabel } from "@/lib/reviews"
 import { artisanName, priceRange } from "@/lib/marketplace"
-import { ACCOUNT_ROUTES } from "@/lib/routes"
+import { ACCOUNT_ROUTES, requestQuoteRoute } from "@/lib/routes"
 import type { PublicArtisan } from "@/types/account/marketplace"
 import { VerifiedBadge } from "@/components/shared/artisan-card"
 import BookingForm from "./booking-form"
@@ -70,8 +70,16 @@ const ArtisanDetails = ({ artisan }: { artisan: PublicArtisan }) => {
                 </Fact>
               )}
             </div>
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              {skill && (
+                <Button render={<Link href={requestQuoteRoute(artisan.id)} />} nativeButton={false}>
+                  <FileText data-icon="inline-start" />
+                  Request a quote
+                </Button>
+              )}
+              <ReportButton target={{ type: "USER", id: artisan.id }} subject={name} />
+            </div>
           </div>
-          <ReportButton target={{ type: "USER", id: artisan.id }} subject={name} className="self-start sm:ml-auto" />
         </div>
       </Card>
 
@@ -132,8 +140,8 @@ const ArtisanProfile = ({ id }: { id: string }) => {
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
               <ArtisanDetails artisan={artisan} />
               <SectionCard
-                title={`Book ${artisan.first_name}`}
-                description="Tell them about the job. They'll reply with a final price."
+                title={`Or book ${artisan.first_name} directly`}
+                description="Quick for simple jobs: tell them about it and they'll reply with a final price. For photos, details or to compare terms, request a quote instead."
                 className="lg:sticky lg:top-24"
               >
                 <BookingForm artisan={artisan} />

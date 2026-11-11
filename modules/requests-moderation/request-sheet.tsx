@@ -163,7 +163,7 @@ const RequestDetails = ({ request }: { request: RequestDetailForStaff }) => {
         open={closing}
         onOpenChange={setClosing}
         title={`Close ${request.reference}?`}
-        description={`It stops taking offers${offers.some(({ status }) => status === "SUBMITTED") ? " and the waiting offers are turned down" : ""}. ${request.customer.name} and those providers are told, with your reason. This can't be undone.`}
+        description={`It stops taking offers${offers.some(({ status }) => status === "SUBMITTED") ? " and the waiting offers are turned down" : ""}. ${request.customer.name} and those artisans are told, with your reason. This can't be undone.`}
         quickReasons={QUICK_REASONS}
         placeholder="Why it's being removed. The customer sees this."
         submitLabel="Close request"
@@ -173,10 +173,10 @@ const RequestDetails = ({ request }: { request: RequestDetailForStaff }) => {
       <ReasonDialog
         open={withdrawing !== null}
         onOpenChange={(open) => !open && setWithdrawing(null)}
-        title={`Withdraw ${withdrawing?.provider.name ?? "this provider"}'s offer?`}
-        description="The customer can no longer accept it. The provider is told why, and the customer that an offer was removed."
+        title={`Withdraw ${withdrawing?.provider.name ?? "this artisan"}'s offer?`}
+        description="The customer can no longer accept it. The artisan is told why, and the customer that an offer was removed."
         quickReasons={QUICK_REASONS}
-        placeholder="Why it's being removed. The provider sees this."
+        placeholder="Why it's being removed. The artisan sees this."
         submitLabel="Withdraw offer"
         pending={withdraw.isPending}
         onSubmit={(reason, done) => withdrawing && withdraw.mutate({ id: withdrawing.id, reason }, { onSuccess: done })}

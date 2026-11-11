@@ -18,7 +18,7 @@ import RequestChatSheet from "./request-chat-sheet"
 
 type View = "cards" | "compare"
 
-const REJECT_REASONS = ["The price is too high", "It would take too long", "I went with another provider"]
+const REJECT_REASONS = ["The price is too high", "It would take too long", "I went with another artisan"]
 
 /** Every offer on the request: as cards, or side by side, with accepting, turning down and messaging */
 const OffersSection = ({ request }: { request: JobRequest }) => {
@@ -77,7 +77,9 @@ const OffersSection = ({ request }: { request: JobRequest }) => {
             title="No offers yet"
             description={
               takingOffers
-                ? "Providers who offer this service have been told. You'll get a notification when an offer comes in."
+                ? request.visibility === "PRIVATE"
+                  ? "We've sent it to the artisan you chose. You'll get a notification when they send an offer."
+                  : "Artisans who offer this service have been told. You'll get a notification when an offer comes in."
                 : "Nobody sent an offer on this request."
             }
           />

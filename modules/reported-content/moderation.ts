@@ -11,7 +11,7 @@ export const removalLabel = ({ target, content_hidden }: ReportForStaff): string
     case "MESSAGE":
       return target.hidden ? null : "Remove the message (both sides see “This message was removed by our team”)"
     case "REVIEW":
-      return target.hidden ? null : "Hide the review from the provider's profile"
+      return target.hidden ? null : "Hide the review from the artisan's profile"
     case "OFFER":
       return target.status === "SUBMITTED" ? "Withdraw the offer" : null
     case "REQUEST":

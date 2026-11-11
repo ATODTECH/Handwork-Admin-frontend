@@ -83,7 +83,9 @@ export const useSaveRequest = () => {
         request.status === "DRAFT"
           ? "Draft saved."
           : published
-            ? "Request published. We've told providers who offer this service."
+            ? request.visibility === "PRIVATE"
+              ? "Request sent. We'll let you know when they reply with an offer."
+              : "Request published. We've told artisans who offer this service."
             : "Request updated.",
       )
       router.push(customerRequestRoute(request.id))
@@ -98,7 +100,7 @@ export const usePublishRequest = () => {
     ...publishRequestMutation(),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.account.requests() })
-      toast.success("Request published. Providers can send offers now.")
+      toast.success("Request published. Artisans can send offers now.")
     },
   })
 }
@@ -158,7 +160,7 @@ export const useRejectOffer = () => {
     ...rejectOfferMutation(),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.account.requests() })
-      toast.success("Offer turned down. We've let the provider know.")
+      toast.success("Offer turned down. We've let the artisan know.")
     },
   })
 }

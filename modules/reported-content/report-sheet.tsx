@@ -11,7 +11,7 @@ import type { ReportForStaff, ReportPerson, ReportTargetDetails } from "@/types/
 import { ReportStatusBadge } from "./columns"
 import { elsewhere } from "./moderation"
 
-const ROLE_LABELS: Record<string, string> = { USER: "Customer", ARTISAN: "Provider" }
+const ROLE_LABELS: Record<string, string> = { USER: "Customer", ARTISAN: "Artisan" }
 
 const Text = ({ children }: { children: React.ReactNode }) => (
   <p className="text-[13px] leading-relaxed whitespace-pre-line text-[#626773]">{children}</p>

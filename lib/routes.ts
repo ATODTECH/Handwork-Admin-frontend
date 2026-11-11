@@ -46,6 +46,9 @@ export const ACCOUNT_ROUTES = {
 /** An artisan's profile and booking form, for customers */
 export const customerArtisanRoute = (id: string) => `${ACCOUNT_ROUTES.customerArtisans}/${id}` as const
 
+/** "Request a quote": a private request to one provider */
+export const requestQuoteRoute = (providerId: string) => `${ACCOUNT_ROUTES.customerNewRequest}?provider=${encodeURIComponent(providerId)}` as const
+
 /** One of the customer's requests, with its offers */
 export const customerRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRequests}/${id}` as const
 
@@ -85,7 +88,7 @@ export const PAGE_HEADINGS: Record<string, { title: string, description?: string
   [ROUTES.services]: { title: "Services", description: "The services artisans can offer. Hidden services stay with artisans who already offer them, but new artisans can't choose them and they leave the category lists." },
   [ROUTES.bookings]: { title: "Bookings", description: "Follow every booking, and settle problems customers report by paying the artisan or refunding the customer." },
   [ROUTES.payouts]: { title: "Payouts", description: "Approve artisans' withdrawals. Approving sends the money to their bank through Paystack." },
-  [ROUTES.requests]: { title: "Requests and offers", description: "Every request customers post, with the offers providers send. Close a request or withdraw an offer that breaks our rules; the people involved are told why. Once an offer is accepted, the Bookings page takes over." },
+  [ROUTES.requests]: { title: "Requests and offers", description: "Every request customers post, with the offers artisans send. Close a request or withdraw an offer that breaks our rules; the people involved are told why. Once an offer is accepted, the Bookings page takes over." },
   [ROUTES.reportedContent]: { title: "Reported content", description: "Accounts, requests, offers, messages, bookings and reviews people reported. Dismiss a report, or act on it and remove what was reported. Reporters are told the outcome, never who handled it." },
   [ROUTES.reports]: { title: "Reports", description: "Review marketplace performance and download detailed reports." },
   [ROUTES.support]: { title: "Support" },

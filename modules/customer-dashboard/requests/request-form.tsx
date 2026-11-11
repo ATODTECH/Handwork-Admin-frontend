@@ -63,7 +63,15 @@ const initialValues = (request?: JobRequest): RequestFormValues => ({
   urgency: request?.urgency ?? "FLEXIBLE",
 })
 
-const toPayload = (values: RequestFormValues): RequestPayload => {
+/** "Request a quote": a private request to one provider, who alone sees it and can send an offer */
+export interface QuoteProvider {
+  id: string
+  firstName: string
+  /** Only the services they offer can be asked for */
+  serviceIds: number[]
+}
+
+const toPayload = (values: RequestFormValues, provider?: QuoteProvider): RequestPayload => {
   const remote = values.fulfilment === "REMOTE"
   // Only details that were filled in
   const details = Object.fromEntries(Object.entries(values.details).filter(([, value]) => value.trim()))
@@ -82,6 +90,7 @@ const toPayload = (values: RequestFormValues): RequestPayload => {
     budget_flexible: values.budgetFlexible,
     deadline: values.deadline || null,
     urgency: values.urgency,
+    ...(provider && { visibility: "PRIVATE" as const, target_provider: provider.id }),
   }
 }
 
@@ -99,8 +108,15 @@ let nextKey = 0
  * Posting or editing a request. A new request is saved as a draft first, then its photos and videos go up one
  * by one, then it's published, so nothing is lost if an upload fails: trying again carries on.
  */
-const RequestForm = ({ request }: { request?: JobRequest }) => {
-  const { data: categories = [], isPending: loadingCategories } = useCategories()
+const RequestForm = ({ request, provider }: { request?: JobRequest, provider?: QuoteProvider }) => {
+  const { data: allCategories = [], isPending: loadingCategories } = useCategories()
+  // A quote can only be for something the provider offers
+  const categories = provider
+    ? allCategories
+      .map((category) => ({ ...category, service: category.service.filter(({ id }) => provider.serviceIds.includes(id)) }))
+      .filter(({ service }) => service.length)
+    : allCategories
+  const isPrivate = !!provider || request?.visibility === "PRIVATE"
   const save = useSaveRequest()
   const [requestId, setRequestId] = useState<number | null>(request?.id ?? null)
   const [media, setMedia] = useState<MediaItem[]>(() => savedMedia(request))
@@ -117,7 +133,7 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
       try {
         await save.mutateAsync({
           requestId,
-          payload: toPayload(values),
+          payload: toPayload(values, provider),
           uploads: media.filter((item) => item.file).map(({ key, file, private: isPrivate }) => ({ key, file: file!, private: isPrivate })),
           removedAttachmentIds: removedIds,
           publish: intent.current === "publish",
@@ -154,7 +170,16 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
 
   return (
     <form noValidate onSubmit={formik.handleSubmit} className="flex flex-col gap-6" aria-busy={submitting}>
-      <SectionCard title="What do you need?" description="Pick the closest service. Providers who offer it will see your request.">
+      <SectionCard
+        title="What do you need?"
+        description={
+          provider
+            ? `Only ${provider.firstName}'s services are listed. Only ${provider.firstName} will see this request.`
+            : isPrivate
+              ? "This request was sent to one artisan only."
+              : "Pick the closest service. Artisans who offer it will see your request."
+        }
+      >
         <FieldGroup className="gap-6">
           <div className="grid gap-6 sm:grid-cols-2">
             <ComboboxField
@@ -196,7 +221,7 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
           <TextareaField
             {...textFieldProps(formik, "description")}
             label="Describe it"
-            placeholder="What's needed, what's wrong, what you've tried, anything a provider should know to give you a fair price."
+            placeholder="What's needed, what's wrong, what you've tried, anything an artisan should know to give you a fair price."
             maxLength={DESCRIPTION_MAX}
           />
 
@@ -228,7 +253,7 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
 
       <SectionCard
         title="Photos and videos"
-        description="Show providers what you need, so they can quote without visiting first. Optional, but it gets better offers."
+        description={`Show ${provider ? provider.firstName : "artisans"} what you need, so they can quote without visiting first. Optional, but it gets better offers.`}
       >
         <div className="flex flex-col gap-4">
           <MediaDropzone
@@ -251,7 +276,7 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
           <p className="flex items-start gap-2 text-xs text-hw-grey-500">
             <ShieldCheck className="mt-0.5 size-4 shrink-0 text-hw-secondary" />
             Leave out faces, documents, house numbers and anything else personal. Mark a file private to show it only to the
-            provider you choose.
+            artisan you choose.
           </p>
         </div>
       </SectionCard>
@@ -286,13 +311,13 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
               label="Address"
               placeholder="House number, street and area"
               autoComplete="street-address"
-              description="Only the provider whose offer you accept will see it."
+              description="Only the artisan whose offer you accept will see it."
             />
           )}
         </FieldGroup>
       </SectionCard>
 
-      <SectionCard title="Budget and timing" description="Both are optional, but they help providers send realistic offers.">
+      <SectionCard title="Budget and timing" description="Both are optional, but they help artisans send realistic offers.">
         <FieldGroup className="gap-6">
           <div className="grid gap-6 sm:grid-cols-2">
             <FormField {...textFieldProps(formik, "budgetMin", { digits: true })} label="Lowest budget" placeholder="10000" startAddon={NairaAddon} />
@@ -306,7 +331,7 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
               onCheckedChange={(checked) => setFieldValue("budgetFlexible", checked === true)}
             />
             <FieldLabel htmlFor="budgetFlexible" className="font-normal">
-              My budget is flexible for the right provider
+              My budget is flexible for the right artisan
             </FieldLabel>
           </Field>
           <div className="grid gap-6 sm:grid-cols-2">
@@ -357,12 +382,12 @@ const RequestForm = ({ request }: { request?: JobRequest }) => {
             </SubmitButton>
             <SubmitButton
               pending={submitting && pendingIntent === "publish"}
-              pendingText="Publishing…"
+              pendingText={provider ? "Sending…" : "Publishing…"}
               disabled={submitting}
               className="h-11 w-full px-5 sm:w-auto"
               onClick={() => chooseIntent("publish")}
             >
-              Publish request
+              {provider ? `Send to ${provider.firstName}` : isPrivate ? "Send request" : "Publish request"}
             </SubmitButton>
           </>
         )}

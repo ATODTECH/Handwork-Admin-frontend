@@ -24,7 +24,7 @@ export const requestSchema = Yup.object({
   description: Yup.string()
     .trim()
     .required("Describe what you need")
-    .min(20, "Add a little more detail so providers can quote properly")
+    .min(20, "Add a little more detail so artisans can quote properly")
     .max(5000, "Keep it under 5,000 characters"),
   details: Yup.object().default({}),
   fulfilment: Yup.mixed<Fulfilment>().oneOf(["ON_SITE", "DELIVERY", "REMOTE"]).required(),

@@ -24,7 +24,7 @@ const TABS: { value: ReportFilter, label: string }[] = [
 ]
 
 const EMPTY: Record<ReportFilter, string> = {
-  open: "Nothing waiting. New reports from customers and providers appear here.",
+  open: "Nothing waiting. New reports from customers and artisans appear here.",
   actioned: "No reports acted on yet.",
   dismissed: "No dismissed reports.",
 }
@@ -62,7 +62,7 @@ const ReportedContentIndex = () => {
     <section className="flex flex-col gap-6">
       <PageHeader
         title={heading?.title ?? "Reported content"}
-        description={heading?.description ?? "Reports from customers and providers."}
+        description={heading?.description ?? "Reports from customers and artisans."}
         action={null}
       />
 

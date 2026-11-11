@@ -18,7 +18,7 @@ import { useCategories } from "@/hooks/account/use-marketplace"
 import { useCloseRequest, useDeleteRequest, usePublishRequest, useRequest } from "@/hooks/account/use-requests"
 import { formatActivityDate } from "@/lib/format"
 import { isApiError } from "@/lib/http/errors"
-import { isEditable, STAGE_META } from "@/lib/requests"
+import { STAGE_META, isEditable, stageHint } from "@/lib/requests"
 import { ACCOUNT_ROUTES, customerEditRequestRoute } from "@/lib/routes"
 import type { JobRequest } from "@/types/account/requests"
 import OffersSection from "./offers/offers-section"
@@ -91,7 +91,7 @@ const RequestActions = ({ request }: { request: JobRequest }) => {
         open={closing}
         onOpenChange={setClosing}
         title="Close this request?"
-        description="Providers won't be able to send offers, and any offers you have are turned down."
+        description="Artisans won't be able to send offers, and any offers you have are turned down."
         quickReasons={CLOSE_REASONS}
         placeholder="Why are you closing it? (optional)"
         submitLabel="Close request"
@@ -128,7 +128,7 @@ const RequestDetails = ({ request }: { request: JobRequest }) => {
           {request.visibility === "PRIVATE" && <Badge variant="secondary"><Lock className="size-3" /> Private request</Badge>}
         </div>
         <h1 className="text-2xl font-semibold tracking-tight text-hw-grey-900">{request.title}</h1>
-        <p className="text-sm text-hw-grey-500">{STAGE_META[request.stage].hint}</p>
+        <p className="text-sm text-hw-grey-500">{stageHint(request)}</p>
         {request.close_reason && <p className="text-sm text-hw-grey-700">Reason: {request.close_reason}</p>}
         <RequestActions request={request} />
       </Card>

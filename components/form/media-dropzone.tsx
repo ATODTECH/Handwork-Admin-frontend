@@ -116,7 +116,7 @@ const MediaTile = ({ item, index, onRemove, onTogglePrivate, disabled }: TilePro
         )}
       >
         {item.private ? <Lock className="size-3.5" /> : <LockOpen className="size-3.5" />}
-        {item.private ? "Private" : saved ? "Visible to providers" : "Visible to providers · make private"}
+        {item.private ? "Private" : saved ? "Visible to artisans" : "Visible to artisans · make private"}
       </button>
     </li>
   )
