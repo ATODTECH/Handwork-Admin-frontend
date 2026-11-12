@@ -22,7 +22,7 @@ const customerNav = (unread: number, supportUnread: number): DashboardNavGroup[]
   {
     label: "Account",
     items: [
-      { title: "Refer & earn", href: "#", icon: Gift, soon: true },
+      { title: "Refer & earn", href: ACCOUNT_ROUTES.customerRefer, icon: Gift },
       { title: "Profile & settings", href: ACCOUNT_ROUTES.customerSettings, icon: UserRoundCog },
       { title: "Help & support", href: ACCOUNT_ROUTES.customerSupport, icon: LifeBuoy, badge: supportUnread, badgeLabel: "New replies" },
     ],

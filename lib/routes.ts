@@ -32,6 +32,7 @@ export const ACCOUNT_ROUTES = {
   customerPayments: "/dashboard/customer/payments",
   customerSettings: "/dashboard/customer/settings",
   customerSupport: "/dashboard/customer/support",
+  customerRefer: "/dashboard/customer/refer",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
   artisanFindWork: "/dashboard/artisan/requests",
@@ -42,6 +43,7 @@ export const ACCOUNT_ROUTES = {
   artisanMessages: "/dashboard/artisan/messages",
   artisanSettings: "/dashboard/artisan/settings",
   artisanSupport: "/dashboard/artisan/support",
+  artisanRefer: "/dashboard/artisan/refer",
   artisanOnboarding: "/dashboard/artisan/onboarding",
 } as const
 

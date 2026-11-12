@@ -54,6 +54,10 @@ export interface Booking {
   contact: string | null
   /** The request this booking came from, when it came from an accepted offer */
   request_id?: number | null
+  /** What the customer pays: the price less a referral discount (for the customer, previewed before paying) */
+  amount_due?: string | null
+  /** The referral discount taken off this booking's payment, in naira */
+  referral_discount?: string
   /** The customer's review of this job, once they've left one (fetch it by id for the text) */
   review?: { id: number, star: number } | null
   created_at: string

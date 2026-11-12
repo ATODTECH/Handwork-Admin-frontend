@@ -10,7 +10,7 @@ import ReasonDialog from "@/components/shared/reason-dialog"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useCancelBooking, useConfirmBooking, usePayBooking, useReportProblem } from "@/hooks/account/use-dashboard"
-import { autoReleaseAt, bookingMeta, bookingPrice, bookingTitle, CANCELLABLE, REPORTABLE } from "@/lib/bookings"
+import { autoReleaseAt, bookingMeta, bookingPrice, bookingTitle, CANCELLABLE, customerPays, referralDiscount, REPORTABLE } from "@/lib/bookings"
 import { formatNairaAmount } from "@/lib/format"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
 import { canReview } from "@/lib/reviews"
@@ -29,7 +29,7 @@ const ConfirmDialog = ({ booking, open, onOpenChange }: { booking: Booking, open
           <DialogTitle>Is the job done?</DialogTitle>
           <DialogDescription>
             {booking.artisan} has marked &ldquo;{bookingTitle(booking)}&rdquo; as done. Confirming pays them from the{" "}
-            {formatNairaAmount(bookingPrice(booking))} you paid. You can&apos;t undo this.
+            {formatNairaAmount(customerPays(booking))} you paid. You can&apos;t undo this.
           </DialogDescription>
         </DialogHeader>
         <p className="text-sm leading-relaxed text-hw-grey-700">
@@ -97,7 +97,7 @@ const ReportDialog = ({ booking, open, onOpenChange }: { booking: Booking, open:
       open={open}
       onOpenChange={onOpenChange}
       title="Report a problem"
-      description={`We'll hold your ${formatNairaAmount(bookingPrice(booking))} and won't pay ${booking.artisan} until our team has looked into it with you both.`}
+      description={`We'll hold your ${formatNairaAmount(customerPays(booking))} and won't pay ${booking.artisan} until our team has looked into it with you both.`}
       quickReasons={REPORT_REASONS}
       placeholder="What went wrong? Add anything that helps us sort it out."
       submitLabel="Report problem"
@@ -140,6 +140,11 @@ const BookingActions = ({ booking, className, expanded = false }: BookingActions
           Report a problem
         </Button>
       )}
+      {action === "pay" && referralDiscount(booking) > 0 && (
+        <span className="text-xs font-medium text-hw-text-green-solid">
+          Refer &amp; earn: {formatNairaAmount(referralDiscount(booking))} off the next booking you pay
+        </span>
+      )}
       {action === "pay" && (
         <SubmitButton
           type="button"
@@ -149,7 +154,7 @@ const BookingActions = ({ booking, className, expanded = false }: BookingActions
           onClick={() => pay.mutate(booking.id)}
         >
           <CreditCard data-icon="inline-start" />
-          Pay {formatNairaAmount(bookingPrice(booking))}
+          Pay {formatNairaAmount(customerPays(booking))}
         </SubmitButton>
       )}
       {action === "confirm" && (

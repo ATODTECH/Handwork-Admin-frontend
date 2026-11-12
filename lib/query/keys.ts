@@ -72,6 +72,7 @@ export const queryKeys = {
     ticket: (id: number) => [...queryKeys.account.tickets(), id] as const,
     ticketsUnread: () => [...queryKeys.account.tickets(), "unread"] as const,
     myReports: () => [...queryKeys.account.all, "my-reports"] as const,
+    referrals: () => [...queryKeys.account.all, "referrals"] as const,
   },
 } as const
 

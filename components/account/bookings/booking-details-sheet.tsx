@@ -7,7 +7,7 @@ import BookingReview from "@/components/account/reviews/booking-review"
 import { DetailSheet } from "@/components/shared/detail-sheet"
 import { DetailRow, DetailSection } from "@/components/shared/details-part"
 import { Button } from "@/components/ui/button"
-import { artisanEarnings, bookingMeta, bookingPrice, bookingTitle, jobMeta, priceAboveBudget } from "@/lib/bookings"
+import { artisanEarnings, bookingMeta, bookingPrice, bookingTitle, customerPays, jobMeta, priceAboveBudget, referralDiscount } from "@/lib/bookings"
 import { formatActivityDate, formatNairaAmount, formatSchedule } from "@/lib/format"
 import { bookingChatKey, messagesRoute } from "@/lib/routes"
 import type { Booking } from "@/types/account/dashboard"
@@ -57,6 +57,12 @@ const BookingDetailsSheet = ({ booking, viewer, onOpenChange }: BookingDetailsSh
                 {formatNairaAmount(booking.agreed_amount)}
                 {priceAboveBudget(booking) > 0 && ` (${formatNairaAmount(priceAboveBudget(booking))} above budget)`}
               </DetailRow>
+            )}
+            {!isArtisan && referralDiscount(booking) > 0 && (
+              <>
+                <DetailRow label="Refer & earn discount" className="text-hw-text-green-solid">−{formatNairaAmount(referralDiscount(booking))}</DetailRow>
+                <DetailRow label={booking.status === "Accepted" ? "You'll pay" : "You paid"}>{formatNairaAmount(customerPays(booking))}</DetailRow>
+              </>
             )}
             {isArtisan && booking.agreed_amount && (
               <DetailRow label="You receive">{formatNairaAmount(artisanEarnings(bookingPrice(booking)))}</DetailRow>

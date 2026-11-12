@@ -3,6 +3,7 @@
 import {
   BriefcaseBusiness,
   CalendarDays,
+  Gift,
   LayoutDashboard,
   LifeBuoy,
   MessageSquareText,
@@ -35,6 +36,7 @@ const artisanNav = (unread: number, supportUnread: number): DashboardNavGroup[] 
   {
     label: "Account",
     items: [
+      { title: "Refer & earn", href: ACCOUNT_ROUTES.artisanRefer, icon: Gift },
       { title: "Profile & settings", href: ACCOUNT_ROUTES.artisanSettings, icon: UserRoundCog },
       { title: "Help & support", href: ACCOUNT_ROUTES.artisanSupport, icon: LifeBuoy, badge: supportUnread, badgeLabel: "New replies" },
     ],

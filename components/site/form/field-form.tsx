@@ -40,10 +40,13 @@ const API_FIELD_TO_FORM: Record<string, keyof RegisterFormValues> = {
 export const RegisterFormField = ({
   role,
   onLogin,
+  referralCode,
 }: {
   role: AccountRole
   /** In a dialog: switch to the login dialog instead of navigating to /login */
   onLogin?: () => void
+  /** From an invite link (`/register?ref=CODE`) */
+  referralCode?: string
 }) => {
   const { mutate: RegisterUser, isPending} = useRegister()
   const [focusedField, setFocusedField] = useState<FieldName | null>(null)
@@ -69,6 +72,7 @@ export const RegisterFormField = ({
         password,
         contact: toContact(countryCode, phone),
         role,
+        ...(referralCode && { referral_code: referralCode }),
       }, {
         onSuccess: () => resetForm(),
 				onError: (error) => {
