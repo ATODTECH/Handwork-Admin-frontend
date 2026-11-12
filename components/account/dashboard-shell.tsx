@@ -16,17 +16,19 @@ interface DashboardShellProps {
   onSignOut?: () => void
   /** The "Need a hand?" support card in the sidebar */
   showSupport?: boolean
+  /** Where the support card's button goes */
+  supportHref?: string
   children: React.ReactNode
 }
 
 /** Sidebar + sticky header frame shared by the customer, artisan and admin dashboards */
-const DashboardShell = ({ nav, headerActions, onSignOut, showSupport, children }: DashboardShellProps) => {
+const DashboardShell = ({ nav, headerActions, onSignOut, showSupport, supportHref, children }: DashboardShellProps) => {
   const pathname = usePathname()
   const active = findActiveNavItem(pathname, nav)
 
   return (
     <SidebarProvider className="font-site">
-      <AppSidebar nav={nav} onSignOut={onSignOut} showSupport={showSupport} />
+      <AppSidebar nav={nav} onSignOut={onSignOut} showSupport={showSupport} supportHref={supportHref} />
       <SidebarInset className="min-w-0 bg-[#F6F7FB]">
         <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-3 border-b border-hw-border bg-white/85 px-4 backdrop-blur-md sm:px-6">
           <SidebarTrigger className="-ml-1" />

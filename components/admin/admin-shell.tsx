@@ -36,10 +36,11 @@ import {
 import { useAdminSignOut } from "@/hooks/admin/use-admin-auth"
 import { useAdminNotifications } from "@/hooks/admin/use-notifications"
 import { useStaffMe } from "@/hooks/admin/use-staff"
+import { useAdminSupportCounts } from "@/hooks/admin/use-support"
 import { useAdminReportCounts } from "@/hooks/admin/use-reports"
 import { ROUTES } from "@/lib/routes"
 
-const adminNav = (openReports: number, waiting: number): DashboardNavGroup[] => [
+const adminNav = (openReports: number, waiting: number, supportOpen: number): DashboardNavGroup[] => [
   {
     label: "Manage",
     items: [
@@ -57,7 +58,7 @@ const adminNav = (openReports: number, waiting: number): DashboardNavGroup[] => 
     label: "Insights",
     items: [
       { title: "Reports", href: ROUTES.reports, icon: ChartColumn },
-      { title: "Support", href: ROUTES.support, icon: Headset, soon: true },
+      { title: "Support", href: ROUTES.support, icon: Headset, badge: supportOpen, badgeLabel: "Waiting on us" },
       { title: "Notifications", href: ROUTES.notifications, icon: BellRing, badge: waiting, badgeLabel: "Waiting on staff" },
       { title: "Settings", href: ROUTES.settings, icon: Settings },
     ],
@@ -117,8 +118,9 @@ const AdminShell = ({ children }: { children: React.ReactNode }) => {
   const signOut = useAdminSignOut()
   const { data: reportCounts } = useAdminReportCounts()
   const { data: notifications } = useAdminNotifications()
+  const { data: supportCounts } = useAdminSupportCounts()
   return (
-    <DashboardShell nav={adminNav(reportCounts?.open ?? 0, notifications?.needs_action ?? 0)} headerActions={<AdminMenu />} onSignOut={signOut} showSupport={false}>
+    <DashboardShell nav={adminNav(reportCounts?.open ?? 0, notifications?.needs_action ?? 0, supportCounts?.open ?? 0)} headerActions={<AdminMenu />} onSignOut={signOut} showSupport={false}>
       {children}
     </DashboardShell>
   )

@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useCancelBooking, useConfirmBooking, usePayBooking, useReportProblem } from "@/hooks/account/use-dashboard"
 import { autoReleaseAt, bookingMeta, bookingPrice, bookingTitle, CANCELLABLE, REPORTABLE } from "@/lib/bookings"
 import { formatNairaAmount } from "@/lib/format"
+import { ACCOUNT_ROUTES } from "@/lib/routes"
 import { canReview } from "@/lib/reviews"
 import type { Booking } from "@/types/account/dashboard"
 
@@ -35,7 +36,7 @@ const ConfirmDialog = ({ booking, open, onOpenChange }: { booking: Booking, open
           Something wrong? Choose <strong className="font-medium text-hw-grey-900">Report a problem</strong>
           {releaseAt ? ` before ${RELEASE_DATE.format(releaseAt)}` : ""}, and we&apos;ll hold the payment while we sort it out.
           Otherwise we pay the artisan automatically then. You can also{" "}
-          <Link href="/contact" className="font-medium text-hw-primary underline-offset-4 hover:underline">contact support</Link>.
+          <Link href={ACCOUNT_ROUTES.customerSupport} className="font-medium text-hw-primary underline-offset-4 hover:underline">contact support</Link>.
         </p>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>

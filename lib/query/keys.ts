@@ -12,6 +12,10 @@ export const queryKeys = {
     analytics: (months: number) => [...queryKeys.admin.all, "analytics", months] as const,
     notifications: (days: number) => [...queryKeys.admin.all, "notifications", days] as const,
     me: () => [...queryKeys.admin.all, "me"] as const,
+    supportRoot: () => [...queryKeys.admin.all, "support"] as const,
+    supportTickets: (status: string) => [...queryKeys.admin.supportRoot(), status] as const,
+    supportCounts: () => [...queryKeys.admin.supportRoot(), "counts"] as const,
+    supportTicket: (id: number) => [...queryKeys.admin.supportRoot(), "ticket", id] as const,
     staff: () => [...queryKeys.admin.all, "staff"] as const,
     withdrawalsRoot: () => [...queryKeys.admin.all, "withdrawals"] as const,
     withdrawals: (status: string) => [...queryKeys.admin.withdrawalsRoot(), status] as const,
@@ -64,6 +68,9 @@ export const queryKeys = {
     reviews: () => [...queryKeys.account.all, "reviews"] as const,
     providerReviews: (providerId: string) => [...queryKeys.account.reviews(), "provider", providerId] as const,
     review: (id: number) => [...queryKeys.account.reviews(), id] as const,
+    tickets: () => [...queryKeys.account.all, "tickets"] as const,
+    ticket: (id: number) => [...queryKeys.account.tickets(), id] as const,
+    ticketsUnread: () => [...queryKeys.account.tickets(), "unread"] as const,
   },
 } as const
 
@@ -89,6 +96,9 @@ export const mutationKeys = {
     setStaffRole: ["admin", "staff", "role"] as const,
     deactivateStaff: ["admin", "staff", "deactivate"] as const,
     reactivateStaff: ["admin", "staff", "reactivate"] as const,
+    replySupport: ["admin", "support", "reply"] as const,
+    assignSupport: ["admin", "support", "assign"] as const,
+    updateSupport: ["admin", "support", "update"] as const,
   },
   account: {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,
@@ -124,6 +134,9 @@ export const mutationKeys = {
     editReview: ["account", "reviews", "edit"] as const,
     replyToReview: ["account", "reviews", "reply"] as const,
     createReport: ["account", "reports", "create"] as const,
+    createTicket: ["account", "support", "create"] as const,
+    replyTicket: ["account", "support", "reply"] as const,
+    resolveTicket: ["account", "support", "resolve"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,

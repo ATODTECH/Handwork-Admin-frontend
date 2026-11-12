@@ -5,9 +5,10 @@ export type StaffNotificationKind =
   | "WITHDRAWAL_REQUESTED"
   | "PAYOUT_FAILED"
   | "REPORT"
+  | "SUPPORT"
 
 /** The admin page each notification opens */
-export type StaffNotificationPage = "artisans" | "bookings" | "payouts" | "reported-content"
+export type StaffNotificationPage = "artisans" | "bookings" | "payouts" | "reported-content" | "support"
 
 export interface StaffNotification {
   /** Stable, e.g. "report-12", so read state can be remembered */

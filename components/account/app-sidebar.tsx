@@ -29,9 +29,11 @@ interface AppSidebarProps {
   /** Defaults to signing out of the customer/artisan account */
   onSignOut?: () => void
   showSupport?: boolean
+  /** Where "Contact support" goes: the dashboard's Help & support page */
+  supportHref?: string
 }
 
-const AppSidebar = ({ nav, onSignOut, showSupport = true }: AppSidebarProps) => {
+const AppSidebar = ({ nav, onSignOut, showSupport = true, supportHref = "/contact" }: AppSidebarProps) => {
   const pathname = usePathname()
   const signOutOfAccount = useSignOut()
   const signOut = onSignOut ?? signOutOfAccount
@@ -102,7 +104,7 @@ const AppSidebar = ({ nav, onSignOut, showSupport = true }: AppSidebarProps) => 
               size="sm"
               variant="secondary"
               className="mt-3 w-full bg-white text-secondary-blue hover:bg-white/90"
-              render={<Link href="/contact" />}
+              render={<Link href={supportHref} onClick={closeOnMobile} />}
               nativeButton={false}
             >
               Contact support
