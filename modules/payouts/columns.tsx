@@ -7,8 +7,9 @@ import type { WithdrawalForReview } from "@/types/admin/withdrawals"
 const column = createDataTableColumns<WithdrawalForReview>()
 
 interface PayoutActions {
-  onApprove: (withdrawal: WithdrawalForReview) => void
-  onReject: (withdrawal: WithdrawalForReview) => void
+  /** Left out for Support staff: only admins approve or reject payouts */
+  onApprove?: (withdrawal: WithdrawalForReview) => void
+  onReject?: (withdrawal: WithdrawalForReview) => void
 }
 
 export const payoutColumns = ({ onApprove, onReject }: PayoutActions) =>
@@ -62,7 +63,8 @@ export const payoutColumns = ({ onApprove, onReject }: PayoutActions) =>
       id: "actions",
       meta: { headerClassName: "text-right", cellClassName: "text-right" },
       cell: ({ row: { original } }) =>
-        original.status === "PENDING" && (
+        original.status === "PENDING" &&
+        (onApprove && onReject ? (
           <div className="flex justify-end gap-2">
             <Button variant="outline" size="sm" onClick={() => onReject(original)}>
               Reject
@@ -71,6 +73,8 @@ export const payoutColumns = ({ onApprove, onReject }: PayoutActions) =>
               Approve
             </Button>
           </div>
-        ),
+        ) : (
+          <span className="text-xs text-hw-grey-500">Admins approve payouts</span>
+        )),
     }),
   ])

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
-import { BadgeCheck, BellRing, CheckCheck, ChevronRight, CircleAlert, Flag, UserRoundCheck, Wallet, WalletCards } from "lucide-react"
+import { BadgeCheck, BellRing, CheckCheck, ChevronRight, CircleAlert, Flag, Headset, UserRoundCheck, Wallet, WalletCards } from "lucide-react"
 import { cn } from "cn"
 import EmptyState from "@/components/account/empty-state"
 import { ListSkeleton } from "@/components/account/query-content"
@@ -25,6 +25,7 @@ const KINDS: Record<StaffNotificationKind, { icon: LucideIcon, tone: SemanticTon
   WITHDRAWAL_REQUESTED: { icon: Wallet, tone: "warning", label: "Payouts to approve" },
   PAYOUT_FAILED: { icon: WalletCards, tone: "danger", label: "Failed payouts" },
   REPORT: { icon: Flag, tone: "brand", label: "Reports to review" },
+  SUPPORT: { icon: Headset, tone: "info", label: "Support requests" },
 }
 
 const PAGES: Record<StaffNotificationPage, string> = {
@@ -32,6 +33,7 @@ const PAGES: Record<StaffNotificationPage, string> = {
   bookings: ROUTES.bookings,
   payouts: ROUTES.payouts,
   "reported-content": ROUTES.reportedContent,
+  support: ROUTES.support,
 }
 
 type View = "action" | "all"

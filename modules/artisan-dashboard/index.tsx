@@ -3,6 +3,7 @@
 import {
   BriefcaseBusiness,
   CalendarDays,
+  Gift,
   LayoutDashboard,
   LifeBuoy,
   MessageSquareText,
@@ -15,9 +16,10 @@ import {
 import DashboardShell from "@/components/account/dashboard-shell"
 import type { DashboardNavGroup } from "@/components/account/nav"
 import { useUnreadMessages } from "@/hooks/account/use-messages"
+import { useUnreadTickets } from "@/hooks/account/use-support"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
 
-const artisanNav = (unread: number): DashboardNavGroup[] => [
+const artisanNav = (unread: number, supportUnread: number): DashboardNavGroup[] => [
   {
     label: "Menu",
     items: [
@@ -34,15 +36,21 @@ const artisanNav = (unread: number): DashboardNavGroup[] => [
   {
     label: "Account",
     items: [
+      { title: "Refer & earn", href: ACCOUNT_ROUTES.artisanRefer, icon: Gift },
       { title: "Profile & settings", href: ACCOUNT_ROUTES.artisanSettings, icon: UserRoundCog },
-      { title: "Help & support", href: "/contact", icon: LifeBuoy },
+      { title: "Help & support", href: ACCOUNT_ROUTES.artisanSupport, icon: LifeBuoy, badge: supportUnread, badgeLabel: "New replies" },
     ],
   },
 ]
 
 export const ArtisanShell = ({ children }: { children: React.ReactNode }) => {
   const unread = useUnreadMessages()
-  return <DashboardShell nav={artisanNav(unread)}>{children}</DashboardShell>
+  const supportUnread = useUnreadTickets()
+  return (
+    <DashboardShell nav={artisanNav(unread, supportUnread)} supportHref={ACCOUNT_ROUTES.artisanSupport}>
+      {children}
+    </DashboardShell>
+  )
 }
 
 export { default as ArtisanOverview } from "./overview"

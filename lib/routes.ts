@@ -31,6 +31,8 @@ export const ACCOUNT_ROUTES = {
   customerMessages: "/dashboard/customer/messages",
   customerPayments: "/dashboard/customer/payments",
   customerSettings: "/dashboard/customer/settings",
+  customerSupport: "/dashboard/customer/support",
+  customerRefer: "/dashboard/customer/refer",
   artisanHome: "/dashboard/artisan",
   artisanJobs: "/dashboard/artisan/jobs",
   artisanFindWork: "/dashboard/artisan/requests",
@@ -40,6 +42,8 @@ export const ACCOUNT_ROUTES = {
   artisanReviews: "/dashboard/artisan/reviews",
   artisanMessages: "/dashboard/artisan/messages",
   artisanSettings: "/dashboard/artisan/settings",
+  artisanSupport: "/dashboard/artisan/support",
+  artisanRefer: "/dashboard/artisan/refer",
   artisanOnboarding: "/dashboard/artisan/onboarding",
 } as const
 
@@ -91,7 +95,7 @@ export const PAGE_HEADINGS: Record<string, { title: string, description?: string
   [ROUTES.requests]: { title: "Requests and offers", description: "Every request customers post, with the offers artisans send. Close a request or withdraw an offer that breaks our rules; the people involved are told why. Once an offer is accepted, the Bookings page takes over." },
   [ROUTES.reportedContent]: { title: "Reported content", description: "Accounts, requests, offers, messages, bookings and reviews people reported. Dismiss a report, or act on it and remove what was reported. Reporters are told the outcome, never who handled it." },
   [ROUTES.reports]: { title: "Reports", description: "How the marketplace is doing: money, bookings, requests and sign-ups by month, compared with the period before. Months are Lagos months; money counts jobs once the artisan is paid." },
-  [ROUTES.support]: { title: "Support" },
+  [ROUTES.support]: { title: "Support", description: "Help requests from customers and artisans, and messages from the website's contact form. Replies reach them in the app and by email." },
   [ROUTES.notifications]: { title: "Notifications", description: "What's waiting on staff across the console (artisans to review, problems, payouts and reports) and what happened recently." },
-  [ROUTES.settings]: { title: "Settings", description: "Manage platform details, admin access, payments and notification preferences." },
+  [ROUTES.settings]: { title: "Settings", description: "Your profile and password, and who on your team can use the admin console." },
 }

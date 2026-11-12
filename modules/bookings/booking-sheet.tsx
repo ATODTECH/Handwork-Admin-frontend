@@ -27,7 +27,8 @@ const Note = ({ title, children }: { title: string, children: React.ReactNode })
 interface BookingSheetProps {
   booking: BookingForStaff | null
   onOpenChange: (open: boolean) => void
-  onResolve: (booking: BookingForStaff) => void
+  /** Left out for Support staff: only admins settle reported problems */
+  onResolve?: (booking: BookingForStaff) => void
 }
 
 /** One booking from start to finish, for staff following it up or settling a problem */
@@ -78,9 +79,13 @@ const BookingSheet = ({ booking, onOpenChange, onResolve }: BookingSheetProps) =
 
         {booking.status === "Disputed" && (
           <div className="pt-5">
-            <Button className="w-full" onClick={() => onResolve(booking)}>
-              Settle the problem
-            </Button>
+            {onResolve ? (
+              <Button className="w-full" onClick={() => onResolve(booking)}>
+                Settle the problem
+              </Button>
+            ) : (
+              <p className="text-xs text-hw-grey-500">Only admins can refund the customer or pay the artisan. Ask an admin to settle it.</p>
+            )}
           </div>
         )}
       </div>

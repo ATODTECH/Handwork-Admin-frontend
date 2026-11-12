@@ -10,8 +10,9 @@ import ReasonDialog from "@/components/shared/reason-dialog"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useCancelBooking, useConfirmBooking, usePayBooking, useReportProblem } from "@/hooks/account/use-dashboard"
-import { autoReleaseAt, bookingMeta, bookingPrice, bookingTitle, CANCELLABLE, REPORTABLE } from "@/lib/bookings"
+import { autoReleaseAt, bookingMeta, bookingPrice, bookingTitle, CANCELLABLE, customerPays, referralDiscount, REPORTABLE } from "@/lib/bookings"
 import { formatNairaAmount } from "@/lib/format"
+import { ACCOUNT_ROUTES } from "@/lib/routes"
 import { canReview } from "@/lib/reviews"
 import type { Booking } from "@/types/account/dashboard"
 
@@ -28,14 +29,14 @@ const ConfirmDialog = ({ booking, open, onOpenChange }: { booking: Booking, open
           <DialogTitle>Is the job done?</DialogTitle>
           <DialogDescription>
             {booking.artisan} has marked &ldquo;{bookingTitle(booking)}&rdquo; as done. Confirming pays them from the{" "}
-            {formatNairaAmount(bookingPrice(booking))} you paid. You can&apos;t undo this.
+            {formatNairaAmount(customerPays(booking))} you paid. You can&apos;t undo this.
           </DialogDescription>
         </DialogHeader>
         <p className="text-sm leading-relaxed text-hw-grey-700">
           Something wrong? Choose <strong className="font-medium text-hw-grey-900">Report a problem</strong>
           {releaseAt ? ` before ${RELEASE_DATE.format(releaseAt)}` : ""}, and we&apos;ll hold the payment while we sort it out.
           Otherwise we pay the artisan automatically then. You can also{" "}
-          <Link href="/contact" className="font-medium text-hw-primary underline-offset-4 hover:underline">contact support</Link>.
+          <Link href={ACCOUNT_ROUTES.customerSupport} className="font-medium text-hw-primary underline-offset-4 hover:underline">contact support</Link>.
         </p>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
@@ -96,7 +97,7 @@ const ReportDialog = ({ booking, open, onOpenChange }: { booking: Booking, open:
       open={open}
       onOpenChange={onOpenChange}
       title="Report a problem"
-      description={`We'll hold your ${formatNairaAmount(bookingPrice(booking))} and won't pay ${booking.artisan} until our team has looked into it with you both.`}
+      description={`We'll hold your ${formatNairaAmount(customerPays(booking))} and won't pay ${booking.artisan} until our team has looked into it with you both.`}
       quickReasons={REPORT_REASONS}
       placeholder="What went wrong? Add anything that helps us sort it out."
       submitLabel="Report problem"
@@ -139,6 +140,11 @@ const BookingActions = ({ booking, className, expanded = false }: BookingActions
           Report a problem
         </Button>
       )}
+      {action === "pay" && referralDiscount(booking) > 0 && (
+        <span className="text-xs font-medium text-hw-text-green-solid">
+          Refer &amp; earn: {formatNairaAmount(referralDiscount(booking))} off the next booking you pay
+        </span>
+      )}
       {action === "pay" && (
         <SubmitButton
           type="button"
@@ -148,7 +154,7 @@ const BookingActions = ({ booking, className, expanded = false }: BookingActions
           onClick={() => pay.mutate(booking.id)}
         >
           <CreditCard data-icon="inline-start" />
-          Pay {formatNairaAmount(bookingPrice(booking))}
+          Pay {formatNairaAmount(customerPays(booking))}
         </SubmitButton>
       )}
       {action === "confirm" && (

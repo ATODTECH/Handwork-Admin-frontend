@@ -63,13 +63,20 @@ export const bookingMeta = (status: BookingStatus): StatusMeta => STATUS_META[st
 /** Agreed price once the artisan accepts, otherwise the customer's budget */
 export const bookingPrice = (booking: Booking) => Number(booking.agreed_amount ?? booking.budget) || 0
 
+/** What the customer pays: the price less a Refer & earn discount, if one applies */
+export const customerPays = (booking: Booking) =>
+  booking.amount_due != null && booking.agreed_amount ? Number(booking.amount_due) || 0 : bookingPrice(booking)
+
+/** The Refer & earn discount on this booking, or 0 */
+export const referralDiscount = (booking: Booking) => Math.max(0, bookingPrice(booking) - customerPays(booking))
+
 /** An old booking where only the 70% deposit has been paid */
 const isDepositOnly = (booking: Booking) => !!booking.deposit_paid_at && !booking.fully_paid_at
 
 /** What the customer has paid on this booking (everything, once paid; nothing once refunded) */
 export const bookingAmountPaid = (booking: Booking) => {
   if (isDepositOnly(booking)) return Number(booking.deposit_amount) || 0
-  return bookingMeta(booking.status).step >= 2 || booking.status === "Disputed" ? bookingPrice(booking) : 0
+  return bookingMeta(booking.status).step >= 2 || booking.status === "Disputed" ? customerPays(booking) : 0
 }
 
 export type PaymentState = "held" | "disputed" | "paid_out" | "deposit" | "refunded"

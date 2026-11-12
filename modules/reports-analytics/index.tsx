@@ -39,7 +39,7 @@ const Headlines = ({ data, period }: { data: Analytics, period: string }) => {
     { label: "New artisans", value: count(now.new_artisans), current: now.new_artisans, prior: before.new_artisans, icon: Wrench, tone: "neutral" as const },
   ]
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
       {tiles.map(({ label, value, current, prior, icon, tone }) => (
         <StatCard key={label} label={label} value={value} hint={changeLabel(current, prior, period)} icon={icon} tone={tone} />
       ))}
@@ -213,7 +213,7 @@ const MonthlyTable = ({ data }: { data: Analytics }) => (
 
 const ReportsSkeleton = () => (
   <div className="flex flex-col gap-6" aria-busy="true" aria-label="Loading">
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
       {Array.from({ length: 6 }, (_, index) => <Skeleton key={index} className="h-28 rounded-2xl" />)}
     </div>
     <div className="grid gap-6 lg:grid-cols-2">

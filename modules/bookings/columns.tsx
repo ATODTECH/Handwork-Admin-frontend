@@ -13,7 +13,8 @@ export const bookingServices = (booking: BookingForStaff) => booking.services.jo
 
 interface BookingTableActions {
   onView: (booking: BookingForStaff) => void
-  onResolve: (booking: BookingForStaff) => void
+  /** Left out for Support staff: only admins refund or pay out a reported problem */
+  onResolve?: (booking: BookingForStaff) => void
 }
 
 export const bookingColumns = ({ onView, onResolve }: BookingTableActions) =>
@@ -77,7 +78,7 @@ export const bookingColumns = ({ onView, onResolve }: BookingTableActions) =>
           <Button variant="outline" size="sm" onClick={() => onView(original)}>
             View
           </Button>
-          {original.status === "Disputed" && (
+          {original.status === "Disputed" && onResolve && (
             <Button size="sm" onClick={() => onResolve(original)}>
               Settle
             </Button>

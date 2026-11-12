@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { useRequestChatSocket } from "@/hooks/account/use-request-chat-socket"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
 import { ACCOUNT_ROUTES, customerRequestRoute } from "@/lib/routes"
 import {
@@ -165,9 +166,11 @@ export const useRejectOffer = () => {
   })
 }
 
-/** The customer's chat with one provider about a request, refreshed while it's open */
-export const useRequestThread = (requestId: number, providerId: string, open: boolean) =>
-  useQuery({ ...requestThreadQuery(requestId, providerId), enabled: open, refetchInterval: open ? THREAD_REFRESH_MS : false })
+/** The customer's chat with one artisan about a request: live over the WebSocket, refreshed only while that's down */
+export const useRequestThread = (requestId: number, providerId: string, open: boolean) => {
+  const live = useRequestChatSocket(requestId, providerId, queryKeys.account.requestThread(requestId, providerId), open)
+  return useQuery({ ...requestThreadQuery(requestId, providerId), enabled: open, refetchInterval: open && !live ? THREAD_REFRESH_MS : false })
+}
 
 export const useSendRequestMessage = () => {
   const queryClient = useQueryClient()

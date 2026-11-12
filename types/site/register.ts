@@ -17,6 +17,8 @@ export type RegisterType = {
   /** International format, e.g. +2348012345678 */
   contact: string
   role: AccountRole
+  /** A friend's invite code (Refer & earn); the API ignores unknown codes */
+  referral_code?: string
 }
 
 export type FieldName = "firstName" | "lastName" | "phone" | "email" | "password" | "countryCode" | "agreeToTerms"

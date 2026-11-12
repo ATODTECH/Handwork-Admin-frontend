@@ -4,9 +4,10 @@ import { CalendarCheck, ClipboardList, CreditCard, Gift, LayoutDashboard, LifeBu
 import DashboardShell from "@/components/account/dashboard-shell"
 import type { DashboardNavGroup } from "@/components/account/nav"
 import { useUnreadMessages } from "@/hooks/account/use-messages"
+import { useUnreadTickets } from "@/hooks/account/use-support"
 import { ACCOUNT_ROUTES } from "@/lib/routes"
 
-const customerNav = (unread: number): DashboardNavGroup[] => [
+const customerNav = (unread: number, supportUnread: number): DashboardNavGroup[] => [
   {
     label: "Menu",
     items: [
@@ -21,16 +22,21 @@ const customerNav = (unread: number): DashboardNavGroup[] => [
   {
     label: "Account",
     items: [
-      { title: "Refer & earn", href: "#", icon: Gift, soon: true },
+      { title: "Refer & earn", href: ACCOUNT_ROUTES.customerRefer, icon: Gift },
       { title: "Profile & settings", href: ACCOUNT_ROUTES.customerSettings, icon: UserRoundCog },
-      { title: "Help & support", href: "/contact", icon: LifeBuoy },
+      { title: "Help & support", href: ACCOUNT_ROUTES.customerSupport, icon: LifeBuoy, badge: supportUnread, badgeLabel: "New replies" },
     ],
   },
 ]
 
 const CustomerShell = ({ children }: { children: React.ReactNode }) => {
   const unread = useUnreadMessages()
-  return <DashboardShell nav={customerNav(unread)}>{children}</DashboardShell>
+  const supportUnread = useUnreadTickets()
+  return (
+    <DashboardShell nav={customerNav(unread, supportUnread)} supportHref={ACCOUNT_ROUTES.customerSupport}>
+      {children}
+    </DashboardShell>
+  )
 }
 
 export default CustomerShell

@@ -17,7 +17,7 @@ export const SiteLogin = () => (
   </Card>
 )
 
-export const SiteRegister = ({ role }: { role: AccountRole }) => {
+export const SiteRegister = ({ role, referralCode }: { role: AccountRole, referralCode?: string }) => {
   const isUser = role === "USER"
 
   return (
@@ -34,8 +34,13 @@ export const SiteRegister = ({ role }: { role: AccountRole }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
+        {referralCode && (
+          <p className="mx-6 mb-4 rounded-lg bg-[#FEF1ED] px-3 py-2 text-center text-sm text-hw-grey-700">
+            You were invited by a friend. Their code <strong className="font-semibold text-hw-grey-900">{referralCode}</strong> is applied.
+          </p>
+        )}
         {/* key: reset the form when switching role */}
-        <RegisterFormField key={role} role={role} />
+        <RegisterFormField key={role} role={role} referralCode={referralCode} />
       </CardContent>
     </Card>
   )
