@@ -1,12 +1,13 @@
 import Link from "next/link"
-import { ArrowRight, BadgeCheck, CalendarDays, MapPin } from "lucide-react"
+import { ArrowRight, BadgeCheck, CalendarDays, FileText, MapPin } from "lucide-react"
 import { UseAvatar } from "@/components/shared/use-avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { availabilityLabel } from "@/lib/artisans"
 import { formatLocation } from "@/lib/locations"
 import { artisanName, priceRange } from "@/lib/marketplace"
-import { customerArtisanRoute } from "@/lib/routes"
+import { customerArtisanRoute, requestQuoteRoute } from "@/lib/routes"
 import type { PublicArtisan } from "@/types/account/marketplace"
 
 const MAX_SERVICES = 2
@@ -18,7 +19,7 @@ export const VerifiedBadge = () => (
   </Badge>
 )
 
-/** One approved artisan in the results, linking to their profile and booking form */
+/** One approved artisan in the results: the card opens their profile; the footer offers a quote or booking */
 const ArtisanCard = ({ artisan }: { artisan: PublicArtisan }) => {
   const { skill } = artisan
   const name = artisanName(artisan)
@@ -26,8 +27,8 @@ const ArtisanCard = ({ artisan }: { artisan: PublicArtisan }) => {
   const cover = skill?.images[0]?.url
 
   return (
-    <Card className="group gap-0 overflow-hidden rounded-2xl p-0 shadow-none ring-hw-border transition-shadow hover:shadow-md">
-      <Link href={customerArtisanRoute(artisan.id)} className="flex h-full flex-col outline-none focus-visible:ring-3 focus-visible:ring-hw-primary/50">
+    <Card className="group flex flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-none ring-hw-border transition-shadow hover:shadow-md">
+      <Link href={customerArtisanRoute(artisan.id)} className="flex flex-1 flex-col outline-none focus-visible:ring-3 focus-visible:ring-hw-primary/50">
         <div className="aspect-video overflow-hidden bg-secondary-blue">
           {cover ? (
             // eslint-disable-next-line @next/next/no-img-element -- public storage URL, not a configured image host
@@ -60,25 +61,31 @@ const ArtisanCard = ({ artisan }: { artisan: PublicArtisan }) => {
             </div>
           )}
 
-          <div className="mt-auto flex items-end justify-between gap-3 border-t border-hw-border pt-4">
-            {skill ? (
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-semibold text-hw-grey-900 tabular-nums">{priceRange(skill)}</span>
-                <span className="flex items-center gap-1.5 text-xs text-hw-grey-500">
-                  <CalendarDays className="size-3.5" />
-                  {availabilityLabel(skill)}
-                </span>
-              </div>
-            ) : (
-              <span />
-            )}
-            <span className="flex items-center gap-1 text-sm font-medium text-hw-primary">
-              View & book
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-            </span>
-          </div>
+          {skill && (
+            <div className="mt-auto flex flex-col gap-1">
+              <span className="text-sm font-semibold text-hw-grey-900 tabular-nums">{priceRange(skill)}</span>
+              <span className="flex items-center gap-1.5 text-xs text-hw-grey-500">
+                <CalendarDays className="size-3.5" />
+                {availabilityLabel(skill)}
+              </span>
+            </div>
+          )}
         </div>
       </Link>
+
+      {/* Outside the profile link: a link can't hold another link */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-hw-border px-5 py-3">
+        {skill && (
+          <Button variant="outline" size="sm" render={<Link href={requestQuoteRoute(artisan.id)} />} nativeButton={false}>
+            <FileText data-icon="inline-start" />
+            Request a quote
+          </Button>
+        )}
+        <Link href={customerArtisanRoute(artisan.id)} className="ml-auto flex items-center gap-1 rounded-md text-sm font-medium text-hw-primary outline-none focus-visible:ring-3 focus-visible:ring-hw-primary/50">
+          View & book
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </div>
     </Card>
   )
 }

@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
+import { useRequestChatSocket } from "@/hooks/account/use-request-chat-socket"
+import { accountSession } from "@/lib/auth/session"
 import { mutationKeys, queryKeys } from "@/lib/query/keys"
 import {
   myOffersQuery,
@@ -82,9 +84,13 @@ export const useWithdrawOffer = () => {
   })
 }
 
-/** The provider's chat with the customer about a request */
-export const useProviderThread = (requestId: number, open: boolean) =>
-  useQuery({ ...providerThreadQuery(requestId), enabled: open, refetchInterval: open ? THREAD_REFRESH_MS : false })
+/** The artisan's chat with the customer about a request: live over the WebSocket, refreshed only while that's down */
+export const useProviderThread = (requestId: number, open: boolean) => {
+  // The conversation is keyed by the artisan, who is the signed-in user here
+  const myId = typeof document === "undefined" ? "" : accountSession.getUserId() ?? ""
+  const live = useRequestChatSocket(requestId, myId, queryKeys.account.providerThread(requestId), open)
+  return useQuery({ ...providerThreadQuery(requestId), enabled: open, refetchInterval: open && !live ? THREAD_REFRESH_MS : false })
+}
 
 export const useSendProviderMessage = () => {
   const queryClient = useQueryClient()

@@ -71,6 +71,7 @@ export const queryKeys = {
     tickets: () => [...queryKeys.account.all, "tickets"] as const,
     ticket: (id: number) => [...queryKeys.account.tickets(), id] as const,
     ticketsUnread: () => [...queryKeys.account.tickets(), "unread"] as const,
+    myReports: () => [...queryKeys.account.all, "my-reports"] as const,
   },
 } as const
 

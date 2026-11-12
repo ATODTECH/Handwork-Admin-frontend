@@ -17,6 +17,7 @@ import { useReplyTicket, useResolveTicket, useTicket, useTickets } from "@/hooks
 import { formatActivityDate } from "@/lib/format"
 import { queryKeys } from "@/lib/query/keys"
 import type { SupportTicket } from "@/types/account/support"
+import MyReports from "./my-reports"
 import NewTicketDialog from "./new-ticket-dialog"
 import { TicketStatusBadge, TicketThread } from "./ticket-parts"
 
@@ -175,6 +176,7 @@ const SupportPage = () => {
           )}
         </div>
       </QueryContent>
+      <MyReports />
       <NewTicketDialog open={creating} onOpenChange={setCreating} onCreated={(ticket) => setOpenId(ticket.id)} />
       <DetailSheet open={openId !== null} onOpenChange={(open) => !open && setOpenId(null)} title="Support request">
         {openId !== null && <TicketDetails id={openId} />}
