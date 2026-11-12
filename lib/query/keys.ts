@@ -10,6 +10,7 @@ export const queryKeys = {
     artisanCounts: () => [...queryKeys.admin.artisansRoot(), "counts"] as const,
     overview: () => [...queryKeys.admin.all, "overview"] as const,
     analytics: (months: number) => [...queryKeys.admin.all, "analytics", months] as const,
+    notifications: (days: number) => [...queryKeys.admin.all, "notifications", days] as const,
     withdrawalsRoot: () => [...queryKeys.admin.all, "withdrawals"] as const,
     withdrawals: (status: string) => [...queryKeys.admin.withdrawalsRoot(), status] as const,
     withdrawalCounts: () => [...queryKeys.admin.withdrawalsRoot(), "counts"] as const,

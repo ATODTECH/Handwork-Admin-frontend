@@ -33,10 +33,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAdminSignOut } from "@/hooks/admin/use-admin-auth"
+import { useAdminNotifications } from "@/hooks/admin/use-notifications"
 import { useAdminReportCounts } from "@/hooks/admin/use-reports"
 import { ROUTES } from "@/lib/routes"
 
-const adminNav = (openReports: number): DashboardNavGroup[] => [
+const adminNav = (openReports: number, waiting: number): DashboardNavGroup[] => [
   {
     label: "Manage",
     items: [
@@ -55,7 +56,7 @@ const adminNav = (openReports: number): DashboardNavGroup[] => [
     items: [
       { title: "Reports", href: ROUTES.reports, icon: ChartColumn },
       { title: "Support", href: ROUTES.support, icon: Headset, soon: true },
-      { title: "Notifications", href: ROUTES.notifications, icon: BellRing, soon: true },
+      { title: "Notifications", href: ROUTES.notifications, icon: BellRing, badge: waiting, badgeLabel: "Waiting on staff" },
       { title: "Settings", href: ROUTES.settings, icon: Settings, soon: true },
     ],
   },
@@ -101,8 +102,9 @@ const AdminMenu = () => {
 const AdminShell = ({ children }: { children: React.ReactNode }) => {
   const signOut = useAdminSignOut()
   const { data: reportCounts } = useAdminReportCounts()
+  const { data: notifications } = useAdminNotifications()
   return (
-    <DashboardShell nav={adminNav(reportCounts?.open ?? 0)} headerActions={<AdminMenu />} onSignOut={signOut} showSupport={false}>
+    <DashboardShell nav={adminNav(reportCounts?.open ?? 0, notifications?.needs_action ?? 0)} headerActions={<AdminMenu />} onSignOut={signOut} showSupport={false}>
       {children}
     </DashboardShell>
   )
