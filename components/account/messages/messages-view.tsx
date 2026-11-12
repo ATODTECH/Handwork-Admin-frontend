@@ -41,7 +41,7 @@ const MessagesView = ({ viewer, initialKey }: MessagesViewProps) => {
         title="Messages"
         description={
           isCustomer
-            ? "Talk to providers about your requests and bookings. Each has its own conversation."
+            ? "Talk to artisans about your requests and bookings. Each has its own conversation."
             : "Talk to customers about their requests and your jobs. Each has its own conversation."
         }
       />
@@ -58,7 +58,7 @@ const MessagesView = ({ viewer, initialKey }: MessagesViewProps) => {
             title="No conversations yet"
             description={
               isCustomer
-                ? "When a provider sends you an offer or a question, or you book one, you can message them here."
+                ? "When an artisan sends you an offer or a question, or you book one, you can message them here."
                 : "Ask a customer about their request, or message them about a job you're booked for."
             }
             action={

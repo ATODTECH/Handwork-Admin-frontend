@@ -6,6 +6,8 @@ export const ROUTES = {
   services: "/admin/dashboard/services",
   bookings: "/admin/dashboard/bookings",
   payouts: "/admin/dashboard/payouts",
+  reportedContent: "/admin/dashboard/reported-content",
+  requests: "/admin/dashboard/requests",
   reports: "/admin/dashboard/reports",
   support: "/admin/dashboard/support",
   notifications: "/admin/dashboard/notifications",
@@ -35,6 +37,7 @@ export const ACCOUNT_ROUTES = {
   artisanOffers: "/dashboard/artisan/offers",
   artisanSchedule: "/dashboard/artisan/schedule",
   artisanEarnings: "/dashboard/artisan/earnings",
+  artisanReviews: "/dashboard/artisan/reviews",
   artisanMessages: "/dashboard/artisan/messages",
   artisanSettings: "/dashboard/artisan/settings",
   artisanOnboarding: "/dashboard/artisan/onboarding",
@@ -42,6 +45,9 @@ export const ACCOUNT_ROUTES = {
 
 /** An artisan's profile and booking form, for customers */
 export const customerArtisanRoute = (id: string) => `${ACCOUNT_ROUTES.customerArtisans}/${id}` as const
+
+/** "Request a quote": a private request to one provider */
+export const requestQuoteRoute = (providerId: string) => `${ACCOUNT_ROUTES.customerNewRequest}?provider=${encodeURIComponent(providerId)}` as const
 
 /** One of the customer's requests, with its offers */
 export const customerRequestRoute = (id: number) => `${ACCOUNT_ROUTES.customerRequests}/${id}` as const
@@ -82,8 +88,10 @@ export const PAGE_HEADINGS: Record<string, { title: string, description?: string
   [ROUTES.services]: { title: "Services", description: "The services artisans can offer. Hidden services stay with artisans who already offer them, but new artisans can't choose them and they leave the category lists." },
   [ROUTES.bookings]: { title: "Bookings", description: "Follow every booking, and settle problems customers report by paying the artisan or refunding the customer." },
   [ROUTES.payouts]: { title: "Payouts", description: "Approve artisans' withdrawals. Approving sends the money to their bank through Paystack." },
-  [ROUTES.reports]: { title: "Reports", description: "Review marketplace performance and download detailed reports." },
+  [ROUTES.requests]: { title: "Requests and offers", description: "Every request customers post, with the offers artisans send. Close a request or withdraw an offer that breaks our rules; the people involved are told why. Once an offer is accepted, the Bookings page takes over." },
+  [ROUTES.reportedContent]: { title: "Reported content", description: "Accounts, requests, offers, messages, bookings and reviews people reported. Dismiss a report, or act on it and remove what was reported. Reporters are told the outcome, never who handled it." },
+  [ROUTES.reports]: { title: "Reports", description: "How the marketplace is doing: money, bookings, requests and sign-ups by month, compared with the period before. Months are Lagos months; money counts jobs once the artisan is paid." },
   [ROUTES.support]: { title: "Support" },
-  [ROUTES.notifications]: { title: "Notifications", description: "Stay on top of approvals, bookings, payments and support activity." },
+  [ROUTES.notifications]: { title: "Notifications", description: "What's waiting on staff across the console (artisans to review, problems, payouts and reports) and what happened recently." },
   [ROUTES.settings]: { title: "Settings", description: "Manage platform details, admin access, payments and notification preferences." },
 }

@@ -27,7 +27,11 @@ export const FilterSelect = <T extends string> ({ label, options, value, onChang
   const isActive = value !== undefined
 
   return (
-    <Select value={value ?? ALL} onValueChange={(next) => onChange(next === ALL ? undefined : (next as T))}>
+    <Select
+      items={options.map((option) => ({ value: option.value ?? ALL, label: option.label }))}
+      value={value ?? ALL}
+      onValueChange={(next) => onChange(next === ALL ? undefined : (next as T))}
+    >
       <SelectTrigger
         aria-label={label}
         render={

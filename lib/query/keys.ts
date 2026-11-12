@@ -9,6 +9,8 @@ export const queryKeys = {
     artisans: (status: string) => [...queryKeys.admin.artisansRoot(), status] as const,
     artisanCounts: () => [...queryKeys.admin.artisansRoot(), "counts"] as const,
     overview: () => [...queryKeys.admin.all, "overview"] as const,
+    analytics: (months: number) => [...queryKeys.admin.all, "analytics", months] as const,
+    notifications: (days: number) => [...queryKeys.admin.all, "notifications", days] as const,
     withdrawalsRoot: () => [...queryKeys.admin.all, "withdrawals"] as const,
     withdrawals: (status: string) => [...queryKeys.admin.withdrawalsRoot(), status] as const,
     withdrawalCounts: () => [...queryKeys.admin.withdrawalsRoot(), "counts"] as const,
@@ -21,6 +23,13 @@ export const queryKeys = {
     userCounts: () => [...queryKeys.admin.usersRoot(), "counts"] as const,
     services: () => [...queryKeys.admin.all, "services"] as const,
     categories: () => [...queryKeys.admin.all, "categories"] as const,
+    reportsRoot: () => [...queryKeys.admin.all, "reports"] as const,
+    reports: (status: string) => [...queryKeys.admin.reportsRoot(), status] as const,
+    reportCounts: () => [...queryKeys.admin.reportsRoot(), "counts"] as const,
+    requestsRoot: () => [...queryKeys.admin.all, "requests"] as const,
+    requests: (status: string) => [...queryKeys.admin.requestsRoot(), status] as const,
+    requestCounts: () => [...queryKeys.admin.requestsRoot(), "counts"] as const,
+    request: (id: number) => [...queryKeys.admin.requestsRoot(), "detail", id] as const,
   },
   site: {
     all: ["site"] as const,
@@ -50,6 +59,9 @@ export const queryKeys = {
     providerRequest: (id: number) => [...queryKeys.account.providerRequests(), id] as const,
     providerThread: (id: number) => [...queryKeys.account.providerRequests(), id, "thread"] as const,
     myOffers: () => [...queryKeys.account.all, "my-offers"] as const,
+    reviews: () => [...queryKeys.account.all, "reviews"] as const,
+    providerReviews: (providerId: string) => [...queryKeys.account.reviews(), "provider", providerId] as const,
+    review: (id: number) => [...queryKeys.account.reviews(), id] as const,
   },
 } as const
 
@@ -66,6 +78,9 @@ export const mutationKeys = {
     createService: ["admin", "services", "create"] as const,
     updateService: ["admin", "services", "update"] as const,
     deleteService: ["admin", "services", "delete"] as const,
+    resolveReport: ["admin", "reports", "resolve"] as const,
+    closeRequest: ["admin", "requests", "close"] as const,
+    withdrawOffer: ["admin", "offers", "withdraw"] as const,
   },
   account: {
     markNotificationRead: ["account", "notifications", "mark-read"] as const,
@@ -97,6 +112,10 @@ export const mutationKeys = {
     sendOffer: ["account", "offers", "send"] as const,
     reviseOffer: ["account", "offers", "revise"] as const,
     withdrawOffer: ["account", "offers", "withdraw"] as const,
+    leaveReview: ["account", "reviews", "leave"] as const,
+    editReview: ["account", "reviews", "edit"] as const,
+    replyToReview: ["account", "reviews", "reply"] as const,
+    createReport: ["account", "reports", "create"] as const,
   },
   site: {
     signIn: ["site", "sign-in"] as const,

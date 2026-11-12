@@ -16,7 +16,7 @@ export const mediaKind = (type: string): "IMAGE" | "VIDEO" | null =>
       : null
 
 export const FULFILMENT_OPTIONS: { value: Fulfilment, label: string, description: string }[] = [
-  { value: "ON_SITE", label: "At my place", description: "The provider comes to you." },
+  { value: "ON_SITE", label: "At my place", description: "The artisan comes to you." },
   { value: "DELIVERY", label: "Made and delivered", description: "They make it and deliver it to you." },
   { value: "REMOTE", label: "Remotely", description: "No visit needed: online or by phone." },
 ]
@@ -77,16 +77,16 @@ interface StageMeta {
 }
 
 export const STAGE_META: Record<RequestStage, StageMeta> = {
-  DRAFT: { label: "Draft", tone: "neutral", hint: "Only you can see this. Publish it so providers can send offers." },
-  PUBLISHED: { label: "Waiting for offers", tone: "info", hint: "Providers who offer this service have been told. Offers will show up here." },
+  DRAFT: { label: "Draft", tone: "neutral", hint: "Only you can see this. Publish it so artisans can send offers." },
+  PUBLISHED: { label: "Waiting for offers", tone: "info", hint: "Artisans who offer this service have been told. Offers will show up here." },
   RECEIVING_OFFERS: { label: "Receiving offers", tone: "brand", hint: "Compare the offers and accept the one that suits you best." },
   EXPIRED: { label: "Expired", tone: "neutral", hint: "This request stopped taking offers. Renew it to keep looking." },
   CLOSED: { label: "Closed", tone: "neutral", hint: "You closed this request." },
   OFFER_ACCEPTED: { label: "Offer accepted", tone: "info", hint: "You accepted an offer." },
   AWAITING_PAYMENT: { label: "Pay to confirm", tone: "warning", hint: "Pay for the offer you accepted to confirm the booking." },
   IN_PROGRESS: { label: "In progress", tone: "info", hint: "The job is booked. Follow it in My bookings." },
-  AWAITING_APPROVAL: { label: "Confirm the job", tone: "warning", hint: "The provider says the job is done. Confirm it in My bookings." },
-  COMPLETED: { label: "Completed", tone: "success", hint: "The job is done and the provider has been paid." },
+  AWAITING_APPROVAL: { label: "Confirm the job", tone: "warning", hint: "The artisan says the job is done. Confirm it in My bookings." },
+  COMPLETED: { label: "Completed", tone: "success", hint: "The job is done and the artisan has been paid." },
   CANCELLED: { label: "Cancelled", tone: "neutral", hint: "The booking was cancelled." },
   DISPUTED: { label: "Problem reported", tone: "danger", hint: "We're holding the payment while our team looks into it." },
   REFUNDED: { label: "Refunded", tone: "neutral", hint: "We refunded your payment." },
@@ -106,6 +106,12 @@ export const filterRequests = (requests: JobRequest[], group: RequestGroup) =>
 
 /** The customer can still change it (no offer accepted yet) */
 export const isEditable = ({ status }: JobRequest) => status === "DRAFT" || status === "OPEN"
+
+/** What happens next, for the request page. A private request went to one provider, not to everyone who matches */
+export const stageHint = ({ stage, visibility }: Pick<JobRequest, "stage" | "visibility">) =>
+  visibility === "PRIVATE" && stage === "PUBLISHED"
+    ? "Only the artisan you chose can see this. Their offer will show up here."
+    : STAGE_META[stage].hint
 
 /** "₦10,000 – ₦25,000", "Up to ₦25,000", "Flexible"… */
 export const budgetLabel = (
