@@ -93,5 +93,5 @@ export const PAGE_HEADINGS: Record<string, { title: string, description?: string
   [ROUTES.reports]: { title: "Reports", description: "How the marketplace is doing: money, bookings, requests and sign-ups by month, compared with the period before. Months are Lagos months; money counts jobs once the artisan is paid." },
   [ROUTES.support]: { title: "Support" },
   [ROUTES.notifications]: { title: "Notifications", description: "What's waiting on staff across the console (artisans to review, problems, payouts and reports) and what happened recently." },
-  [ROUTES.settings]: { title: "Settings", description: "Manage platform details, admin access, payments and notification preferences." },
+  [ROUTES.settings]: { title: "Settings", description: "Your profile and password, and who on your team can use the admin console." },
 }

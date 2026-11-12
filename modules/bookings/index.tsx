@@ -7,6 +7,7 @@ import { DataTable } from "@/components/table-data/data-table"
 import { DataTablePagination } from "@/components/table-data/data-table-pagination"
 import { useAdminBookingCounts, useAdminBookings } from "@/hooks/admin/use-bookings"
 import { usePageHeading } from "@/hooks/admin/use-page-heading"
+import { useIsStaffAdmin } from "@/hooks/admin/use-staff"
 import type { BookingFilter, BookingForStaff } from "@/types/admin/bookings"
 import BookingSheet from "./booking-sheet"
 import { bookingColumns } from "./columns"
@@ -45,7 +46,11 @@ const BookingsIndex = () => {
   const bookings = list.data ?? []
   // Looked up by id, so the sheet shows the booking as it is after settling it
   const viewing = bookings.find(({ id }) => id === viewingId) ?? null
-  const columns = useMemo(() => bookingColumns({ onView: ({ id }) => setViewingId(id), onResolve: setResolving }), [])
+  const isAdmin = useIsStaffAdmin()
+  const columns = useMemo(
+    () => bookingColumns({ onView: ({ id }) => setViewingId(id), onResolve: isAdmin ? setResolving : undefined }),
+    [isAdmin],
+  )
   const tabs: FilterTab<BookingFilter>[] = TABS.map((tab) => ({ ...tab, count: counts.data?.[tab.value] }))
 
   const lastPage = Math.max(1, Math.ceil(bookings.length / PAGE_SIZE))
@@ -95,7 +100,7 @@ const BookingsIndex = () => {
         }
       />
 
-      <BookingSheet booking={viewing} onOpenChange={(open) => !open && setViewingId(null)} onResolve={setResolving} />
+      <BookingSheet booking={viewing} onOpenChange={(open) => !open && setViewingId(null)} onResolve={isAdmin ? setResolving : undefined} />
       <ResolveDialog booking={resolving} onOpenChange={(open) => !open && setResolving(null)} />
     </section>
   )

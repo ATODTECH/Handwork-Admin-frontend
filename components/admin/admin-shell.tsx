@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import DashboardShell from "@/components/account/dashboard-shell"
 import type { DashboardNavGroup } from "@/components/account/nav"
+import { UseAvatar } from "@/components/shared/use-avatar"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -34,6 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useAdminSignOut } from "@/hooks/admin/use-admin-auth"
 import { useAdminNotifications } from "@/hooks/admin/use-notifications"
+import { useStaffMe } from "@/hooks/admin/use-staff"
 import { useAdminReportCounts } from "@/hooks/admin/use-reports"
 import { ROUTES } from "@/lib/routes"
 
@@ -57,7 +59,7 @@ const adminNav = (openReports: number, waiting: number): DashboardNavGroup[] => 
       { title: "Reports", href: ROUTES.reports, icon: ChartColumn },
       { title: "Support", href: ROUTES.support, icon: Headset, soon: true },
       { title: "Notifications", href: ROUTES.notifications, icon: BellRing, badge: waiting, badgeLabel: "Waiting on staff" },
-      { title: "Settings", href: ROUTES.settings, icon: Settings, soon: true },
+      { title: "Settings", href: ROUTES.settings, icon: Settings },
     ],
   },
 ]
@@ -65,26 +67,38 @@ const adminNav = (openReports: number, waiting: number): DashboardNavGroup[] => 
 /** Staff menu in the header: the admin session is separate from customer/artisan accounts */
 const AdminMenu = () => {
   const signOut = useAdminSignOut()
+  const { data: me } = useStaffMe()
+  const name = me ? `${me.first_name} ${me.last_name}`.trim() || me.email : "Staff"
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="ghost" className="h-10 gap-2 rounded-full px-1.5 sm:pr-3" />}>
-        <Avatar className="size-8">
-          <AvatarFallback className="bg-secondary-blue text-white">
-            <ShieldCheck className="size-4" />
-          </AvatarFallback>
-        </Avatar>
-        <span className="hidden text-sm font-medium text-hw-grey-900 sm:inline">Staff</span>
+        {me?.profile_image ? (
+          <UseAvatar src={me.profile_image} name={name} aspectRatio="size-8" className="text-xs" />
+        ) : (
+          <Avatar className="size-8">
+            <AvatarFallback className="bg-secondary-blue text-white">
+              <ShieldCheck className="size-4" />
+            </AvatarFallback>
+          </Avatar>
+        )}
+        <span className="hidden max-w-40 truncate text-sm font-medium text-hw-grey-900 sm:inline">{me ? me.first_name || name : "Staff"}</span>
         <ChevronDown className="hidden size-4 text-hw-grey-500 sm:inline" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="flex flex-col">
-            <span className="text-sm font-semibold text-hw-grey-900">Admin console</span>
-            <span className="text-xs font-normal text-hw-grey-500">Handwork Expert staff</span>
+            <span className="truncate text-sm font-semibold text-hw-grey-900">{name}</span>
+            <span className="text-xs font-normal text-hw-grey-500">
+              {me ? `${me.role === "ADMIN" ? "Admin" : "Support"} · Handwork Expert` : "Handwork Expert staff"}
+            </span>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuItem render={<Link href={ROUTES.settings} />}>
+          <Settings />
+          Settings
+        </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/" />}>
           <Globe />
           Back to website

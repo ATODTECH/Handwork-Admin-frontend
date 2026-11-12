@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/shared/page-header"
 import { DataTable } from "@/components/table-data/data-table"
 import { DataTablePagination } from "@/components/table-data/data-table-pagination"
 import { usePageHeading } from "@/hooks/admin/use-page-heading"
+import { useIsStaffAdmin } from "@/hooks/admin/use-staff"
 import { useRejectWithdrawal, useWithdrawalCounts, useWithdrawals } from "@/hooks/admin/use-withdrawals"
 import { formatNairaAmount } from "@/lib/format"
 import type { WithdrawalFilter, WithdrawalForReview } from "@/types/admin/withdrawals"
@@ -47,7 +48,8 @@ const PayoutsIndex = () => {
   const list = useWithdrawals(status)
   const counts = useWithdrawalCounts()
   const withdrawals = list.data ?? []
-  const columns = useMemo(() => payoutColumns({ onApprove: setApproving, onReject: setRejecting }), [])
+  const isAdmin = useIsStaffAdmin()
+  const columns = useMemo(() => payoutColumns(isAdmin ? { onApprove: setApproving, onReject: setRejecting } : {}), [isAdmin])
   const tabs: FilterTab<WithdrawalFilter>[] = TABS.map((tab) => ({ ...tab, count: counts.data?.[tab.value] }))
 
   const lastPage = Math.max(1, Math.ceil(withdrawals.length / PAGE_SIZE))

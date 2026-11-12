@@ -67,7 +67,7 @@ const UserSheet = ({ user, onOpenChange, onDeactivate }: UserSheetProps) => {
           )}
 
           {user.is_staff ? (
-            <p className="pt-5 text-xs text-hw-grey-500">Staff accounts are managed in Django admin.</p>
+            <p className="pt-5 text-xs text-hw-grey-500">Staff accounts are managed in Settings, under Staff.</p>
           ) : (
             <div className="pt-5">
               {user.is_active ? (
