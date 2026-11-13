@@ -11,6 +11,4 @@ if (!apiBaseUrl) {
 export const env = {
   /** API origin without a trailing slash, e.g. https://api.example.com */
   apiBaseUrl: apiBaseUrl.replace(/\/+$/, ""),
-  /** Shared key the public-site endpoints (`/v2/...`) expect in the Authorization header */
-  siteApiKey: process.env.NEXT_PUBLIC_TOKEN_KEY ?? "",
 } as const
