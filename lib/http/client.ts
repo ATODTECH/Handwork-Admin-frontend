@@ -109,17 +109,13 @@ export const apiClient = createAuthClient(session, ROUTES.login)
 export const accountClient = createAuthClient(accountSession, ACCOUNT_ROUTES.login)
 
 // ---------------------------------------------------------------------------
-// Public site API (`/v2`) — shared site key + Django session cookie
+// Public site API (`/v2`): the contact and newsletter forms. Public and rate-limited by the API, so no key or
+// cookie: sending cookies made the browser reject the API's `Access-Control-Allow-Origin: *` answer.
 // ---------------------------------------------------------------------------
 
 export const siteClient = axios.create({
   ...baseConfig,
   baseURL: `${env.apiBaseUrl}/v2`,
-  withCredentials: true,
-  headers: {
-    ...baseConfig.headers,
-    ...(env.siteApiKey && { Authorization: `Bearer ${env.siteApiKey}` }),
-  },
 })
 
 siteClient.interceptors.response.use(undefined, (error) => Promise.reject(toApiError(error)))

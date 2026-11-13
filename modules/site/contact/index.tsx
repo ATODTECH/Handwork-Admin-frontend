@@ -1,27 +1,11 @@
 "use client"
 
 import { contactHero } from "@/assets/site"
-import { useSiteSession } from "@/hooks/site/use-site-session"
-import { DataLoading } from "@/components/site/data-loading"
 import { PageHero } from "@/components/site/page-hero"
-import { WidgetError } from "@/components/site/widget-error"
 import { ContentContactIndex } from "./content"
 
+/** The contact page shows straight away; the form talks to the API only when it's sent */
 const ContactIndex = () => {
-  // sets the cookie the contact and subscribe endpoints expect
-  const { isPending, isError, refetch, isRefetching } = useSiteSession()
-
-  if (isPending) return <DataLoading className="my-50" />
-  if (isError) {
-    return (
-      <div className="flex flex-col flex-1 h-screen justify-center items-center px-5">
-        <section className="flex flex-col justify-self-center space-y-4 rounded-xl border border-[#E2E8F0] bg-primary-white p-6 w-full max-w-lg">
-          <WidgetError message="Couldn't load the Contact us page." onRetry={() => refetch()} isRetrying={isRefetching} />
-        </section>
-      </div>
-    )
-  }
-
   return (
     <>
       <PageHero image={contactHero}>

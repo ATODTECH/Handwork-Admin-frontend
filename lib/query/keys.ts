@@ -39,7 +39,6 @@ export const queryKeys = {
   },
   site: {
     all: ["site"] as const,
-    session: () => [...queryKeys.site.all, "session"] as const,
   },
   account: {
     all: ["account"] as const,
