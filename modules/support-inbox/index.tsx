@@ -25,7 +25,7 @@ const TABS: { value: SupportFilter, label: string }[] = [
 ]
 
 const EMPTY: Record<SupportFilter, string> = {
-  open: "Nothing waiting. New requests from customers, artisans and the website appear here.",
+  open: "Nothing waiting. New requests from customers and artisans appear here.",
   mine: "Nothing assigned to you.",
   waiting: "No requests waiting on a reply from the user.",
   resolved: "No resolved requests yet.",
@@ -69,7 +69,7 @@ const TicketRow = ({ ticket, onOpen }: { ticket: TicketForStaff, onOpen: () => v
   </li>
 )
 
-/** The team's inbox for help requests and website messages */
+/** The team's inbox for help requests from customers and artisans */
 const SupportInboxIndex = () => {
   const heading = usePageHeading()
   const [status, setStatus] = useState<SupportFilter>("open")
